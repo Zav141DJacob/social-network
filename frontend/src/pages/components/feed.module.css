@@ -1,0 +1,218 @@
+.feed {
+  width: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.creator {
+  position: relative;
+  left: 50%;
+  transform: translate(-50%);
+  max-width: 600px;
+  min-width: 450px;
+  padding-left:20px;
+  min-height: 87px;
+  top: 21px;
+  background: rgb(48, 52, 54);
+  border-radius: 12px;
+}
+
+.title {
+  position: relative;
+  width: 94%;
+  top: 10px;
+  height: 33px;
+  margin: 0 auto;
+  padding-left: 9px;
+  padding-right: 9px;
+  background: rgb(89, 96, 100);
+  border-radius: 9px;
+  outline: none;
+  border: none;
+  color: whitesmoke;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  padding-right: 10px;
+}
+
+.title::placeholder {
+  position: relative;
+  padding: 4px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  color: #D0D0D0;
+}
+
+.description {
+  position: relative;
+  width: 94%;
+  top: 60px;
+  height: 72px;
+  margin: 0 auto 80px;
+  padding-left: 10px;
+  padding-right: 10px;
+  background: rgb(89, 96, 100);
+  border-radius: 9px;
+  outline: none;
+  border: none;
+  color: whitesmoke;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  resize: none;
+}
+
+.description::placeholder {
+  padding: 4px;
+  color: #D0D0D0;
+}
+
+
+.categories {
+  position: absolute;
+  left: 50%;
+  display: block;
+  transform: translate(-50%);
+  width: 100%;
+  top: 63px;
+  height: 30px;
+  margin: auto;
+  cursor: default;
+}
+
+.ul {
+  position: relative;
+   list-style-type: none;
+   top: -10px;
+   margin: auto;
+   padding: 0;
+   overflow: hidden;
+}
+
+.category {
+  position: relative;
+  top: -12px;
+}
+
+.li {
+  position: relative;
+  float: left;
+  left: 90px;
+  padding-left: 40px;
+  padding-right: 10px;
+  margin: 0px 10px 20px 30px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  color: #D0D0D0;
+  height: 30px;
+}
+
+.li:hover {
+  background: rgb(89, 96, 100);
+  border-radius: 10px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.bang {
+  background: rgb(89, 96, 100);
+  border-radius: 10px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+
+.rustlogo {
+  position: relative;
+  top: 17px;
+  left: -28px;
+  width: 100%;
+  background-image: url(./../../Rust_programming_language_black_logo.svg);
+  background-size: cover;
+  height: 0;
+  padding: 0; /* reset */
+  padding-bottom: calc(100%);
+}
+
+.jslogo {
+  position: relative;
+  top: 16px;
+  left: -23px;
+  width: 100%;
+  background-image: url(./../../JS_logo.svg);
+  background-size: cover;
+  height: 0;
+  padding: 0; /* reset */
+  padding-bottom: calc(100%);
+}
+
+.gologo {
+  position: relative;
+  top: 6px;
+  left: -44px;
+  width: 100%;
+  background-image: url(./../../Go-Logo_Aqua.svg);
+  background-size: cover;
+  height: 0;
+  padding: 0; /* reset */
+  padding-bottom: calc(100%);
+}
+
+
+.submitready {
+  position: relative;
+  background: rgb(89, 96, 100);
+  width: 97%;
+  text-align: center;
+  top: -7px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border-radius: 7px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 24px;
+  color: #D0D0D0;
+  background: rgb(14, 57, 122);
+  cursor: default;
+}
+
+.submit {
+  position: relative;
+  background: rgb(89, 96, 100);
+  width: 97%;
+  text-align: center;
+  top: -7px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border-radius: 7px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 24px;
+  color: #D0D0D0;
+  cursor: not-allowed;
+}
+
+
+.posts {
+  position: relative;
+  left: 50%;
+  top: 20px;
+  transform: translate(-50%);
+  width: inherit;
+  max-width: 980px;
+  min-width: 820px;
+  cursor:default;
+}

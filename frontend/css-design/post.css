@@ -1,0 +1,152 @@
+/* 1st post */
+
+position: absolute;
+width: 1045px;
+height: 370px;
+left: 415px;
+top: 71px;
+
+
+
+/* post-bg */
+
+position: absolute;
+width: 1045px;
+height: 297px;
+left: 415px;
+top: 71px;
+
+background: #404040;
+border-radius: 10px;
+
+
+/* Jacob */
+
+position: absolute;
+width: 647px;
+height: 40px;
+left: 467px;
+top: 105px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #777575;
+
+
+
+/* How to delete cookies? */
+
+position: absolute;
+width: 647px;
+height: 40px;
+left: 467px;
+top: 135px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 29px;
+
+color: #D0D0D0;
+
+
+
+/* Comments */
+
+position: absolute;
+width: 647px;
+height: 40px;
+left: 467px;
+top: 401px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 29px;
+
+color: #D0D0D0;
+
+
+
+/* I have been trying to delete cookies with document.cookies. But i get an error. Can you please give some guidance? */
+
+position: absolute;
+width: 954px;
+height: 82px;
+left: 467px;
+top: 208px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 29px;
+
+color: #D0D0D0;
+
+
+
+/* Javascript */
+
+position: absolute;
+width: 104px;
+height: 21px;
+left: 494px;
+top: 167px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 20px;
+line-height: 24px;
+
+color: #D0D0D0;
+
+
+
+/* Unofficial_JavaScript_logo_2 3 */
+
+position: absolute;
+width: 23px;
+height: 23px;
+left: 467px;
+top: 167px;
+
+background: url(Unofficial_JavaScript_logo_2.png);
+
+
+/* comment-box-bg */
+
+position: absolute;
+width: 975px;
+height: 53px;
+left: 450px;
+top: 300px;
+
+background: #777575;
+border-radius: 9px;
+
+
+/* Write a comment... */
+
+position: absolute;
+width: 647px;
+height: 40px;
+left: 476px;
+top: 316px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #D0D0D0;
+
+

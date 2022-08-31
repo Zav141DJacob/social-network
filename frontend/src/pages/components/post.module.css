@@ -1,0 +1,225 @@
+.postC {
+  position: relative;
+  width: 80%;
+  top: 70px;
+  margin: 0 auto;
+  padding-bottom: 20px;
+}
+
+.postContainer {
+  width: inherit;
+  min-width: 500px;
+  top: 71px;
+  background: rgb(48, 52, 54);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  margin: 0 auto;
+}
+
+.author {
+  position: relative;
+  height: 40px;
+  max-width: 300px;
+  left: 30px;
+  top: 18px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 24px;
+  color: #777575;
+}
+
+.title {
+  position: relative;
+  left: 30px;
+  max-width: 570px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 25px;
+  line-height: 24px;
+  color: rgb(232, 230, 227);
+}
+
+
+.ul {
+   position: relative;
+   list-style-type: none;
+   margin: auto;
+   top: 5px;
+   padding: 0;
+   overflow: hidden;
+}
+
+.category {
+  position: relative;
+  top: -12px;
+}
+
+.li {
+  position: relative;
+  float: left;
+  left: 25px;
+  padding-right: 20px;
+  margin: 0px 10px 20px 30px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  color: #D0D0D0;
+  height: 30px;
+  border-radius: 10px;
+}
+
+.rustlogo {
+  position: relative;
+  top: 17px;
+  left: -28px;
+  width: 100%;
+  background-image: url(./../../Rust_programming_language_black_logo.svg);
+  background-size: cover;
+  height: 0;
+  padding: 0; /* reset */
+  padding-bottom: calc(100%);
+}
+
+.jslogo {
+  position: relative;
+  top: 16px;
+  left: -23px;
+  width: 100%;
+  background-image: url(./../../JS_logo.svg);
+  background-size: cover;
+  height: 0;
+  padding: 0; /* reset */
+  padding-bottom: calc(100%);
+}
+
+.gologo {
+  position: relative;
+  top: 7px;
+  left: -44px;
+  width: 100%;
+  background-image: url(./../../Go-Logo_Aqua.svg);
+  background-size: cover;
+  height: 0;
+  padding: 0; /* reset */
+  padding-bottom: calc(100%);
+}
+
+.desc {
+  position: relative;
+  width: 95%;
+  left: 30px;
+  top: -18px;
+  max-width: 740px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 24px;
+  color: rgb(232, 230, 227);
+}
+
+.close {
+  position: relative;
+  left: 94%;
+  top: 37px;
+  width: 20px;
+  height: 20px;
+  color: rgb(232, 230, 227);
+}
+
+.commentBox {
+  position: relative;
+  margin: 0 auto;
+  width: inherit;
+  min-width: 500px;
+}
+.commentInput {
+  position: relative;
+  width: 94%;
+  left: 10px;
+  height: auto;
+  background: #777575;
+  border-radius: 9px;
+  border: none;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  outline: none;
+  line-height: 24px;
+  color: rgb(232, 230, 227);
+  resize: none;
+  padding-left: 14px;
+  padding-right: 14px;
+  margin: 0 auto;
+}
+
+.commentInput::placeholder {
+  color: #A9A9A9;
+}
+
+.commentInput:placeholder-shown {
+  position: relative;
+  width: 332px;
+  height: auto;
+  left: 10px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 24px;
+  color: #A9A9A9;
+  margin: 0 auto;
+}
+
+.commentsLabel {
+  position: relative;
+  left: 10px;
+  top: 12px;
+  color: rgb(232, 230, 227);
+}
+
+.comment {
+  color: rgb(232, 230, 227);
+  width: inherit;
+  min-width: 300px;
+  top: 71px;
+  background: rgb(48, 52, 54);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 20px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.commentAuthor {
+  position: relative;
+  left: 10px;
+  top: 12px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 14px;
+  color: #777575;
+}
+
+.commentBody {
+  position: relative;
+  left: 10px;
+  overflow-wrap: break-word;
+  padding-right: 30px;
+}
+
+.commentTime {
+  font-size: 14px;
+  line-height: 14px;
+  color: #777575;
+  position: relative;
+  left: 10px;
+}

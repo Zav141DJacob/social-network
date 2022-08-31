@@ -1,0 +1,207 @@
+/* DM sidebar */
+
+position: absolute;
+width: 220px;
+height: 1144px;
+left: 1508px;
+top: -27px;
+
+
+
+/* dm-sidebar-bg */
+
+position: absolute;
+width: 220px;
+height: 1144px;
+left: 1508px;
+top: -27px;
+
+background: #404040;
+
+
+/* Users */
+
+position: absolute;
+width: 59px;
+height: 23px;
+left: 1523px;
+top: 34px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #FFFFFF;
+
+mix-blend-mode: normal;
+opacity: 0.8;
+
+
+/* Ellipse 1 */
+
+position: absolute;
+width: 27px;
+height: 27px;
+left: 1526px;
+top: 73px;
+
+background: #B40404;
+
+
+/* new-msg-indicator */
+
+position: absolute;
+width: 9px;
+height: 9px;
+left: 1632px;
+top: 82px;
+
+background: #4D5FBD;
+
+
+/* new-msg-indicator */
+
+position: absolute;
+width: 9px;
+height: 9px;
+left: 1637px;
+top: 125px;
+
+background: #4D5FBD;
+
+
+/* Jacob */
+
+position: absolute;
+width: 80px;
+height: 22px;
+left: 1566px;
+top: 75px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #FFFFFF;
+
+
+
+/* Ellipse 2 */
+
+position: absolute;
+width: 27px;
+height: 27px;
+left: 1526px;
+top: 116px;
+
+background: #B40404;
+
+
+/* Tobias */
+
+position: absolute;
+width: 80px;
+height: 22px;
+left: 1566px;
+top: 118px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #FFFFFF;
+
+
+
+/* Ellipse 3 */
+
+position: absolute;
+width: 27px;
+height: 27px;
+left: 1526px;
+top: 159px;
+
+background: #B40404;
+
+
+/* Mary */
+
+position: absolute;
+width: 80px;
+height: 22px;
+left: 1566px;
+top: 161px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #FFFFFF;
+
+
+
+/* offline-indicator */
+
+position: absolute;
+width: 27px;
+height: 27px;
+left: 1526px;
+top: 202px;
+
+background: #B40404;
+
+
+/* Peter */
+
+position: absolute;
+width: 80px;
+height: 22px;
+left: 1566px;
+top: 204px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #FFFFFF;
+
+
+
+/* online-indicator */
+
+position: absolute;
+width: 27px;
+height: 27px;
+left: 1526px;
+top: 245px;
+
+background: #24A30F;
+
+
+/* xXxJames */
+
+position: absolute;
+width: 121px;
+height: 16px;
+left: 1566px;
+top: 247px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #FFFFFF;
+
+
