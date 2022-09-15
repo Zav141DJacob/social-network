@@ -20,6 +20,7 @@ import (
 //	title
 //	post body
 func Post(userId, catId, title, body interface{}) error {
+	
 	stmt, err := Db.Prepare("INSERT INTO posts (userId, title, body, date) VALUES (?, ?, ?, ?);")
 
 	if err != nil {
@@ -28,6 +29,7 @@ func Post(userId, catId, title, body interface{}) error {
 
 	defer stmt.Close()
 	stmt.Exec(userId, title, body, time.Now())
+	
 
 	categoryList, err := FromCategories("", "")
 
@@ -41,6 +43,7 @@ func Post(userId, catId, title, body interface{}) error {
 		return err
 	}
 
+	
 
 	postId := len(posts)
 	var categoryListString string
@@ -49,6 +52,7 @@ func Post(userId, catId, title, body interface{}) error {
 	var count = 0
 
 	var values string
+	
 
 	for _, category := range categoryList {
 		values += "?, "
@@ -63,6 +67,7 @@ func Post(userId, catId, title, body interface{}) error {
 		} else {
 			boolValues = append(boolValues, false)
 		}
+
 	}
 	stmt, err = Db.Prepare("INSERT INTO postCategory (postId, " + categoryListString[:len(categoryListString) - 2] + ") VALUES (?, " + values[:len(values)-2] + ");")
 
@@ -261,15 +266,15 @@ func LikeComment(userId, commentId, value interface{}) error{
 }
 
 // Inserts a category into the database
-func InsertCategory(title interface{}) error {
-	stmt, err := Db.Prepare("INSERT INTO categories (title) VALUES (?)")
+func InsertCategory(title interface{}, userId int, isMain bool) error {
+	stmt, err := Db.Prepare("INSERT INTO categories (title, userId, isMain) VALUES (?, ?, ?)")
 	
 	if err != nil {
 		return err
 	}
 
 	
-	stmt.Exec(title)
+	stmt.Exec(title, userId, isMain)
 
 	_, err = Db.Exec(`ALTER TABLE postCategory ADD COLUMN "has` + title.(string) + `" BOOLEAN NOT NULL`)
 

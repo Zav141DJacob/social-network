@@ -87,12 +87,12 @@ func commentLikes() error {
 }
 
 func Categories() error {
-	err := InsertCategory("Golang")
+	err := InsertCategory("Golang", 0, true)
 	if err != nil {
 		return errors.New("ERROR in categories: " + err.Error())
 	}
-	InsertCategory("Javascript")
-	InsertCategory("Rust")
+	InsertCategory("Javascript", 0, true)
+	InsertCategory("Rust", 0, true)
 	return nil
 }
 

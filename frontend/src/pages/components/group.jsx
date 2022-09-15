@@ -1,23 +1,26 @@
 import styles from './group.module.css'
 import { useState } from 'react'
 import {useAuth} from './../../App'
+import { findCookies } from './right-sidebar';
+import { postData } from '../Login';
 
-async function postData(url = '', data = {}) {
-  // Default options are marked with *
-  const response = await fetch(url, {
-    method: 'POST',
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    redirect: 'follow', 
-    referrerPolicy: 'no-referrer', 
-    body: JSON.stringify(data) 
-  });
-  return response.json(); // parses JSON response into native JavaScript objects
-}
+// async function postData(url = '', data = {}) {
+//   console.log(url, data);
+//   // Default options are marked with *
+//   const response = await fetch(url, {
+//     method: 'POST',
+//     mode: 'cors',
+//     cache: 'no-cache',
+//     credentials: 'include',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     redirect: 'follow', 
+//     referrerPolicy: 'no-referrer', 
+//     body: JSON.stringify(data) 
+//   });
+  // return response.json(); // parses JSON response into native JavaScript objects
+// }
 
 export function Group({dispatch}) {
   const { nickname } = useAuth();
@@ -42,13 +45,11 @@ export function Group({dispatch}) {
 
 function Description({nickname, title, value, setDesc, dispatch}) {
   function submitPost() {
-    let cookieStruct = {}
-    for (const i of document.cookie.split("; ")) {
-        let split = i.split("=")
-        cookieStruct[split[0]] = split[1]
-      }
-    const postObj = {title: title, body: value, userToken: cookieStruct.session}
-    // postData('http://localhost:8000/api/v1/posts/', postObj).then(i => dispatch({type: 'create', postId:i}))
+    let cookieStruct = findCookies();
+    const postObj = {title: title, body: value}
+    console.log(postObj);
+    // postData('http://localhost:8000/api/v1/categories/', postObj).then(i => dispatch({type: 'create', postId:i}))
+    postData('http://localhost:8000/api/v1/categories/', postObj, false).then(i => console.log(i));
   }
   if (title && value) {
     return (

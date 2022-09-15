@@ -437,40 +437,103 @@ func CommentAPI(w http.ResponseWriter, r *http.Request) {
 }
 
 func CategoryAPI(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		categories, err := FromCategories("", "")
-		if err != nil {
-			// https://golangbyexample.com/500-status-http-response-golang/
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		jsonCategories, err := json.Marshal(categories)
-		if err != nil {
-			HandleErr(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		fmt.Fprintln(w, string(jsonCategories))
-	case "POST":
-		// https://stackoverflow.com/questions/27595480/does-golang-request-parseform-work-with-application-json-content-type
-		var v map[string]interface{}
-		err := json.NewDecoder(r.Body).Decode(&v)
-		if err != nil {
-			HandleErr(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		var title = v["title"]
+	if r.Method != "OPTIONS" {
+		auth := AuthenticateSession(r.Header["Authentication"])
+		if (auth == SessionData{}) {
+			fmt.Println("CategoryAPI, Custom Error: auth == sessiondata{}")
 
-		// if !success {
-		// 	w.WriteHeader(419)
-		// 	w.Write([]byte(errMsg))
-		// } else {
-		InsertCategory(title)
-		w.WriteHeader(http.StatusCreated)
-		// }
-	
+			w.WriteHeader(500)
+			return
+		}
+		switch r.Method {
+		case "GET":
+			
+			categories, err := FromCategories("", "")
+			if err != nil {
+				// https://golangbyexample.com/500-status-http-response-golang/
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			var returnCategories []CategoryData
+			for index, c := range categories {
+				if index < 3 {
+					returnCategories = append(returnCategories, c)
+					break
+				}
+				groupMembers, err := FromGroupMembers("UserId", auth.UserId)
+
+				if err != nil {
+					HandleErr(err)
+					w.WriteHeader(http.StatusInternalServerError)
+					return 
+				}
+
+				for _, c2 := range groupMembers {
+					if c2.CatId == c.CatId {
+						returnCategories = append(returnCategories, c)
+						break
+					} 
+				}
+			}
+			jsonCategories, err := json.Marshal(returnCategories)
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			fmt.Fprintln(w, string(jsonCategories))
+		case "POST":
+			auth := AuthenticateSession(r.Header["Authentication"])
+			if (auth == SessionData{}) {
+				fmt.Println("CategoryAPI, Custom Error: auth == sessiondata{}")
+
+				w.WriteHeader(500)
+				return
+			}
+
+			// https://stackoverflow.com/questions/27595480/does-golang-request-parseform-work-with-application-json-content-type
+			var v map[string]interface{}
+			err := json.NewDecoder(r.Body).Decode(&v)
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			categories, err := FromCategories("", "")
+			if err != nil {
+				HandleErr(err)
+				// https://golangbyexample.com/500-status-http-response-golang/
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			var title = v["title"]
+			// var userToken = v["userToken"]
+
+
+
+			// var mainCategory = v["main"]
+
+			for _, c := range categories {
+				
+				if c.Title == title.(string) {
+					w.WriteHeader(409)
+					return
+				}
+			}
+
+			fmt.Println(categories)
+
+			// if !success {
+			// 	w.WriteHeader(419)
+			// 	w.Write([]byte(errMsg))
+			// } else {
+			InsertCategory(title, auth.UserId, false)
+			w.WriteHeader(http.StatusCreated)
+			// }
+		
+		}
 	}
 }
 

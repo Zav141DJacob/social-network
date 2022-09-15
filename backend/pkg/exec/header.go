@@ -60,8 +60,10 @@ type CommentData struct {
 }
 
 type CategoryData struct {
-	CatId int
-	Title string
+	CatId	int
+	Title 	string
+	UserId	int
+	IsMain	bool
 }
 
 // Post like struct
@@ -120,6 +122,11 @@ type OnlineUserData struct {
 	Avatar  string
 }
 
+type GroupMembersData struct {
+	Id	int
+	UserId	int
+	CatId	int
+}
 // type ErrorString struct {
 // 	s string
 // }

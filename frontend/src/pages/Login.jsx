@@ -5,9 +5,10 @@ import { useNavigate } from 'react-router-dom'
 import { findCookies } from './components/right-sidebar';
 
 // Example POST method implementation:
-export async function postData(url = '', data = {}, boolean = true) {
+export async function postData(url = '', data = {}, wantObject = true) {
   // Default options are marked with *
   let cookieStruct = findCookies()
+  console.log(cookieStruct);
   const response = await fetch(url, {
     method: 'POST',
     mode: 'cors',
@@ -21,7 +22,7 @@ export async function postData(url = '', data = {}, boolean = true) {
     referrerPolicy: 'no-referrer', 
     body: JSON.stringify(data) 
   });
-  if (boolean) {
+  if (wantObject) {
     return response.json(); // parses JSON response into native JavaScript objects
   }
   return response

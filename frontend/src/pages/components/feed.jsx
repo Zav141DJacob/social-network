@@ -3,23 +3,24 @@ import styles from './feed.module.css'
 import {useAuth} from './../../App'
 import { PostComponent } from './post'
 import {throttle} from 'lodash'
+import { postData } from '../Login'
 
-async function postData(url = '', data = {}) {
-  // Default options are marked with *
-  const response = await fetch(url, {
-    method: 'POST',
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    redirect: 'follow', 
-    referrerPolicy: 'no-referrer', 
-    body: JSON.stringify(data) 
-  });
-  return response.json(); // parses JSON response into native JavaScript objects
-}
+// async function postData(url = '', data = {}) {
+//   // Default options are marked with *
+//   const response = await fetch(url, {
+//     method: 'POST',
+//     mode: 'cors',
+//     cache: 'no-cache',
+//     credentials: 'include',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     redirect: 'follow', 
+//     referrerPolicy: 'no-referrer', 
+//     body: JSON.stringify(data) 
+//   });
+//   return response.json(); // parses JSON response into native JavaScript objects
+// }
 
 export function Feed({selectedCat, dispatch, forwardRef, scrollValue}) {
   const [posts, setPosts] = useState()

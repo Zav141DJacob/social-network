@@ -29,7 +29,7 @@ func FromUsers(condition string, value interface{}) ([]UserData, error){
 			&user.FirstName,
 			&user.LastName,
 			&user.Age,
-      &user.Avatar,
+      		&user.Avatar,
 			&user.RoleId,
 			&user.Date)
 
@@ -163,7 +163,9 @@ func FromCategories(condition string, value interface{}) ([]CategoryData, error)
 
 		err = rows.Scan(
 			&category.CatId, 
-			&category.Title)
+			&category.Title,
+			&category.UserId,
+			&category.IsMain)
 
 		if err != nil {
 			return nil, err
@@ -266,6 +268,34 @@ func FromSessions(condition string, value interface{}) ([]SessionData, error){
 	}
 
 	return returnSession, nil
+}
+
+func FromGroupMembers(condition string, value interface{}) ([]GroupMembersData, error){
+	rows, err := doRows("groupMembers", condition, value)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var returnGroupMembers []GroupMembersData
+	for rows.Next() {
+		var groupMembers GroupMembersData
+
+		err = rows.Scan(
+			&groupMembers.Id,
+			&groupMembers.UserId,
+			&groupMembers.CatId)
+
+		if err != nil {
+			return nil, err
+		}
+
+		returnGroupMembers = append(returnGroupMembers, groupMembers)
+	}
+
+	return returnGroupMembers, nil
 }
 
 // `CREATE TABLE "notifications" (
