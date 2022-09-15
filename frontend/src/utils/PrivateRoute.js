@@ -1,3 +1,5 @@
+
+import {TopBar} from '../pages/components/topbar'
 import { Outlet, Navigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 export const PrivateRoute = () => {
@@ -8,10 +10,10 @@ export const PrivateRoute = () => {
     fetch('http://localhost:8000/api/v1/sessions/',
     {method: "GET", mode:'cors', cache:'no-cache', credentials: 'include',  headers: {Authentication: output.session}})
     .then(item => {
-      if (item.status === 419) {
+      if (item.status === 419 || item.status === 500) {
         setSession(23)
       }
-    })
+    }).catch(() => setSession(23))
   }, [])
    if (!cookies) {
       return <Navigate to='/login' replace="true"/>
@@ -23,5 +25,10 @@ export const PrivateRoute = () => {
   if (session === 23) {
     return <Navigate to='/login' replace />
   }
-  return <Outlet /> 
+  return (
+    <>
+    <TopBar />
+    <Outlet />
+    </>
+  )
 }

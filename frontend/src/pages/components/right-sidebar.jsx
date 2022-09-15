@@ -46,14 +46,13 @@ const getNotifications = async (notification, setNotification) => {
       
       setNotification(returnArr)
     })
-  })
+  }).catch(() => console.log("BAD THING in right-sidebar 49"))
 }
 const wsOnMessage = (notification, setNotification, setUsers) => {
   ws.onmessage = function(event) {
     getOnlineUsers(notification, setNotification, setUsers)
     postData("http://localhost:8000/api/v1/notifications/", {FromUserId: JSON.parse(event.data).SenderId}, false)
     .then(resp => {
-      console.log("hey")
 
       getNotifications(notification, setNotification)
 
@@ -103,7 +102,6 @@ const getOnlineUsers = (notification, setNotification, setUsers) => {
     },
   }).then(item => {
     item.json().then((res) => {
-      console.log(res)
       setUsers(res)
       // getUserListOrder(users, setUsers, res)
       getNotifications(notification, setNotification)

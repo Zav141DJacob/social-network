@@ -3,7 +3,6 @@ import {PrivateRoute} from './utils/PrivateRoute'
 import Login from './pages/Login'
 import Home from './pages/Home'
 import Post from './pages/Post'
-import {TopBar} from './pages/components/topbar'
 import { Routes, Route,  useNavigate } from 'react-router-dom';
 import { useReducer, useState, createContext, useContext} from 'react'
 
@@ -57,7 +56,6 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-    {token && <TopBar/>}
       {children}
     </AuthContext.Provider>
   );
