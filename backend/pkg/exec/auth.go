@@ -2,7 +2,7 @@ package exec
 
 import (
   "net/mail"
-  "fmt"
+  // "fmt"
   "golang.org/x/crypto/bcrypt"
 )
 
