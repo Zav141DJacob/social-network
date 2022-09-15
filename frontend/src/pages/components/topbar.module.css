@@ -5,22 +5,50 @@
   position: absolute;
   height: 50px;
   width: 100%;
-  background-color: navy;
-}
-
-.list {
-  background-color: red;
+  background: #404040;
+  border-bottom: 1px solid #000000;
 }
 
 .logo {
   position: relative;
   font-family: 'Helvetica';
-font-style: normal;
-font-weight: 400;
-font-size: 36px;
-line-height: 45px;
-left: 20px;
-top: 5px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 45px;
+  left: 20px;
+  top: 5px;
+  color: #BEBEBE;
+}
 
-color: #BEBEBE;
+.notifications {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(241, 236, 236, 0.6);
+  align-self: flex-end;
+  order: 1;
+}
+
+.bell {
+  position: relative;
+  top: 6px;
+  left: 6px;
+}
+
+.profile {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  align-self: flex-end;
+  order: 1;
+}
+
+.actions {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  width: 90px;
+  top: 5px;
+  right: 1%;
 }
