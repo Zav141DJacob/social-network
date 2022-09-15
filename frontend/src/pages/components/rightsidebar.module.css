@@ -1,6 +1,7 @@
 .sidebar {
   position: relative;
   cursor: default;
+  height: 94vh;
   width: 14%;
   top: 50px;
   min-width: 180px;
