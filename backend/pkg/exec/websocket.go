@@ -84,7 +84,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 		
 		// registers the user with their ID
 		if init.(bool) {
-			nickname := v["nickname"]
+			nickname := v["Nickname"]
 			user, err := FromUsers("nickname", nickname)
 
 			if err != nil || len(user) == 0 {

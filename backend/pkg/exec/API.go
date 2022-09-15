@@ -160,6 +160,7 @@ func UserAPI(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte("ERROR: 500 Internal server error"))
 
 			} else {
+        fmt.Println("DAMN")
         res, err := json.Marshal(respUser)
         if err != nil {
 			  	w.WriteHeader(http.StatusInternalServerError)
@@ -523,7 +524,7 @@ func SessionAPI(w http.ResponseWriter, r *http.Request) {
 		// fmt.Fprintln(w, r.Header["Authentication"])
 		auth := AuthenticateSession(r.Header["Authentication"])
 		if (auth == SessionData{}) {
-			fmt.Println("Custom Error: auth == sessiondata{}")
+			fmt.Println("527, Custom Error: auth == sessiondata{}")
 
 			w.WriteHeader(500)
 			return
@@ -639,7 +640,7 @@ func OnlineUsersAPI(w http.ResponseWriter, r *http.Request) {
 		auth := AuthenticateSession(r.Header["Authentication"])
 
 		if (auth == SessionData{}) {
-			fmt.Println("Custom Error: auth == sessiondata{}")
+			fmt.Println("643, Custom Error: auth == sessiondata{}")
 			w.WriteHeader(419)
 			return
 		}
@@ -800,7 +801,7 @@ func NotificationsApi(w http.ResponseWriter, r *http.Request) {
 		auth := AuthenticateSession(r.Header["Authentication"])
 
 		if (auth == SessionData{}) {
-			fmt.Println("Custom Error: auth == sessiondata{}")
+			fmt.Println("804, Custom Error: auth == sessiondata{}")
 			w.WriteHeader(419)
 			return
 		}
@@ -872,7 +873,7 @@ func MessagesAPI(w http.ResponseWriter, r *http.Request) {
 		auth := AuthenticateSession(r.Header["Authentication"])
 
 		if (auth == SessionData{}) {
-			fmt.Println("Custom Error: auth == sessiondata{}")
+			fmt.Println("876, Custom Error: auth == sessiondata{}")
 
 			w.WriteHeader(419)
 			return
