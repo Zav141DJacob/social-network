@@ -6,7 +6,7 @@ export const PrivateRoute = () => {
    let output = {};
   useEffect(() => {
     fetch('http://localhost:8000/api/v1/sessions/',
-    {method: "GET", headers: {Authentication: output.session}})
+    {method: "GET", mode:'cors', cache:'no-cache', credentials: 'include',  headers: {Authentication: output.session}})
     .then(item => {
       if (item.status === 419) {
         setSession(23)

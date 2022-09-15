@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"encoding/json"
 	"github.com/gorilla/websocket"
+  "fmt"
 )
 
 // This article helped me a lot with this project:
@@ -49,8 +50,8 @@ func (manager *ClientManager) start() {
 func (c *Client) reader(conn *websocket.Conn) {
 	unregister := func() {
 		manager.unregister <- c
-		conn.Close()
-		log.Println("Client Connection Terminated")
+		 conn.Close()
+		 log.Println("Client Connection Terminated")
 	}
 	for {
 
@@ -58,6 +59,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 		messageType, p, err := c.socket.ReadMessage()
 
 		if err != nil {
+      fmt.Println(err)
 			unregister()
 			return
 		}
@@ -84,10 +86,11 @@ func (c *Client) reader(conn *websocket.Conn) {
 		
 		// registers the user with their ID
 		if init.(bool) {
-			nickname := v["Nickname"]
+			nickname := v["nickname"]
 			user, err := FromUsers("nickname", nickname)
 
 			if err != nil || len(user) == 0 {
+        fmt.Println(err, user)
 				unregister()
 				return
 			}
