@@ -2,8 +2,10 @@ package exec
 
 import (
 	// "fmt"
-	"time"
+	"fmt"
 	"strconv"
+	"time"
+
 	// "net/http"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -14,7 +16,7 @@ import (
 
 // Inserts a post into the database
 // Requires:
-//	user Id  
+//	user Id
 //	title
 //	post body
 func Post(userId, catId, title, body interface{}) error {
@@ -86,13 +88,14 @@ func Post(userId, catId, title, body interface{}) error {
 //	first name
 //	last name
 //	age
-func Register(nickname, email, password, firstName, lastName, age interface{}) error {
+func Register(nickname, email, password, firstName, lastName, age, avatar interface{}) error {
 	stmt, err := Db.Prepare(
 		`INSERT INTO users 
-		(nickname, eMail, password, firstName, lastName, age, roleId, date) 
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?);`)
+		(nickname, eMail, password, firstName, lastName, age, avatar, roleId, date) 
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`)
 
 	if err != nil {
+    fmt.Println("toDb98", err)
 		return err
 	}
 
@@ -105,8 +108,9 @@ func Register(nickname, email, password, firstName, lastName, age interface{}) e
 	}
 
 	defer stmt.Close()
-  	_, err = stmt.Exec(nickname, email, hash, firstName, lastName, age.(string), 1, time.Now())
+  	_, err = stmt.Exec(nickname, email, hash, firstName, lastName, age.(string), avatar, 1, time.Now())
 	if err != nil {
+    fmt.Println("toDb113", err)
 		HandleErr(err)
 		return err
 	}
@@ -288,15 +292,15 @@ func InsertCategory(title interface{}) error {
 // 	FOREIGN KEY ("role_id") REFERENCES "users"("role_id")
 // )`
 
-func InsertSession(session, nickname string, userId, roleId int) error {
-	stmt, err := Db.Prepare("INSERT INTO sessions (sessionId, nickname, userId, roleId, date) VALUES (?, ?, ?, ?, ?)")
+func InsertSession(session, nickname, avatar string, userId, roleId int) error {
+	stmt, err := Db.Prepare("INSERT INTO sessions (sessionId, nickname, avatar, userId, roleId, date) VALUES (?, ?, ?, ?, ?, ?)")
 	
 	if err != nil {
 		return err
 	}
 
 	defer stmt.Close()
-	stmt.Exec(session, nickname, userId, roleId, time.Now())
+	stmt.Exec(session, nickname, avatar, userId, roleId, time.Now())
 	return nil
 }
 

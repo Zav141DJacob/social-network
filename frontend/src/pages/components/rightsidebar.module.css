@@ -23,10 +23,20 @@
   color: #FFFFFF;
 }
 
+.profilePicture {
+  position: relative;
+  width: 23px;
+  height: 23px;
+  top: 50px;
+  left: 10px;
+  background: rgb(29, 130, 12);
+  border-radius: 30px;
+}
+
 .onlineIndicator {
   position: relative;
-  width: 20px;
-  height: 20px;
+  width: 6px;
+  height: 6px;
   top: 40px;
   left: 10px;
   background: rgb(29, 130, 12);
@@ -35,8 +45,8 @@
 
 .offlineIndicator {
   position: relative;
-  width: 20px;
-  height: 20px;
+  width: 6px;
+  height: 6px;
   top: 40px;
   left: 10px;
   background: rgb(144, 3, 3);
@@ -61,7 +71,7 @@ border-radius: 20px;
 border: 2px solid rgb(22, 26, 28);
   width: 16px;
   height: 16px;
-  top: 9px;
+  top: -09px;
   left: 9px;
   color: white;
   text-align: center;

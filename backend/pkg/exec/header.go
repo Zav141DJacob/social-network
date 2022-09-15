@@ -25,6 +25,7 @@ type UserData struct {
 	FirstName string
 	LastName  string
 	Age		  string
+	Avatar		  string
 	RoleId	  int
 	Date	  string
 }
@@ -81,6 +82,7 @@ type CLikeData struct {
 type SessionData struct {
 	SessionId string
 	Nickname  string
+	Avatar  string
 	UserId	  int
 	RoleId	  int
 	Date	  string
@@ -115,6 +117,7 @@ type OnlineUserData struct {
 	UserId	 int
 	Online	 bool
 	Nickname string
+	Avatar  string
 }
 
 // type ErrorString struct {

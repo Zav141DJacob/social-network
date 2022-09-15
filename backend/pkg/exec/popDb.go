@@ -50,12 +50,12 @@ func posts() error{
 
 // nickname, email, password, firstName, lastName, age 
 func users() error {
-	err := Register("Jacob", "jaagup.tomingas@gmail.com", "q1w2e3r4t5y6", "Jaagup", "Tomingas", "20")
+	err := Register("Jacob", "jaagup.tomingas@gmail.com", "q1w2e3r4t5y6", "Jaagup", "Tomingas", "20", "jacob.png")
 	if err != nil {
 		return errors.New("ERROR in users: " + err.Error())
 	}
-	Register("Kertu", "kertu.saul@gmail.com", "q1w2e3r4t5y6", "Kertu", "Saul", "22")
-	Register("Alex", "alex.viik@gmail.com", "q1w2e3r4t5y6", "Alex", "Viik", "28")
+	Register("Kertu", "kertu.saul@gmail.com", "q1w2e3r4t5y6", "Kertu", "Saul", "22", "kertu.png")
+	Register("Alex", "alex.viik@gmail.com", "q1w2e3r4t5y6", "Alex", "Viik", "28", "alex.png")
 	return nil
 }
 

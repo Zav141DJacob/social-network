@@ -103,6 +103,7 @@ const getOnlineUsers = (notification, setNotification, setUsers) => {
     },
   }).then(item => {
     item.json().then((res) => {
+      console.log(res)
       setUsers(res)
       // getUserListOrder(users, setUsers, res)
       getNotifications(notification, setNotification)
@@ -136,6 +137,8 @@ export function RightSideBar() {
       {users.map(item => {
         return (
           <div key={item.UserId} className={styles.user}>
+          
+ <img className={styles.profilePicture} src={`http://localhost:8000/static/${item.Avatar}`}  /> 
               <div className={item.Online ? styles.onlineIndicator : styles.offlineIndicator}>
                 {notification[item.UserId] && <div className={styles.notificationCount}>{notification[item.UserId] > 9 ? "9+" : notification[item.UserId]}</div>}
               </div>

@@ -1,7 +1,7 @@
 package exec
 
 import(
-	// "fmt"
+	"fmt"
 	// "forum/pkg/header"
 	"database/sql"
 )
@@ -29,10 +29,12 @@ func FromUsers(condition string, value interface{}) ([]UserData, error){
 			&user.FirstName,
 			&user.LastName,
 			&user.Age,
+      &user.Avatar,
 			&user.RoleId,
 			&user.Date)
 
 		if err != nil {
+        fmt.Println("API168", err)
 			return nil, err
 		}
 
@@ -251,6 +253,7 @@ func FromSessions(condition string, value interface{}) ([]SessionData, error){
 		err = rows.Scan(
 			&session.SessionId,
 			&session.Nickname,
+			&session.Avatar,
 			&session.UserId,
 			&session.RoleId,
 			&session.Date)

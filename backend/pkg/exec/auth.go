@@ -61,7 +61,7 @@ func AuthLogin(nickname, password interface{}) (bool, string) {
 
 
 // Checks if the register info is correct
-func AuthRegister(nickname, email, password, firstName, lastName, age interface{}) (ResponseRegisterUser) {
+func AuthRegister(nickname, email, password, firstName, lastName, age, avatar interface{}) (ResponseRegisterUser) {
   
   	respUser := ResponseRegisterUser{}	
 

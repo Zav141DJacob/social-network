@@ -44,7 +44,7 @@ func startSession(nickname interface{}) error {
 		// }
 	}
 	
-	err = InsertSession(sessionToken, user[0].Nickname, user[0].UserId, user[0].RoleId)
+	err = InsertSession(sessionToken, user[0].Nickname, user[0].Avatar, user[0].UserId, user[0].RoleId)
 
 	if err != nil {
 		return err

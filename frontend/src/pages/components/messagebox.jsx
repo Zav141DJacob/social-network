@@ -140,27 +140,28 @@ export function MessageBox({user, closeHandler, getOnlineUsers}) {
   
   return (
     <div className={styles.messagebox}>
-      <div className={styles.topbar}>
-        <div className={user.Online ? styles.onlineIndicator : styles.offlineIndicator}></div>
-        <span className={styles.nickname}>{user.Nickname}</span>
-        <div className={styles.close} onClick={(e) => {
-        setMessageCount(0)
-        closeHandler(e)
-        }}>
-          <svg  viewBox="0 0 24 24">
-            <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
-          </svg>
-        </div>
-      </div> 
-      <div className={styles.messages} ref={messageScroll}> {loading && messages.length-messageCount > 0 && <h1 className={styles.msgLoad}>Loading older messages</h1>}{messages.slice(messages.length-messageCount < 0 ? 0 : messages.length-messageCount).map((item, i) => {
-        return (
-          <Fragment key={i}>
-            <TimeAgo className={item.sent ? styles.datesent : styles.datereceive} datetime={item.date} opts={{ minInterval:60}}/>
+    <div className={styles.topbar}>
+    <img className={styles.profilePicture} src={`http://localhost:8000/static/${user.Avatar}`}  /> 
+    <div className={user.Online ? styles.onlineIndicator : styles.offlineIndicator}></div>
+    <span className={styles.nickname}>{user.Nickname}</span>
+    <div className={styles.close} onClick={(e) => {
+      setMessageCount(0)
+      closeHandler(e)
+    }}>
+    <svg  viewBox="0 0 24 24">
+    <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+    </svg>
+    </div>
+    </div> 
+    <div className={styles.messages} ref={messageScroll}> {loading && messages.length-messageCount > 0 && <h1 className={styles.msgLoad}>Loading older messages</h1>}{messages.slice(messages.length-messageCount < 0 ? 0 : messages.length-messageCount).map((item, i) => {
+      return (
+        <Fragment key={i}>
+        <TimeAgo className={item.sent ? styles.datesent : styles.datereceive} datetime={item.date} opts={{ minInterval:60}}/>
         <div className={styles.message} ><div className={item.sent ? styles.sent : styles.received}>{item.message}</div></div>
         </Fragment>
-        )
-      })}
-      <div ref={lastmsg} className={styles.lastMsg} />
+      )
+    })}
+    <div ref={lastmsg} className={styles.lastMsg} />
 
       </div>
       <div className={styles.submit} >

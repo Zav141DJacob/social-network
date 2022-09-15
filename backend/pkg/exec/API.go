@@ -3,17 +3,19 @@ package exec
 import (
 	// "log"
 	"fmt"
+	"net/http"
 	"sort"
 	"strings"
-	"net/http"
+
 	// "time"
-	"strconv"
 	"encoding/json"
 	"io"
 	"os"
 	"path/filepath"
-	"github.com/satori/go.uuid"
-  	"regexp"
+	"regexp"
+	"strconv"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 
@@ -133,12 +135,13 @@ func UserAPI(w http.ResponseWriter, r *http.Request) {
 		var firstName = v["FirstName"]
 		var lastName  = v["LastName"]
 		var age		  = v["Age"]
+    var avatar = v["Avatar"]
 
 		//toDo 
 		// Remove all gender options
 		// var gender 	  = v["Gender"] 
 
-		respUser := AuthRegister(nickname, email, password, firstName, lastName, age)
+		respUser := AuthRegister(nickname, email, password, firstName, lastName, age, avatar)
 
 		if (respUser != ResponseRegisterUser{}) {
 			// fmt.Println(errMsg)
@@ -153,15 +156,16 @@ func UserAPI(w http.ResponseWriter, r *http.Request) {
       w.WriteHeader(419)
       w.Write(res)
     } else {
-      err = Register(nickname, email, password, firstName, lastName, age)
-      fmt.Println(err)
+      err = Register(nickname, email, password, firstName, lastName, age, avatar)
       if err != nil {
+        fmt.Println("API161", err)
         w.WriteHeader(http.StatusInternalServerError)
         w.Write([]byte("ERROR: 500 Internal server error"))
 
 			} else {
         res, err := json.Marshal(respUser)
         if err != nil {
+        fmt.Println("API168", err)
 			  	w.WriteHeader(http.StatusInternalServerError)
 		  		w.Write([]byte("ERROR: 500 Internal server error"))
         }
@@ -684,6 +688,7 @@ func OnlineUsersAPI(w http.ResponseWriter, r *http.Request) {
 				onlineUsers.UserId = session.UserId
 				onlineUsers.Online = true
 				onlineUsers.Nickname = session.Nickname
+				onlineUsers.Avatar = session.Avatar
 				
 				onOffUsers.Online = append(onOffUsers.Online, onlineUsers)
 			}
@@ -692,18 +697,19 @@ func OnlineUsersAPI(w http.ResponseWriter, r *http.Request) {
 	
 				var found bool
 	
-				for _, session := range onOffUsers.Online {
-					if session.UserId == user.UserId {
-						found = true
-						break
-					}
-				}
-				if !found {
-					var offlineUser OnlineUserData
-					offlineUser.UserId = user.UserId
-					offlineUser.Online = false
-					offlineUser.Nickname = user.Nickname
-					
+        for _, session := range onOffUsers.Online {
+          if session.UserId == user.UserId {
+            found = true
+            break
+          }
+        }
+        if !found {
+          var offlineUser OnlineUserData
+          offlineUser.UserId = user.UserId
+          offlineUser.Online = false
+          offlineUser.Nickname = user.Nickname
+          offlineUser.Avatar = user.Avatar
+
 					onOffUsers.Offline = append(onOffUsers.Offline, offlineUser)
 				}
 			}

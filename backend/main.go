@@ -8,27 +8,34 @@ import(
 
 func main(){
 
-	err := exec.Initialize()
-	if err != nil {
-		exec.HandleErr(err)
-		return
-	}
-	port := ":8000"
-	fileServer := http.StripPrefix("/", http.FileServer( http.Dir("./")))
-	http.Handle("/", fileServer)
-	// ToDo: change Middleware function name
-	http.HandleFunc("/api/v1/users/", Middleware(exec.UserAPI))
-	http.HandleFunc("/api/v1/posts/", Middleware(exec.PostApi))
-	http.HandleFunc("/api/v1/categories/", Middleware(exec.CategoryAPI))
-	http.HandleFunc("/api/v1/sessions/", Middleware(exec.SessionAPI))
-	http.HandleFunc("/api/v1/comments/", Middleware(exec.CommentAPI))
-	http.HandleFunc("/api/v1/post-likes/", Middleware(exec.PostLikeAPI))
-	http.HandleFunc("/api/v1/online-users/", Middleware(exec.OnlineUsersAPI))
-	http.HandleFunc("/api/v1/messages/", Middleware(exec.MessagesAPI))
-	http.HandleFunc("/api/v1/notifications/", Middleware(exec.NotificationsApi))
-	http.HandleFunc("/api/v1/upload/", Middleware(exec.UploadFile))
+  err := exec.Initialize()
+  if err != nil {
+    exec.HandleErr(err)
+    return
+  }
+  fs := http.FileServer(http.Dir("./static"))
+  http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	
+  http.HandleFunc("/static", func(w http.ResponseWriter, r *http.Request) {
+    fmt.Println("HOI")
+    http.ServeFile(w, r, "image.html")
+  })
+  port := ":8000"
+  fileServer := http.StripPrefix("/", http.FileServer( http.Dir("./")))
+  http.Handle("/", fileServer)
+  // ToDo: change Middleware function name
+  http.HandleFunc("/api/v1/users/", Middleware(exec.UserAPI))
+  http.HandleFunc("/api/v1/posts/", Middleware(exec.PostApi))
+  http.HandleFunc("/api/v1/categories/", Middleware(exec.CategoryAPI))
+  http.HandleFunc("/api/v1/sessions/", Middleware(exec.SessionAPI))
+  http.HandleFunc("/api/v1/comments/", Middleware(exec.CommentAPI))
+  http.HandleFunc("/api/v1/post-likes/", Middleware(exec.PostLikeAPI))
+  http.HandleFunc("/api/v1/online-users/", Middleware(exec.OnlineUsersAPI))
+  http.HandleFunc("/api/v1/messages/", Middleware(exec.MessagesAPI))
+  http.HandleFunc("/api/v1/notifications/", Middleware(exec.NotificationsApi))
+  http.HandleFunc("/api/v1/upload/", Middleware(exec.UploadFile))
+
+
 	// websocket stuff
 	// http.HandleFunc("/ws/", Middleware(exec.WsRootHandler))
 	// http.HandleFunc("/ws/longlat", Middleware(exec.wsLonglatHandler))
