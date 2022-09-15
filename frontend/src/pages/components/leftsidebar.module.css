@@ -1,10 +1,11 @@
 .sidebar {
+  position:relative;
   cursor: default;
   width: 13%;
   min-width: 240px;
   height: 100%;
   left: 0px;
-  top: 0px;
+  top: 50px;
   background: rgb(22, 26, 28);
 }
 

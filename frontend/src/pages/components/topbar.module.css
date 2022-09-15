@@ -1,0 +1,26 @@
+.topbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: absolute;
+  height: 50px;
+  width: 100%;
+  background-color: navy;
+}
+
+.list {
+  background-color: red;
+}
+
+.logo {
+  position: relative;
+  font-family: 'Helvetica';
+font-style: normal;
+font-weight: 400;
+font-size: 36px;
+line-height: 45px;
+left: 20px;
+top: 5px;
+
+color: #BEBEBE;
+}

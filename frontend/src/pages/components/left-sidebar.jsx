@@ -24,6 +24,7 @@ export function LeftSideBar({dispatch, postPage}) {
           <li className={styles.topic} id="rust" onClick={categoryHandler}><div style={{width: "25px"}}><div className={styles.rustlogo}/></div>Rust</li>
           <li className={styles.topic} id="js" onClick={categoryHandler}><div style={{width: "20px"}}><div className={styles.jslogo}/></div>Javascript</li>
           <li className={styles.topic} id="go" onClick={categoryHandler}><div style={{height: "20px", width: "40px"}}><div className={styles.gologo}/></div>Golang</li>
+          <li className={styles.topic} id="create" onClick={() => dispatch({type: "group"})}><button>Create a group</button></li>
         </ul>
       </div>
       <div onClick={onLogout} className={styles.logout}>

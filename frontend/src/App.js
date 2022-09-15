@@ -3,6 +3,7 @@ import {PrivateRoute} from './utils/PrivateRoute'
 import Login from './pages/Login'
 import Home from './pages/Home'
 import Post from './pages/Post'
+import {TopBar} from './pages/components/topbar'
 import { Routes, Route,  useNavigate } from 'react-router-dom';
 import { useReducer, useState, createContext, useContext} from 'react'
 
@@ -19,6 +20,8 @@ function postReducer(state, action) {
       return {postSelected: true, postId: action.postId}
     case 'category':
       return {postSelected: false, postCat: state.postCat === action.category ? 'all' : action.category}
+    case 'group':
+      return {postSelected: false, createGroup: true}
     default:
       throw Error('Unknown action', action.type)
   }
@@ -54,6 +57,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
+    {token && <TopBar/>}
       {children}
     </AuthContext.Provider>
   );
@@ -65,7 +69,7 @@ export const useAuth = () => {
 
 
 function App() {
-  const [post, dispatch] = useReducer(postReducer, {postSelected: false})
+  const [post, dispatch] = useReducer(postReducer, {postSelected: false, createGroup: false})
   return (
     <div className="App">
       <AuthProvider>

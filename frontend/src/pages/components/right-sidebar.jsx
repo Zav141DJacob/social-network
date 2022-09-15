@@ -130,29 +130,28 @@ export function RightSideBar() {
     wsOnMessage(notification, setNotification, setUsers)
     getOnlineUsers(notification, setNotification, setUsers)
   }, [])
-  
+
   if (users) {
     return (
-    <div className={styles.sidebar}>
+      <div className={styles.sidebar}>
       {users.map(item => {
         return (
           <div key={item.UserId} className={styles.user}>
-          
- <img className={styles.profilePicture} src={`http://localhost:8000/static/${item.Avatar}`}  /> 
-              <div className={item.Online ? styles.onlineIndicator : styles.offlineIndicator}>
-                {notification[item.UserId] && <div className={styles.notificationCount}>{notification[item.UserId] > 9 ? "9+" : notification[item.UserId]}</div>}
-              </div>
+          <img className={styles.profilePicture} src={`http://localhost:8000/static/${item.Avatar}`}  /> 
+          <div className={item.Online ? styles.onlineIndicator : styles.offlineIndicator}>
+          {notification[item.UserId] && <div className={styles.notificationCount}>{notification[item.UserId] > 9 ? "9+" : notification[item.UserId]}</div>}
+          </div>
           <h1 className={styles.nickname} onClick={() => {
-          setmessageUser(item)
-          setMessageboxOpen(true)
-          deleteNotification(item.UserId, notification, setNotification)
+            setmessageUser(item)
+            setMessageboxOpen(true)
+            deleteNotification(item.UserId, notification, setNotification)
           }}>{item.Nickname} </h1>
           {notification[item.UserId] && <div className={styles.notification} />}
           </div>
-          )
+        )
       })}
       {messageboxOpen && <MessageBox user={messageUser} closeHandler={closeMessageBox} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}}/>}
-    </div>
+      </div>
     )
   }
   return (
