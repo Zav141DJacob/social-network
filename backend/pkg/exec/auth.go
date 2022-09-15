@@ -116,20 +116,17 @@ func AuthRegister(nickname, email, password, firstName, lastName, age interface{
 func AuthenticateSession(header []string) SessionData {
   var authId string
   if len(header) == 0 {
-    fmt.Println("3easd ", header)
 		return SessionData{}
 	}
 	authId = header[0]
 	session, err := FromSessions("sessionId", authId)
 
 	if err != nil {
-    fmt.Println("333 ", header)
 		HandleErr(err)
 		return SessionData{}
 	}
 
 	if len(session) == 0 {
-    fmt.Println("999 ", header)
 		return SessionData{}
 	}
 
