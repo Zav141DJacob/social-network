@@ -455,11 +455,11 @@ func CategoryAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			var returnCategories []CategoryData
-			for index, c := range categories {
-				if index < 3 {
+			for _, c := range categories {
+				//if index < 3 {
 					returnCategories = append(returnCategories, c)
-					break
-				}
+					// break
+				//}
 				groupMembers, err := FromGroupMembers("UserId", auth.UserId)
 
 				if err != nil {

@@ -41,10 +41,10 @@ export function Feed({selectedCat, dispatch, forwardRef, scrollValue}) {
         case 'rust':
           setPostCopy(posts?.filter(post => post.Category.HasRust === true))
           return;
-        case 'js':
+        case 'javascript':
           setPostCopy(posts?.filter(post => post.Category.HasJavascript === true))
           return;
-        case 'go':
+        case 'golang':
           setPostCopy(posts?.filter(post => post.Category.HasGolang === true))
           return;
       }

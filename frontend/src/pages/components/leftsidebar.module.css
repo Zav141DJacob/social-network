@@ -36,8 +36,9 @@
 
 .topic {
   position: relative;
-  top: -140px;
-  left: 20px;
+  top: -120px;
+  padding-top: 10px;
+  left: -10px;
   width: 300px;
   font-family: 'Helvetica Neue', Helvetica, Arial;
   font-style: normal;
