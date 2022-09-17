@@ -4,6 +4,48 @@
   height: 100%;
 }
 
+.private {
+  position: relative;
+  width: 100%;
+  top: 20px;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+.privatebox {
+  position: relative;
+  left: 50%;
+  transform: translate(-50%);
+  max-width: 600px;
+  min-width: 450px;
+  padding-left:20px;
+  min-height: 157px;
+  top: 71px;
+  background: rgb(48, 52, 54);
+  border-radius: 12px;
+}
+
+.privatetext {
+  position: absolute;
+  color: whitesmoke;
+  left: 50%;
+  top: 70%;
+  font-weight: 100;
+  font-family: Helvetica;
+  font-size: 24px;
+  transform: translate(-50%);
+}
+
+.lock {
+  position: absolute;
+  scale: 0.12;
+  left: -7px;
+  top: -250px;
+  padding: 5px;
+  fill:none;
+  stroke: white;
+}
+
 .profile {
   position: relative;
   left: 50%;
