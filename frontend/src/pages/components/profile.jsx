@@ -38,6 +38,7 @@ export function Profile({userId, state, dispatch}) {
       <div className={styles.feed}>
       <div className={styles.profile}>
       <img className={styles.avatar} src={`http://localhost:8000/static/${profile.Avatar}`} />
+      {profile.Nickname !== nickname && <button className={styles.followBtn}>Follow</button>}
       <h2 className={styles.name}>{profile.FirstName} {profile.LastName}</h2>
       <div className={styles.stats}>
       <span>0 posts</span>

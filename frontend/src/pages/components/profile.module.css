@@ -133,3 +133,9 @@
   min-width: 300px;
   color: whitesmoke;
 }
+
+.followBtn {
+  position: absolute;
+  top: 40px;
+  left: 300px;
+}
