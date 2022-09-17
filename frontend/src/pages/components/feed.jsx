@@ -41,7 +41,7 @@ export function Feed({selectedCat, dispatch, forwardRef, scrollValue}) {
         case 'rust':
           setPostCopy(posts?.filter(post => post.Category.HasRust === true))
           return;
-        case 'javascript':
+        case 'js':
           setPostCopy(posts?.filter(post => post.Category.HasJavascript === true))
           return;
         case 'golang':

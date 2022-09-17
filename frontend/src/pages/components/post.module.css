@@ -19,9 +19,8 @@
 .author {
   position: relative;
   height: 40px;
-  max-width: 300px;
   left: 30px;
-  top: 18px;
+  top: 4px;
   font-family: 'Helvetica Neue', Helvetica, Arial;
   font-style: normal;
   font-weight: 400;
@@ -32,6 +31,7 @@
 
 .title {
   position: relative;
+  top: 3px;
   left: 30px;
   max-width: 570px;
   font-family: 'Helvetica Neue', Helvetica, Arial;

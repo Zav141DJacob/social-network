@@ -5,6 +5,7 @@ export function Profile({userId, state, dispatch}) {
   const {nickname} = useAuth();
   const [profile, setProfile] = useState()
   let cookies = document.cookie
+  console.log(123, userId)
 
   let output = {};
   cookies.split(/\s*;\s*/).forEach(function(pair) {
@@ -15,15 +16,18 @@ export function Profile({userId, state, dispatch}) {
   useEffect(() => {
     if (state?.profile) {
       if (state.profileId) {
-      fetch("http://localhost:8000/api/v1/users/" + state.profileId + "/")
-        .then((item) => item.json().then(res =>  setProfile(res[0])))
+        fetch("http://localhost:8000/api/v1/users/nickname/" + state.profileId + "/")
+          .then((item) => item.json().then(res =>  setProfile(res[0])))
+        window.history.pushState("y2", "x3", `/users/${state.profileId}`)
+      } else if (userId) {
+        fetch("http://localhost:8000/api/v1/users/nickname/" + userId + "/")
+          .then((item) => item.json().then(res =>  setProfile(res[0])))
+        window.history.pushState("y2", "x3", `/users/${userId}`)
       } else {
-      fetch("http://localhost:8000/api/v1/users/nickname/" + nickname + "/")
-        .then((item) => item.json().then(res =>  setProfile(res[0])))
+        fetch("http://localhost:8000/api/v1/users/nickname/" + nickname + "/")
+          .then((item) => item.json().then(res =>  setProfile(res[0])))
+        window.history.pushState("y2", "x3", `/users/${nickname}`)
       }
-    } else {
-      fetch("http://localhost:8000/api/v1/users/" + userId + "/")
-        .then((item) => item.json().then(res =>  setProfile(res[0])))
     }
   }, [state?.profile, state?.profileId])
 

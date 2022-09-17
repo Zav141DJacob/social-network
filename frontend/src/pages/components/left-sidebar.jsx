@@ -27,7 +27,6 @@ export function LeftSideBar({dispatch, postPage}) {
 
   const categoryHandler = (e) => {
     if (postPage) {
-      nav('/')
     }
     dispatch({type: "category", category: e.target.id}) 
   }

@@ -41,6 +41,8 @@ export function PostComponent({post, postInfo, dispatch}) {
   const closePostHandler = (e) => {
     e.stopPropagation()
     if (dispatch) {
+      console.log('damn')
+      nav("/")
       dispatch({type: 'unselect'})
     } else {
       nav("/")
@@ -86,6 +88,7 @@ export function PostComponent({post, postInfo, dispatch}) {
     });
   }
 
+  console.log(postData)
   return (
     <div className={styles.postC}>
       <div className={styles.postContainer} onClick={() => dispatch({type: 'select', postId: postData?.Post?.PostId})}>
@@ -96,7 +99,7 @@ export function PostComponent({post, postInfo, dispatch}) {
               </svg>
         </div>
       }
-        <div className={styles.author}>{postData?.User}</div>
+        <span className={styles.author} onClick={(e) => {e.stopPropagation();dispatch({type: "profile", Id: `${postData?.User}` })}}>{postData?.User}</span>
         <div className={styles.title} >{postData?.Post?.Title}</div>
         <ul className={styles.ul}>
           {postData?.Category?.HasRust && <li className={styles.li}><div className={styles.category} style={{top: "-16px"}}><div style={{width: "22px"}}><div className={styles.rustlogo}/></div>Rust</div></li>}

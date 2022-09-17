@@ -25,6 +25,7 @@ function postReducer(state, action) {
     case 'select':
        return {...state, postSelected: true, postId: action.postId, profile: false, profileDrop: false}
     case 'unselect':
+     window.history.pushState("Home.jsx:31", "Home.jsx:31", `/`)
       return {...state, postSelected: false, postId: null, profile: false, profileDrop: false} 
     case 'create':
       return {postSelected: true, postId: action.postId, profile: false, profileDrop: false}
@@ -37,6 +38,7 @@ function postReducer(state, action) {
     case 'profileDrop':
       return {...state, profileDrop: !state.profileDrop}
     case 'home':
+     window.history.pushState("Home.jsx:31", "Home.jsx:31", `/`)
       return defaultFalse
     default:
       throw Error('Unknown action', action.type)
@@ -91,8 +93,8 @@ function App() {
         <Routes>
           <Route path='/login' element={<Login />} />
           <Route element={<PrivateRoute dispatch={dispatch} state={post}/>}>
-            <Route path='/post/:postId' element={<Post dispatch={dispatch} post={post} />} />
-            <Route path='/users/:userId' element={<Profile dispatch={dispatch} user={post} />} />
+            <Route path='/post/:postId' element={<Home dispatch={dispatch} post={post} />} />
+            <Route path='/users/:userId' element={<Home dispatch={dispatch} post={post} />} />
             <Route index element={<Home dispatch={dispatch} post={post} />} />
           </Route>
         </Routes>

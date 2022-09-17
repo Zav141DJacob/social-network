@@ -1,7 +1,6 @@
 import styles from './topbar.module.css'
 import {useAuth} from './../../App'
 import { useState } from 'react'
-import {useNavigate} from 'react-router-dom'
 
 function ProfileDropdown({dispatch}) {
   const {onLogout, nickname} = useAuth();
@@ -9,10 +8,10 @@ function ProfileDropdown({dispatch}) {
   <>
     <div className={styles.arrowUp}></div>
     <div className={styles.profileDrop}>
-      <span className={styles.dropFirst}onClick={() => dispatch({type: "profile"})}>{nickname}</span>
+      <span className={styles.dropFirst}onClick={() => dispatch({type: "profile", Id: undefined})}>{nickname}</span>
       <hr/>
-      <span className={styles.dropSecond} onClick={() => dispatch({type: "profile"})}>
-         <h3 className={styles.settingstext} onClick={() => dispatch({type: "profile"})}>Profile & Settings</h3>
+      <span className={styles.dropSecond} onClick={() => dispatch({type: "profile", Id: undefined})}>
+         <h3 className={styles.settingstext} onClick={() => dispatch({type: "profile", Id: undefined})}>Profile & Settings</h3>
          <svg viewBox="0 0 24 24" className={styles.settings}>
          <path d="M12 4a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4m0 10c4 0 8 2 8 4v2H4v-2c0-2 4-4 8-4Z"/>
          </svg>
@@ -31,14 +30,12 @@ function ProfileDropdown({dispatch}) {
 
 export function TopBar({dispatch, state}) {
   let {nickname} = useAuth()
-  const nav = useNavigate()
   let [avatar, setAvatar] = useState()
-  let [profileDrop, setProfileDrop] = useState(false)
   fetch("http://localhost:8000/api/v1/users/nickname/" + nickname + "/")
     .then((item) => item.json().then(res =>  setAvatar(res[0].Avatar)))
   return (
     <div className={styles.topbar}>
-      <div className={styles.logo} onClick={() => {nav('/');dispatch({type: "home"})}}>Meetup</div>
+      <div className={styles.logo} onClick={() => {dispatch({type: "home"})}}>Meetup</div>
       <div className={styles.actions}>
       <div className={styles.notifications}>
       <svg className={styles.bell} viewBox="0 0 24 24">

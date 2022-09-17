@@ -143,7 +143,7 @@ export function MessageBox({user, closeHandler, getOnlineUsers, dispatch}) {
     <div className={styles.topbar}>
     <img className={styles.profilePicture} src={`http://localhost:8000/static/${user.Avatar}`}  /> 
     <div className={user.Online ? styles.onlineIndicator : styles.offlineIndicator}></div>
-    <span className={styles.nickname} onClick={() => dispatch({type: "profile", Id: `${user.UserId}` })}>{user.Nickname}</span>
+    <span className={styles.nickname} onClick={() => dispatch({type: "profile", Id: `${user.Nickname}` })}>{user.Nickname}</span>
     <div className={styles.close} onClick={(e) => {
       setMessageCount(0)
       closeHandler(e)
