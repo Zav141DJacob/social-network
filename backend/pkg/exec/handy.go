@@ -3,6 +3,7 @@ package exec
 import (
 	"fmt"
 	"strings"
+	"errors"
 )
 
 //Handles the error when called
@@ -69,4 +70,17 @@ func SortAlpha(argArr []string, allUsers []OnlineUserData) []OnlineUserData {
 	}
 
 	return allUsers
+}
+
+// type myError struct{}
+
+// func (m *myError) error() string {
+// 	return s
+// }
+
+func CreateErr(s string) error {
+	// https://www.digitalocean.com/community/tutorials/creating-custom-errors-in-go
+	
+
+	return errors.New(s)
 }

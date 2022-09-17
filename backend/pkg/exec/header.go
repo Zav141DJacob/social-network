@@ -29,6 +29,7 @@ type UserData struct {
 	Avatar		  string
 	RoleId	  int
 	Date	  string
+	IsPrivate bool
 }
 
 type PostData struct {
@@ -85,7 +86,7 @@ type CLikeData struct {
 type SessionData struct {
 	SessionId string
 	Nickname  string
-	Avatar  string
+	Avatar	  string
 	UserId	  int
 	RoleId	  int
 	Date	  string

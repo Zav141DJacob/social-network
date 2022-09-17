@@ -96,11 +96,11 @@ func Post(userId, catId, title, body interface{}) error {
 func Register(nickname, email, password, firstName, lastName, age, bio, avatar interface{}) error {
 	stmt, err := Db.Prepare(
 		`INSERT INTO users 
-		(nickname, eMail, password, firstName, lastName, age, bio, avatar, roleId, date) 
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`)
+		(nickname, eMail, password, firstName, lastName, age, bio, avatar, roleId, date, isPrivate) 
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`)
 
 	if err != nil {
-    fmt.Println("toDb98", err)
+		HandleErr(err)
 		return err
 	}
 
@@ -113,9 +113,9 @@ func Register(nickname, email, password, firstName, lastName, age, bio, avatar i
 	}
 
 	defer stmt.Close()
-  	_, err = stmt.Exec(nickname, email, hash, firstName, lastName, age.(string), bio, avatar, 1, time.Now())
+  	_, err = stmt.Exec(nickname, email, hash, firstName, lastName, age.(string), bio, avatar, 1, time.Now(), true)
 	if err != nil {
-    fmt.Println("toDb113", err)
+    	fmt.Println("toDb113", err)
 		HandleErr(err)
 		return err
 	}

@@ -30,9 +30,9 @@ func AuthLogin(nickname, password interface{}) (bool, string) {
 	// If it cant find a nickname then look for email instead
 	if len(allUsers) == 0 {
 
-		if len(allUsers) == 0 {
-			return false, "Invalid nickname or password"
-		} 
+		// if len(allUsers) == 0 {
+		// 	return false, "Invalid nickname or password"
+		// } 
 		// ToDo: allow for email login
 		allUsers, err = FromUsers("email", nickname)
 
@@ -114,8 +114,8 @@ func AuthRegister(nickname, email, password, firstName, lastName, age, bio, avat
 }
 
 func AuthenticateSession(header []string) SessionData {
-  var authId string
-  if len(header) == 0 {
+	var authId string
+	if len(header) == 0 {
 		return SessionData{}
 	}
 	authId = header[0]

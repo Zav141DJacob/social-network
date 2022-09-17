@@ -1,11 +1,11 @@
 package exec
 
 import (
-	// "log"
 	"fmt"
 	"net/http"
 	"sort"
 	"strings"
+	// "net/url"
 
 	// "time"
 	"encoding/json"
@@ -91,13 +91,22 @@ func UserAPI(w http.ResponseWriter, r *http.Request) {
 		var users []UserData
 		var err error
 
+		// requestUrl := r.URL.Path
+		// m, err := url.ParseQuery(requestUrl)
+		// fmt.Println(m, err)
 		path := strings.Split(r.URL.Path, "/")
 		if len(path) == 7 {
-			if path[4] != "nickname" {
+			if path[4] != "nickname" && path[4] != "email" {
+				HandleErr(err)
+
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
-			users, err = FromUsers("nickname", path[5])
+			if path[4] == "nickname" {
+				users, err = FromUsers("nickname", path[5])
+			} else {
+				users, err = FromUsers("email", path[5])
+			}
 		} else if len(path) == 6 {
 			users, err = FromUsers("userId", path[4])
 		} else {
@@ -105,12 +114,15 @@ func UserAPI(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if err != nil {
+			HandleErr(err)
+
 			// https://golangbyexample.com/500-status-http-response-golang/
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		jsonUsers, err := json.Marshal(users)
 		if err != nil {
+			HandleErr(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -136,13 +148,27 @@ func UserAPI(w http.ResponseWriter, r *http.Request) {
 		var lastName  = v["LastName"]
 		var age		  = v["Age"]
 		var bio		  = v["Bio"]
-    var avatar = v["Avatar"]
+    	var avatar 	  = v["Avatar"]
 
-		//toDo 
-		// Remove all gender options
-		// var gender 	  = v["Gender"] 
+		// toDo: FrontEnd
+		// var isPrivate = v["Private"]
 
 		respUser := AuthRegister(nickname, email, password, firstName, lastName, age, bio, avatar)
+
+		// groupMembers, err := FromGroupMembers("UserId", auth.UserId)
+
+		// 		if err != nil {
+		// 			HandleErr(err)
+		// 			w.WriteHeader(http.StatusInternalServerError)
+		// 			return 
+		// 		}
+
+		// 		for _, c2 := range groupMembers {
+		// 			if c2.CatId == c.CatId {
+		// 				returnCategories = append(returnCategories, c)
+		// 				break
+		// 			} 
+		// 		}
 
 		if (respUser != ResponseRegisterUser{}) {
 			// fmt.Println(errMsg)
@@ -150,28 +176,28 @@ func UserAPI(w http.ResponseWriter, r *http.Request) {
 			// loginFail = 1
 			//errors.New("Nickname already in use")
 			
-      res, err := json.Marshal(respUser)
-      if err != nil {
-        fmt.Println("Error in API.go -> UserAPI -> case POST:", err)  
-      }
-      w.WriteHeader(419)
-      w.Write(res)
-    } else {
-      err = Register(nickname, email, password, firstName, lastName, age,bio, avatar)
-      if err != nil {
-        fmt.Println("API161", err)
-        w.WriteHeader(http.StatusInternalServerError)
-        w.Write([]byte("ERROR: 500 Internal server error"))
+			res, err := json.Marshal(respUser)
+			if err != nil {
+				fmt.Println("Error in API.go -> UserAPI -> case POST:", err)  
+			}
+			w.WriteHeader(419)
+			w.Write(res)
+		} else {
+			err = Register(nickname, email, password, firstName, lastName, age,bio, avatar)
+			if err != nil {
+				fmt.Println("API161+", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				// w.Write([]byte("ERROR: 500 Internal server error"))
 
 			} else {
-        res, err := json.Marshal(respUser)
-        if err != nil {
-        fmt.Println("API168", err)
-			  	w.WriteHeader(http.StatusInternalServerError)
-		  		w.Write([]byte("ERROR: 500 Internal server error"))
-        }
+				res, err := json.Marshal(respUser)
+				if err != nil {
+					fmt.Println("API168+", err)
+					w.WriteHeader(http.StatusInternalServerError)
+					// w.Write([]byte("ERROR: 500 Internal server error"))
+				}
 				w.WriteHeader(http.StatusCreated)
-        w.Write(res)
+				w.Write(res)
 			}
 		}
 	}
@@ -287,6 +313,8 @@ func PostApi(w http.ResponseWriter, r *http.Request) {
 		categoryIds := v["categories"]
 		title  		:= v["title"]
 		body   		:= v["body"]
+		// ToDo:
+		// image		:= v["image"]
 
 		user, err := FromSessions("sessionId", userToken)
 		
@@ -412,6 +440,8 @@ func CommentAPI(w http.ResponseWriter, r *http.Request) {
 		// commentId	:= v["commentId"]
 		postId  	:= v["postId"]
 		body   		:= v["body"]
+		// ToDo:
+		// image		:= v["image"]
 
 		user, err := FromSessions("sessionId", userToken)
 
@@ -461,20 +491,8 @@ func CategoryAPI(w http.ResponseWriter, r *http.Request) {
 					returnCategories = append(returnCategories, c)
 					// break
 				//}
-				groupMembers, err := FromGroupMembers("UserId", auth.UserId)
-
-				if err != nil {
-					HandleErr(err)
-					w.WriteHeader(http.StatusInternalServerError)
-					return 
-				}
-
-				for _, c2 := range groupMembers {
-					if c2.CatId == c.CatId {
-						returnCategories = append(returnCategories, c)
-						break
-					} 
-				}
+				
+				
 			}
 			jsonCategories, err := json.Marshal(returnCategories)
 			if err != nil {
@@ -630,9 +648,10 @@ func SessionAPI(w http.ResponseWriter, r *http.Request) {
 		authLogin, errMsg := AuthLogin(nickname, password)
 		if !authLogin {
 			fmt.Println(errMsg)
+
 			userRes := LoginUser{
-				Nickname: "Invalid nickname or password",
-				Password: "Invalid nickname or password",
+				Nickname: errMsg,
+				Password: errMsg,
 			}
 
 			response, err := json.Marshal(userRes)
@@ -643,18 +662,41 @@ func SessionAPI(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(419)
 			w.Write(response)
 		} else {
-			Login(nickname)
+			err := Login(nickname)
 			
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(419)
+				return
+			}
+
 			user, err := FromSessions("nickname", nickname)
 
 			if err != nil {
+				HandleErr(err)
 				w.WriteHeader(419)
 				return
 			}
 
 			if len(user) == 0 {
+				users, err := FromUsers("email", nickname)
+
 				if err != nil {
-					w.WriteHeader(419)
+					w.WriteHeader(500)
+					return				
+				}
+
+				if len(users) == 0 {
+					w.WriteHeader(500)
+					return				
+				}
+				user, err = FromSessions("userId", users[0].UserId)
+				if len(user) == 0 {
+					w.WriteHeader(500)
+					return				
+				}
+				if err != nil {
+					w.WriteHeader(500)
 					return				
 				}
 				// ToDo: allow for email login

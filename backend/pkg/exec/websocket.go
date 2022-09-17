@@ -13,6 +13,8 @@ import (
 
 type ClientManager struct {
     clients    map[idType]*websocket.Conn
+	// ToDo:
+	// groupChats map[idType][clients]
     register   chan *Client
     unregister chan *Client
 }
