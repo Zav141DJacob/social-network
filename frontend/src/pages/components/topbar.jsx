@@ -3,9 +3,12 @@ import {useAuth} from './../../App'
 import { useState } from 'react'
 
 function ProfileDropdown() {
+  const {onLogout, nickname} = useAuth();
   return (
+  <>
+    <div className={styles.arrowUp}></div>
     <div className={styles.profileDrop}>
-      <span className={styles.dropFirst}>Hi Tom Jones</span>
+      <span className={styles.dropFirst}>{nickname}</span>
       <hr/>
       <span className={styles.dropSecond}>
          <h3 className={styles.settingstext}>Profile & Settings</h3>
@@ -14,13 +17,14 @@ function ProfileDropdown() {
          </svg>
       </span>
       <hr/>
-      <span className={styles.dropThird}>
+      <span className={styles.dropThird} onClick={onLogout}>
          <h3 className={styles.logouttext}>Log out</h3>
          <svg viewBox="0 0 24 24" className={styles.logout}>
          <path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9Z"/>
          </svg>
       </span>
     </div>
+  </>
   )
 }
 

@@ -42,11 +42,11 @@ export function LeftSideBar({dispatch, postPage}) {
             {groups && groups.map(group => {
               return <li key={group.Title} className={styles.topic} id={(group.Title).toLowerCase()} onClick={categoryHandler}>{group.Title}</li>
             })}
-          <li className={styles.topic} id="create" onClick={() => dispatch({type: "group"})}><button>Create a group</button></li>
+          <li className={styles.seemore} id="seemore">See more</li>
         </ul>
       </div>
-      <div onClick={onLogout} className={styles.logout}>
-        <button type="button" onClick={onLogout} className={styles.logoutBtn}>Log out</button>
+      <div onClick={() => dispatch({type: "group"})} className={styles.logout}>
+        <button type="button" onClick={() => dispatch({type: "group"})} className={styles.logoutBtn}>Create a group</button>
       </div>
     </div>
   )
