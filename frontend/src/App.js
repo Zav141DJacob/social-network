@@ -11,7 +11,6 @@ import { useReducer, useState, createContext, useContext} from 'react'
 export const AuthContext = createContext(null);
 
 function postReducer(state, action) {
-  console.log(state)
   const defaultFalse = {
     postSelected: false,
     postId: null,

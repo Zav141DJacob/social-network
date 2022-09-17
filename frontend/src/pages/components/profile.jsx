@@ -11,7 +11,6 @@ export function Profile({userId, state, dispatch}) {
     pair = pair.split(/\s*=\s*/);
     output[pair[0]] = pair.slice(1).join('=');
   });
-  console.log(state)
 
   useEffect(() => {
     if (state?.profile) {
