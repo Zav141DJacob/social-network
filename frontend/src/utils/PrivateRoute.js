@@ -2,7 +2,7 @@
 import {TopBar} from '../pages/components/topbar'
 import { Outlet, Navigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-export const PrivateRoute = () => {
+export const PrivateRoute = ({dispatch, state}) => {
    let cookies = document.cookie
   const [session, setSession] = useState()
    let output = {};
@@ -27,7 +27,7 @@ export const PrivateRoute = () => {
   }
   return (
     <>
-    <TopBar />
+    <TopBar dispatch={dispatch} state={state} />
     <Outlet />
     </>
   )

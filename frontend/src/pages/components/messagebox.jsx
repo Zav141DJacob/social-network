@@ -71,7 +71,7 @@ const getMessages = (setMessages, messages, targetUser) => {
 }
 
 
-export function MessageBox({user, closeHandler, getOnlineUsers}) {
+export function MessageBox({user, closeHandler, getOnlineUsers, dispatch}) {
 
   // console.log("user", user)
   let lastmsg = useRef()
@@ -102,11 +102,11 @@ export function MessageBox({user, closeHandler, getOnlineUsers}) {
       var time = new Date().getTime()
       var date = new Date(time)
 
-      messagesCopy.push({sent: message.Sent, message: message.Message, date: date.toString().split("GMT")[0]}) 
 
-      if (message.value !== '') {
-        setMessages(messagesCopy)
-      }
+    if (message.value !== '') {
+      messagesCopy.push({sent: message.Sent, message: message.Message, date: date.toString().split("GMT")[0]}) 
+      setMessages(messagesCopy)
+    }
 
   }
   useEffect(() => {
@@ -143,7 +143,7 @@ export function MessageBox({user, closeHandler, getOnlineUsers}) {
     <div className={styles.topbar}>
     <img className={styles.profilePicture} src={`http://localhost:8000/static/${user.Avatar}`}  /> 
     <div className={user.Online ? styles.onlineIndicator : styles.offlineIndicator}></div>
-    <span className={styles.nickname}>{user.Nickname}</span>
+    <span className={styles.nickname} onClick={() => dispatch({type: "profile", Id: `${user.UserId}` })}>{user.Nickname}</span>
     <div className={styles.close} onClick={(e) => {
       setMessageCount(0)
       closeHandler(e)
@@ -165,7 +165,6 @@ export function MessageBox({user, closeHandler, getOnlineUsers}) {
 
       </div>
       <div className={styles.submit} >
-
         <Textbox 
         scrollRef={lastmsg} 
         messages={messages} 
@@ -180,21 +179,23 @@ export function MessageBox({user, closeHandler, getOnlineUsers}) {
 }
 
 function Textbox({scrollRef, handleSubmit, messages, setMessages, currentMessage, setCurrentMessage, target}) {
-  
-      function handleOnEnter (text) {
-        console.log('enter', text)
-        ws.send(JSON.stringify({message: text, targetId: target.UserId, init: false}))
-      }
+
+  function handleOnEnter (text) {
+    console.log('enter', text)
+    if (text !== '') {
+      ws.send(JSON.stringify({message: text, targetId: target.UserId, init: false}))
+    }
+  }
   return (
-        <InputEmoji
-          value={currentMessage}
-          onChange={setCurrentMessage}
-          cleanOnEnter
-          onEnter={handleOnEnter}
-          placeholder="Type a message"
-          theme="dark"
-        />
-      )
- //  return <div style={{height: `${(24*currentMessage.rows)}px`}}><textarea rows={currentMessage.rows} style={{top: `${414+(-24*currentMessage.rows)}px` }} value={currentMessage.value}
+    <InputEmoji
+    value={currentMessage}
+    onChange={setCurrentMessage}
+    cleanOnEnter
+    onEnter={handleOnEnter}
+    placeholder="Type a message"
+    theme="dark"
+    />
+  )
+  //  return <div style={{height: `${(24*currentMessage.rows)}px`}}><textarea rows={currentMessage.rows} style={{top: `${414+(-24*currentMessage.rows)}px` }} value={currentMessage.value}
   //  className={styles.messageInput} placeholder={"Aa..."} onChange={handleChange} /></div>;
 }

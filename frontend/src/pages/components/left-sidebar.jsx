@@ -33,9 +33,6 @@ export function LeftSideBar({dispatch, postPage}) {
   }
   return (
     <div className={styles.sidebar}>
-      <div className={styles.greeting}>
-        <h1>Hello, {nickname}</h1>
-      </div>
       <div className={styles.topics}>
         <h2 className={styles.topicsHeader}>Groups</h2>
         <ul className={styles.topicslist}>

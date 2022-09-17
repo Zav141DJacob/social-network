@@ -5,6 +5,7 @@ import { PostComponent } from './components/post'
 import { useState, useEffect, useReducer, createRef } from 'react'
 import { wsSetup } from './components/right-sidebar'
 import {Group} from './components/group'
+import {Profile} from './components/profile'
 
 export default function Home({post, dispatch}) {
   useEffect(() => {
@@ -38,8 +39,8 @@ export default function Home({post, dispatch}) {
   return (
     <>
     <LeftSideBar dispatch={dispatch} />
-    {post.postSelected ? postLayout : post.createGroup ? <Group/> : <Feed forwardRef={feedScroll} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
-    <RightSideBar />
+    {post.postSelected ? postLayout : post.createGroup ? <Group/> : post.profile ? <Profile state={post} user={post.profileId}/> : <Feed forwardRef={feedScroll} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
+    <RightSideBar dispatch={dispatch} />
     </>
   )
 }

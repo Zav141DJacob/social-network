@@ -1,0 +1,93 @@
+.feed {
+  width: 100%;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+.profile {
+  position: relative;
+  left: 50%;
+  transform: translate(-50%);
+  max-width: 600px;
+  min-width: 450px;
+  padding-left:20px;
+  min-height: 207px;
+  top: 71px;
+  background: rgb(48, 52, 54);
+  border-radius: 12px;
+}
+
+.avatar {
+  position: absolute;
+  box-shadow: inset 2px 4px 6px rgba(0, 0, 0, 0.45);
+  border-radius: 50%;
+  top: 50px;
+  width: 100px;
+  height:100px;
+}
+.name {
+  position: absolute;
+  top: 20px;
+  left: 150px;
+  color: whitesmoke;
+}
+
+.stats {
+  position: absolute;
+  display: flex;
+  top: 80px;
+  left: 150px;
+  justify-content: space-between;
+  font-weight: 400;
+  max-width: 400px;
+  min-width: 300px;
+  color: whitesmoke;
+}
+
+.nickname {
+  position: absolute;
+  display: flex;
+  top: 120px;
+  left: 150px;
+  justify-content: space-between;
+  font-weight: 800;
+  max-width: 400px;
+  min-width: 300px;
+  color: whitesmoke;
+}
+
+.bio {
+  position: absolute;
+  display: flex;
+  top: 140px;
+  left: 150px;
+  justify-content: space-between;
+  font-weight: 400;
+  max-width: 400px;
+  min-width: 300px;
+  color: whitesmoke;
+}
+
+.email {
+  position: absolute;
+  display: flex;
+  top: 180px;
+  left: 150px;
+  justify-content: space-between;
+  font-weight: 400;
+  max-width: 400px;
+  min-width: 300px;
+  color: whitesmoke;
+}
+
+.age {
+  position: absolute;
+  display: flex;
+  top: 160px;
+  left: 150px;
+  justify-content: space-between;
+  font-weight: 400;
+  max-width: 400px;
+  min-width: 300px;
+  color: whitesmoke;
+}

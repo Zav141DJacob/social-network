@@ -209,7 +209,7 @@
 .posts {
   position: relative;
   left: 50%;
-  top: 20px;
+  top: 60px;
   transform: translate(-50%);
   width: inherit;
   max-width: 980px;

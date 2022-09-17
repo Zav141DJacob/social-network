@@ -3,6 +3,7 @@ import {PrivateRoute} from './utils/PrivateRoute'
 import Login from './pages/Login'
 import Home from './pages/Home'
 import Post from './pages/Post'
+import Profile from './pages/Profile'
 import { Routes, Route,  useNavigate } from 'react-router-dom';
 import { useReducer, useState, createContext, useContext} from 'react'
 
@@ -10,17 +11,34 @@ import { useReducer, useState, createContext, useContext} from 'react'
 export const AuthContext = createContext(null);
 
 function postReducer(state, action) {
+  console.log(state)
+  const defaultFalse = {
+    postSelected: false,
+    postId: null,
+    profile: false,
+    profileDrop: false,
+    createGroup: false,
+    profileId: undefined,
+    postCat: undefined,
+  }
+
   switch (action.type) {
     case 'select':
-       return {...state, postSelected: true, postId: action.postId}
+       return {...state, postSelected: true, postId: action.postId, profile: false, profileDrop: false}
     case 'unselect':
-      return {...state, postSelected: false, postId: null} 
+      return {...state, postSelected: false, postId: null, profile: false, profileDrop: false} 
     case 'create':
-      return {postSelected: true, postId: action.postId}
+      return {postSelected: true, postId: action.postId, profile: false, profileDrop: false}
     case 'category':
-      return {postSelected: false, postCat: state.postCat === action.category ? 'all' : action.category}
+      return {postSelected: false, profile: false, profileDrop: false, postCat: state.postCat === action.category ? 'all' : action.category}
     case 'group':
-      return {postSelected: false, createGroup: true}
+      return {...defaultFalse, createGroup: true}
+    case 'profile':
+      return {...defaultFalse, profile: true, profileId: action.Id}
+    case 'profileDrop':
+      return {...state, profileDrop: !state.profileDrop}
+    case 'home':
+      return defaultFalse
     default:
       throw Error('Unknown action', action.type)
   }
@@ -67,14 +85,15 @@ export const useAuth = () => {
 
 
 function App() {
-  const [post, dispatch] = useReducer(postReducer, {postSelected: false, createGroup: false})
+  const [post, dispatch] = useReducer(postReducer, {postSelected: false, createGroup: false, profile: false})
   return (
     <div className="App">
       <AuthProvider>
         <Routes>
           <Route path='/login' element={<Login />} />
-          <Route element={<PrivateRoute />}>
+          <Route element={<PrivateRoute dispatch={dispatch} state={post}/>}>
             <Route path='/post/:postId' element={<Post dispatch={dispatch} post={post} />} />
+            <Route path='/users/:userId' element={<Profile dispatch={dispatch} user={post} />} />
             <Route index element={<Home dispatch={dispatch} post={post} />} />
           </Route>
         </Routes>
