@@ -29,9 +29,11 @@ func FromUsers(condition string, value interface{}) ([]UserData, error){
 			&user.FirstName,
 			&user.LastName,
 			&user.Age,
+			&user.Bio,
       		&user.Avatar,
 			&user.RoleId,
-			&user.Date)
+			&user.Date,
+			&user.IsPrivate)
 
 		if err != nil {
         fmt.Println("API168", err)

@@ -44,7 +44,7 @@ export function Feed({selectedCat, dispatch, forwardRef, scrollValue}) {
         case 'js':
           setPostCopy(posts?.filter(post => post.Category.HasJavascript === true))
           return;
-        case 'go':
+        case 'golang':
           setPostCopy(posts?.filter(post => post.Category.HasGolang === true))
           return;
       }

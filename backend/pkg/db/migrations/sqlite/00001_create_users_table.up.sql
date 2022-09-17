@@ -7,7 +7,9 @@ CREATE TABLE "users" (
 		"firstName"	TEXT NOT NULL,
 		"lastName"	TEXT NOT NULL,
 		"age"		TEXT NOT NULL,
-		"avatar"		TEXT NOT NULL,
+		"bio"		TEXT NOT NULL,
+		"avatar"	TEXT NOT NULL,
 		"roleId"	INTEGER NOT NULL,
-		"date"		DATETIME NOT NULL
+		"date"		DATETIME NOT NULL,
+		"isPrivate" BOOLEAN NOT NULL
 );

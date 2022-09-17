@@ -109,7 +109,7 @@ const getOnlineUsers = (notification, setNotification, setUsers) => {
   })
 }
 
-export function RightSideBar() {
+export function RightSideBar({dispatch}) {
   const [users, setUsers] = useState(null)
   const [messageboxOpen, setMessageboxOpen] = useState(false)
   const [messageUser, setmessageUser] = useState(null)
@@ -148,7 +148,7 @@ export function RightSideBar() {
           </div>
         )
       })}
-      {messageboxOpen && <MessageBox user={messageUser} closeHandler={closeMessageBox} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}}/>}
+      {messageboxOpen && <MessageBox dispatch={dispatch} user={messageUser} closeHandler={closeMessageBox} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}}/>}
       </div>
     )
   }

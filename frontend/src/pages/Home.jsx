@@ -5,9 +5,19 @@ import { PostComponent } from './components/post'
 import { useState, useEffect, useReducer, createRef } from 'react'
 import { wsSetup } from './components/right-sidebar'
 import {Group} from './components/group'
+import {Profile} from './components/profile'
+import {useParams} from 'react-router-dom'
 
 export default function Home({post, dispatch}) {
+    const x = useParams()
+  let poster = false;
   useEffect(() => {
+  if (x?.postId) {
+    dispatch({type: "select"})
+  }
+  if (x?.userId) {
+    dispatch({type: "profile", Id: x.userId})
+  }
   wsSetup()
   }, [])
   
@@ -15,7 +25,6 @@ export default function Home({post, dispatch}) {
   let feedScroll = createRef()
 
   useEffect(() => {
-    window.history.pushState("Home.jsx:31", "Home.jsx:31", `/`)
       let store = null
       const onScroll = () => {
          setScrollValue(store.scrollTop);
@@ -31,15 +40,16 @@ export default function Home({post, dispatch}) {
       }
    }, [feedScroll, scrollValue]);
 
+  let posty = x?.postId ? x.postId : post.postId
 
-  let postLayout = <div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", minwidth: "100px"}}><PostComponent post={post.postId} dispatch={dispatch}/></div>
+  let postLayout = <div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", minwidth: "100px"}}><PostComponent post={posty} dispatch={dispatch}/></div>
 
 
   return (
     <>
     <LeftSideBar dispatch={dispatch} />
-    {post.postSelected ? postLayout : post.createGroup ? <Group/> : <Feed forwardRef={feedScroll} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
-    <RightSideBar />
+    {post.postSelected ? postLayout : post.createGroup ? <Group/> : post.profile ? <Profile state={post} user={post.profileId}/> : <Feed forwardRef={feedScroll} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
+    <RightSideBar dispatch={dispatch} />
     </>
   )
 }

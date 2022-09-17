@@ -32,12 +32,11 @@ export function Group({dispatch}) {
     return
   }
   return (
+    <div className={styles.feed}>
     <div className={styles.creator}>
     <h1 style={{"color": "white"}}>Create a group</h1>
     <input className={styles.title} placeholder={"What do you want to post, " + nickname} value={title} onChange={handleTitleChange} />
     <Description nickname={nickname} title={title} value={desc} dispatch={dispatch} setDesc={setDesc} />
-    <div>
-    <h2 style={{"color": "white"}}>Invite users</h2>
     </div>
     </div>
   )

@@ -8,7 +8,6 @@ import { findCookies } from './components/right-sidebar';
 export async function postData(url = '', data = {}, wantObject = true) {
   // Default options are marked with *
   let cookieStruct = findCookies()
-  console.log(cookieStruct);
   const response = await fetch(url, {
     method: 'POST',
     mode: 'cors',

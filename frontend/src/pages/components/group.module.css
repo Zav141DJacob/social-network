@@ -6,7 +6,7 @@
 }
 .creator {
   position: relative;
-  left: 20%;
+  left: 50%;
   transform: translate(-50%);
   max-width: 600px;
   max-height: 600px;
@@ -86,7 +86,7 @@
   top: 63px;
   height: 30px;
   margin: auto;
-  cursor: default;
+  cursor: pointer;
 }
 
 .ul {
