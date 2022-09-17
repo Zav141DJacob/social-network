@@ -29,7 +29,8 @@ func FromUsers(condition string, value interface{}) ([]UserData, error){
 			&user.FirstName,
 			&user.LastName,
 			&user.Age,
-      		&user.Avatar,
+			&user.Bio,
+      &user.Avatar,
 			&user.RoleId,
 			&user.Date)
 

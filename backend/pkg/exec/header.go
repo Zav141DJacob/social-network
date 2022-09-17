@@ -25,6 +25,7 @@ type UserData struct {
 	FirstName string
 	LastName  string
 	Age		  string
+	Bio		  string
 	Avatar		  string
 	RoleId	  int
 	Date	  string

@@ -135,13 +135,14 @@ func UserAPI(w http.ResponseWriter, r *http.Request) {
 		var firstName = v["FirstName"]
 		var lastName  = v["LastName"]
 		var age		  = v["Age"]
+		var bio		  = v["Bio"]
     var avatar = v["Avatar"]
 
 		//toDo 
 		// Remove all gender options
 		// var gender 	  = v["Gender"] 
 
-		respUser := AuthRegister(nickname, email, password, firstName, lastName, age, avatar)
+		respUser := AuthRegister(nickname, email, password, firstName, lastName, age, bio, avatar)
 
 		if (respUser != ResponseRegisterUser{}) {
 			// fmt.Println(errMsg)
@@ -156,7 +157,7 @@ func UserAPI(w http.ResponseWriter, r *http.Request) {
       w.WriteHeader(419)
       w.Write(res)
     } else {
-      err = Register(nickname, email, password, firstName, lastName, age, avatar)
+      err = Register(nickname, email, password, firstName, lastName, age,bio, avatar)
       if err != nil {
         fmt.Println("API161", err)
         w.WriteHeader(http.StatusInternalServerError)
