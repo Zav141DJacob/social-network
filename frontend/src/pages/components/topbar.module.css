@@ -21,6 +21,7 @@
   left: 20px;
   top: 5px;
   color: #BEBEBE;
+  cursor: pointer;
 }
 
 .notifications {
@@ -30,6 +31,7 @@
   background: rgba(41, 36, 36, 1);
   align-self: flex-end;
   order: 1;
+  cursor: pointer;
 }
 
 .bell {
@@ -43,6 +45,7 @@
   border-radius: 50%;
   align-self: flex-end;
   order: 1;
+  cursor: pointer;
 }
 
 .actions {

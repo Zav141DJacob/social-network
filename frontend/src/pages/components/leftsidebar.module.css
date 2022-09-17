@@ -44,6 +44,7 @@
   font-style: normal;
   font-weight: 700;
   font-size: 20px;
+  cursor: pointer;
   color: #D0D0D0;
 }
 .seemore {
@@ -57,6 +58,7 @@
   font-weight: 400;
   font-size: 16px;
   color: #D0D0D0;
+  cursor: pointer;
 }
 
 .topicslist {
@@ -71,41 +73,6 @@
   color: #D0D0D0;
 }
 
-.rustlogo {
-  position: relative;
-  top: 22px;
-  left: -30px;
-  width: 100%;
-  background-image: url(./../../Rust_programming_language_black_logo.svg);
-  background-size: cover;
-  height: 0;
-  padding: 0; /* reset */
-  padding-bottom: calc(100%);
-}
-
-.jslogo {
-  position: relative;
-  top: 20px;
-  left: -30px;
-  width: 100%;
-  background-image: url(./../../JS_logo.svg);
-  background-size: cover;
-  height: 0;
-  padding: 0; /* reset */
-  padding-bottom: calc(100%);
-}
-
-.gologo {
-  position: relative;
-  top: 11px;
-  left: -50px;
-  width: 100%;
-  background-image: url(./../../Go-Logo_Aqua.svg);
-  background-size: cover;
-  height: 0;
-  padding: 0; /* reset */
-  padding-bottom: calc(100%);
-}
 
 .logout {
   position: relative;
@@ -114,6 +81,7 @@
   left: 24.07px;
   top: calc(95% - 60px);
   margin-bottom: 10px;
+  cursor: pointer;
 }
 
 .logoutBtn {
@@ -128,4 +96,5 @@
   line-height: 29px;
   border: none;
   color: white;
+  cursor: pointer;
 }
