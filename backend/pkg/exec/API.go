@@ -975,8 +975,6 @@ func NotificationsApi(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
-
 func MessagesAPI(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
@@ -1011,6 +1009,8 @@ func MessagesAPI(w http.ResponseWriter, r *http.Request) {
 
 func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 
+
+	// 
 }
 
 func FollowerAPI(w http.ResponseWriter, r *http.Request) {
@@ -1032,7 +1032,7 @@ func FollowerAPI(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		fmt.Fprintf(w, string(jsonFollowers))
-	case
+	// case
 	}
 }
 // func PostLikeAPI(w http.ResponseWriter, r *http.Request) {
