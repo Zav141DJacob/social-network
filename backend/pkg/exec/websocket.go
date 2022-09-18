@@ -46,6 +46,8 @@ func (manager *ClientManager) start() {
     }
 }
 
+// ToDo:
+// add Follow function to websocket
 
 // ToDo:
 //	think of a better name for this function

@@ -48,7 +48,7 @@ type PostData struct {
 type PostCategoryData struct {
 	PostId		  int
 
-	Categories	map[string]bool
+	Categories    map[string]bool
 	HasGolang 	  bool
 	HasJavascript bool
 	HasRust		  bool
@@ -121,13 +121,19 @@ type OnlineUserData struct {
 	UserId	 int
 	Online	 bool
 	Nickname string
-	Avatar  string
+	Avatar	 string
 }
 
 type GroupMembersData struct {
-	Id	int
+	Id		int
 	UserId	int
 	CatId	int
+}
+
+type FollowersData struct {
+	Id				int
+	UserId			int
+	FollowerUserId	int
 }
 // type ErrorString struct {
 // 	s string

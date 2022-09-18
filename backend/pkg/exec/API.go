@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"sort"
 	"strings"
-	// "net/url"
+	"net/url"
 
 	// "time"
 	"encoding/json"
@@ -1009,7 +1009,32 @@ func MessagesAPI(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 
+}
+
+func FollowerAPI(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+
+		requestUrl := r.URL.Path
+		m, err := url.ParseQuery(requestUrl)
+		if err != nil {
+			w.WriteHeader(419)
+			return
+		}
+		fmt.Println(m)
+		userId := m["userId"]
+		followers, err := FromFollowers("userId", userId)
+		jsonFollowers, err := json.Marshal(followers)
+		if err != nil {
+			w.WriteHeader(419)
+			return
+		}
+		fmt.Fprintf(w, string(jsonFollowers))
+	case
+	}
+}
 // func PostLikeAPI(w http.ResponseWriter, r *http.Request) {
 // 	switch r.Method {
 // 	case "GET":

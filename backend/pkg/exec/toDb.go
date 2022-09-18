@@ -332,3 +332,15 @@ func Message(senderId, targetId, message interface{}) error {
 	stmt.Exec(senderId, message, targetId, time.Now())
 	return nil
 }
+
+func Follow(userId, followerUserId interface{}) error{
+	stmt, err := Db.Prepare("INSERT INTO followers (userId, followerUserId) VALUES (?, ?);")
+
+	if err != nil {
+		return err
+	}
+	
+	defer stmt.Close()
+	stmt.Exec(userId, followerUserId)
+	return nil
+}

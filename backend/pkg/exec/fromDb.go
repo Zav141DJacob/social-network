@@ -417,6 +417,34 @@ func FromMessages(senderValue, targetValue interface{}) ([]MessageData, error){
 	return returnMessage, nil
 }
 
+func FromFollowers(condition string, value interface{}) ([]FollowersData, error) {
+	rows, err := doRows("followers", condition, value)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var returnFollowers []FollowersData
+	for rows.Next() {
+		var follower FollowersData
+
+		err = rows.Scan(
+			&follower.Id,
+			&follower.UserId,
+			&follower.FollowerUserId)
+
+		if err != nil {
+			return nil, err
+		}
+
+		returnFollowers = append(returnFollowers, follower)
+	}
+
+	return returnFollowers, nil
+}
+
 // Pulls data from the database
 // SELECT - how many arguments (* for all)
 // FROM	  - from where you pull data from
