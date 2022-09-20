@@ -978,7 +978,7 @@ func MessagesAPI(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// http://localhost:8000/api/v1/profile/?userId=0
+// http://localhost:8000/api/v1/profile/?nicknage=Jacob
 func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "OPTIONS" {
 		auth := AuthenticateSession(r.Header["Authentication"])
