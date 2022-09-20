@@ -1032,6 +1032,24 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
+
+			users, err := FromUsers("", "")
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+
+			// https://zetcode.com/golang/filter-slice/
+			nonFollowers := FilterUserData(users, func(user interface{}) bool {
+				userId := user.(UserData).UserId
+				for _, follower := range followers {
+					if userId == follower.FollowerUserId {
+						return false
+					}
+				}
+				return true
+			})
+
 			if user[0].IsPrivate {
 				found := false
 				for _, follower := range followers {
@@ -1045,14 +1063,19 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 					// w.WriteHeader(401)
 					profile.User = user[0]
 
+					profile.Followers = followers
+					profile.NonFollowers = nonFollowers
+
 					jsonProfile, err := json.Marshal(profile)
 					if err != nil {
 						w.WriteHeader(500)
 						return
 					}
 
-					fmt.Fprintf(w, string(jsonProfile))
-					// w.WriteHeader(200)
+					// fmt.Fprintf(w, string(jsonProfile))
+					w.WriteHeader(401)
+					w.Write([]byte(jsonProfile))
+
 					return
 				}
 			}
@@ -1063,27 +1086,11 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			users, err := FromUsers("", "")
-			if err != nil {
-				w.WriteHeader(500)
-				return
-			}
-
-			// https://zetcode.com/golang/filter-slice/
-			nonFollowers := Filter(users, func(user interface{}) bool {
-				userId := user.(UserData).UserId
-				for _, follower := range followers {
-					if userId == follower.FollowerUserId {
-						return false
-					}
-				}
-				return true
-			})
 
 			profile.User = user[0]
 
 			profile.Followers = followers
-			profile.NonFollowers = nonFollowers.([]UserData)
+			profile.NonFollowers = nonFollowers
 
 			profile.Posts = posts
 
