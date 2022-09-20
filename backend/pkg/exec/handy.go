@@ -67,10 +67,10 @@ func CreateErr(s string) error {
 	return errors.New(s)
 }
 
-func Filter(slice interface{}, f func(interface{}) bool) interface{} {
-	returnSlice := make([]interface{}, 0)
+func FilterUserData(slice interface{}, f func(interface{}) bool) []UserData {
+	returnSlice := make([]UserData, 0)
 
-	for _, v := range slice.([]interface{}) {
+	for _, v := range slice.([]UserData) {
 		if f(v) {
 			returnSlice = append(returnSlice, v)
 		}
