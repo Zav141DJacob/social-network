@@ -62,20 +62,20 @@ function InputField({id, name, submitId,placeholder, onClick, onKeyDown, good, p
   if (error) {
     errorCaption = name === 'Age' ? <h3 id="error-caption" style={{fontSize: '14px', top: '8px'}}>{error[name]}</h3> : <h3 id="error-caption">{error[name]}</h3>
   }
-    return (
+  return (
     <>
-    <div id={elemId} key={name}>
-      {(placeholder === 'Age' || placeholder === 'Avatar') && <div className="fineinput">{placeholder}</div> }
-      <input className={placeholder + '-input'} id={id + '-input'} name={name} type={type} accept={type === 'file' ? "image/png, image/jpg, image/gif" : ""} placeholder={placeholder} required={placeholder === "Age"} onKeyDown={onKeyDown} autoFocus={focus}/>
-      <div className="submit" id={submitBtnHeight} onClick={onClick}>
-        <div id="plane">
-          <svg id="planeSVG" width="30" height="30" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path id="planePath" d="M0 25.3125L11.25 29.5312L16.875 45L24.9216 34.2563L39.375 39.375L45 0L0 25.3125ZM20.1628 32.175L17.5866 39.1641L14.5322 30.3947L38.1628 8.9325L20.1628 32.175Z" fill="white"/>
-          </svg>
+      <div id={elemId} key={name}>
+        {(placeholder === 'Age' || placeholder === 'Avatar') && <div className="fineinput">{placeholder}</div> }
+        <input className={placeholder + '-input'} id={id + '-input'} name={name} type={type} accept={type === 'file' ? "image/png, image/jpg, image/gif" : ""} placeholder={placeholder} required={placeholder === "Age"} onKeyDown={onKeyDown} autoFocus={focus}/>
+        <div className="submit" id={submitBtnHeight} onClick={onClick}>
+          <div id="plane">
+            <svg id="planeSVG" width="30" height="30" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path id="planePath" d="M0 25.3125L11.25 29.5312L16.875 45L24.9216 34.2563L39.375 39.375L45 0L0 25.3125ZM20.1628 32.175L17.5866 39.1641L14.5322 30.3947L38.1628 8.9325L20.1628 32.175Z" fill="white"/>
+            </svg>
+          </div>
         </div>
       </div>
-    </div>
-    {error && Object.keys(error).includes(name) && <div id={errorId}>{errorCaption}</div>}
+      {error && Object.keys(error).includes(name) && <div id={errorId}>{errorCaption}</div>}
     </>
   )
 }
@@ -85,45 +85,45 @@ export default function Login() {
   const [error, setError] = React.useState(null)
   const [errorFields, setErrorFields] = React.useState(loginFields)
   const saveCredentials = (field, value) => {
-        credentials = {...credentials, [field]: value}
-    }
+    credentials = {...credentials, [field]: value}
+  }
   let navigate = useNavigate();
-  
+
 
   const setupField = async (element) => {
-       if (element.name === 'ConfirmPassword' && element.value !== credentials.Password) {
-        setError({...error, "ConfirmPassword": "Passwords don't match"})
-        return
-      } else if (element.name === 'FirstName' && element.value === '') {
-        setError({...error, "FirstName": "First name cannot be empty"})
-        return
-      } else if (element.name === 'LastName' && element.value === '') {
-        setError({...error, "LastName": "Last name cannot be empty"})
-        return
-      } else if (element.name === 'Age' && element.value === '') {
-        setError({...error, "Age": "Age can't be empty"})
-        return
-      } else if (element.name === 'Avatar') {
-        let formData = new FormData()
-        let file = element.files[0]
-        formData.append("file", file)
-        let x = await postImg('http://localhost:8000/api/v1/upload/', formData)
-        saveCredentials('Avatar', x)
-      } else if ((element.name === 'Email' || element.name === 'Nickname' || element.name === 'Password') && element.value.length < 5) {
-        setError({...error, [element.name]: `${[element.name]} is too short!`})
-        return
-      } else if (error && Object.keys(error).includes(element.name)) {
-        let errCopy = {...error}
-        delete errCopy.Email
-        setError(errCopy)
-        element.parentElement.id = element.parentElement.id.slice(0, -5)
-        saveCredentials([element.name], element.value)
-      } else {
-        saveCredentials([element.name], element.value)
+    if (element.name === 'ConfirmPassword' && element.value !== credentials.Password) {
+      setError({...error, "ConfirmPassword": "Passwords don't match"})
+      return
+    } else if (element.name === 'FirstName' && element.value === '') {
+      setError({...error, "FirstName": "First name cannot be empty"})
+      return
+    } else if (element.name === 'LastName' && element.value === '') {
+      setError({...error, "LastName": "Last name cannot be empty"})
+      return
+    } else if (element.name === 'Age' && element.value === '') {
+      setError({...error, "Age": "Age can't be empty"})
+      return
+    } else if (element.name === 'Avatar') {
+      let formData = new FormData()
+      let file = element.files[0]
+      formData.append("file", file)
+      let x = await postImg('http://localhost:8000/api/v1/upload/', formData)
+      saveCredentials('Avatar', x)
+    } else if ((element.name === 'Email' || element.name === 'Nickname' || element.name === 'Password') && element.value.length < 5) {
+      setError({...error, [element.name]: `${[element.name]} is too short!`})
+      return
+    } else if (error && Object.keys(error).includes(element.name)) {
+      let errCopy = {...error}
+      delete errCopy.Email
+      setError(errCopy)
+      element.parentElement.id = element.parentElement.id.slice(0, -5)
+      saveCredentials([element.name], element.value)
+    } else {
+      saveCredentials([element.name], element.value)
     }
 
     if (element.name === 'LastName') {
-        saveCredentials('LastName', element.value)
+      saveCredentials('LastName', element.value)
     }
     console.log(credentials)
 
@@ -134,88 +134,88 @@ export default function Login() {
     flushSync(() => {
       setErrorFields(fiield)
     })
-    
-      let e = document.querySelector('#inputfield-good');
-      if (e) {
-        e.firstChild.focus()
-      } else {
-        let r = document.querySelectorAll('#inputfield');
-        if (r.length > 0) {
-          if (r.length === 0) {
-          } else {
-            r[0].id += '-good'
-            r[0].firstChild.focus()
-          }
+
+    let e = document.querySelector('#inputfield-good');
+    if (e) {
+      e.firstChild.focus()
+    } else {
+      let r = document.querySelectorAll('#inputfield');
+      if (r.length > 0) {
+        if (r.length === 0) {
         } else {
-          let x = document.querySelector('#pending-signup');
-          let y = document.querySelector('#pending-login');
-          if (x) {
-            x.id += '-good'
-          } else if (y) {
-            y.id += '-good'
-          } else {
-          }
+          r[0].id += '-good'
+          r[0].firstChild.focus()
         }
-      
+      } else {
+        let x = document.querySelector('#pending-signup');
+        let y = document.querySelector('#pending-login');
+        if (x) {
+          x.id += '-good'
+        } else if (y) {
+          y.id += '-good'
+        } else {
+        }
+      }
+
     }
-    
+
     let x = document.querySelector('#pending-login-good')
     let y = document.querySelector('#pending-signup-good')
-    
-        if (x) {
-            setTimeout(() => {
-              // x.id = 'pending-login'
-              postData('http://localhost:8000/api/v1/sessions/', credentials).then(item => {
-                flushSync(() => {
-                  setError(item)
-                  let invalidFields = {...item}
-                  Object.keys(invalidFields).filter(i => {
-                    if (invalidFields[i] === '') {
-                      delete invalidFields[i]
-                    }
-                    return invalidFields[i] !== ''
-                  })
-                  if ('Name' in invalidFields) {
-                    document.cookie = `session=${invalidFields.Value}; path=/;`
-                    document.cookie = `uID=${credentials.Nickname}; path=/;`
-                    navigate('/', {replace: true})
+
+    if (x) {
+      setTimeout(() => {
+        // x.id = 'pending-login'
+        postData('http://localhost:8000/api/v1/sessions/', credentials).then(item => {
+          flushSync(() => {
+            setError(item)
+            let invalidFields = {...item}
+            Object.keys(invalidFields).filter(i => {
+              if (invalidFields[i] === '') {
+                delete invalidFields[i]
+              }
+              return invalidFields[i] !== ''
+            })
+            if ('Name' in invalidFields) {
+              document.cookie = `session=${invalidFields.Value}; path=/;`
+              document.cookie = `uID=${credentials.Nickname}; path=/;`
+              navigate('/', {replace: true})
             }
-                  setErrorFields([...Object.keys(invalidFields)])
-                  if (Object.keys(invalidFields).length > 0) {
-                    x.id = 'pending-login'
-                  } else {
-                    console.log('We are IN')
-                    // x.id = 'pending-login-good'
-                    navigate('/', {replace: true})
-                  }
-                  setErrorFields(Object.keys(item).filter(i => item[i] !== ''))
-                })
-              })
-            }, 1000)
-          } else if (y) {
-            setTimeout(() => {
-              postData('http://localhost:8000/api/v1/users/', credentials).then(item => {
-                setError(item)
-                let invalidFields = {...item}
-                  Object.keys(invalidFields).filter(i => {
-                    if (invalidFields[i] === '') {
-                      delete invalidFields[i]
-                    }
-                    return invalidFields[i] !== ''
-                  })
-                  setErrorFields([...Object.keys(invalidFields)])
-                  if (Object.keys(invalidFields).length > 0) {
-                    y.id = 'pending-signup'
-                  } else {
-                    navigate('/', {replace: true})
-                  }
-                flushSync(() => {
-                  setErrorFields(Object.keys(item).filter(i => item[i] !== ''))
-                })
-              })
-            }, 1000)
+            setErrorFields([...Object.keys(invalidFields)])
+            if (Object.keys(invalidFields).length > 0) {
+              x.id = 'pending-login'
+            } else {
+              console.log('We are IN')
+              // x.id = 'pending-login-good'
+              navigate('/', {replace: true})
+            }
+            setErrorFields(Object.keys(item).filter(i => item[i] !== ''))
+          })
+        })
+      }, 1000)
+    } else if (y) {
+      setTimeout(() => {
+        postData('http://localhost:8000/api/v1/users/', credentials).then(item => {
+          setError(item)
+          let invalidFields = {...item}
+          Object.keys(invalidFields).filter(i => {
+            if (invalidFields[i] === '') {
+              delete invalidFields[i]
+            }
+            return invalidFields[i] !== ''
+          })
+          setErrorFields([...Object.keys(invalidFields)])
+          if (Object.keys(invalidFields).length > 0) {
+            y.id = 'pending-signup'
+          } else {
+            navigate('/', {replace: true})
           }
-      }
+          flushSync(() => {
+            setErrorFields(Object.keys(item).filter(i => item[i] !== ''))
+          })
+        })
+      }, 1000)
+    }
+  }
 
   function handleSubmit(e) {
     e.stopPropagation()
@@ -270,10 +270,10 @@ export default function Login() {
             {error?.[errorFields[0]] ? <h3 style={{color: '#f57870'}}> {errorFields[0] === 'ConfirmPassword' ? <span onClick={passwordClick}>Wrong password. Click to set new password</span> : 'Input error for ' + errorFields[0]}</h3> : <h3>Fill in all the information</h3>}
           </div>
           <div id='bottombar'>
-          {errorFields && errorFields.map((bang, i) => {
-            return <InputField id='inputfield' key={bang} name={bang} good={i === 0} submitId='submit' placeholder={bang} onClick={handleSubmit} onKeyDown={handleKeyDown} error={error} focus={i === 0} password={bang ==='Password' || bang === 'ConfirmPassword'}/>
-          })
-        }
+            {errorFields && errorFields.map((bang, i) => {
+              return <InputField id='inputfield' key={bang} name={bang} good={i === 0} submitId='submit' placeholder={bang} onClick={handleSubmit} onKeyDown={handleKeyDown} error={error} focus={i === 0} password={bang ==='Password' || bang === 'ConfirmPassword'}/>
+            })
+            }
             <div id='pending-signup'>
               <h2 id="usercheck">Sign up complete</h2>
             </div>
@@ -284,8 +284,8 @@ export default function Login() {
               setUserCreator(!userCreator)
               setErrorFields(loginFields)
               setError(null)
-              }
-            }>
+            }
+              }>
               <h5>if you have an account click here to login</h5>
             </div>
           </div>
@@ -304,22 +304,22 @@ export default function Login() {
           {errorFields && errorFields.map((bang, i) => {
             return <InputField id='inputfield' key={error ? bang + error[bang] : bang} name={bang} good={i === 0} submitId='submit' placeholder={bang} onClick={handleSubmit} onKeyDown={handleKeyDown} error={error} password={bang ==='Password' || bang === 'ConfirmPassword'} focus={i === 0}/>
           })
-        }
-                    <div id='pending-login'>
+          }
+          <div id='pending-login'>
             <h2 id="usercheck">Confirming credentials</h2>
           </div>
           <div id='backfield'>
           </div>
         </div>
       </div>
-        <div id='newUser' onClick={() => {
-          setUserCreator(!userCreator)
-          setErrorFields(signupFields)
-          setError(null)
-        }
+      <div id='newUser' onClick={() => {
+        setUserCreator(!userCreator)
+        setErrorFields(signupFields)
+        setError(null)
+      }
         }>
-          <h5>or create a new user</h5>
-        </div>
+        <h5>or create a new user</h5>
+      </div>
     </div>
   );
 }

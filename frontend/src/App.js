@@ -2,8 +2,6 @@ import './App.css';
 import {PrivateRoute} from './utils/PrivateRoute'
 import Login from './pages/Login'
 import Home from './pages/Home'
-import Post from './pages/Post'
-import Profile from './pages/Profile'
 import { Routes, Route,  useNavigate } from 'react-router-dom';
 import { useReducer, useState, createContext, useContext} from 'react'
 
@@ -16,6 +14,7 @@ function postReducer(state, action) {
     postId: null,
     profile: false,
     profileDrop: false,
+    notificationDrop: false,
     createGroup: false,
     profileId: undefined,
     postCat: undefined,
@@ -36,7 +35,9 @@ function postReducer(state, action) {
     case 'profile':
       return {...defaultFalse, profile: true, profileId: action.Id}
     case 'profileDrop':
-      return {...state, profileDrop: !state.profileDrop}
+      return {...state, profileDrop: !state.profileDrop, notificationDrop: false}
+    case 'notificationDrop':
+      return {...state, notificationDrop: !state.notificationDrop, profileDrop: false}
     case 'home':
      window.history.pushState("Home.jsx:31", "Home.jsx:31", `/`)
       return defaultFalse
