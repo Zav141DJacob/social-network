@@ -1041,7 +1041,16 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 				}
 
 				if !found {
-					w.WriteHeader(401)
+					// w.WriteHeader(401)
+					profile.user = user
+					
+					jsonProfile, err := json.Marshal(profile)
+					if err != nil {
+						w.WriteHeader(500)
+						return
+					}
+
+					fmt.Fprintf(w, string(jsonProfile))
 					return
 				}
 			}
