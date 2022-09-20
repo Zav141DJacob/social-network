@@ -212,6 +212,7 @@ func UserAPI(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// ?categoryId=
 func PostAPI(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
@@ -1011,20 +1012,20 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			if len(m["userId"]) == 0 {
+			if len(m["nickname"]) == 0 {
 				w.WriteHeader(419)
 				return
 			}
 
-			userId := m["userId"][0]
+			nickname := m["nickname"][0]
 
-			user, err := FromUsers("userId", userId)
+			user, err := FromUsers("nickname", nickname)
 			if err != nil {
 				w.WriteHeader(500)
 				return
 			}
 
-			followers, err := FromFollowers("userId", userId)
+			followers, err := FromFollowers("userId", user[0].userId)
 			if err != nil {
 				w.WriteHeader(500)
 				return
@@ -1045,7 +1046,7 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 			
-			posts, err := FromPosts("userId", userId)
+			posts, err := FromPosts("userId", user[0].userId)
 			if err != nil {
 				w.WriteHeader(500)
 				return

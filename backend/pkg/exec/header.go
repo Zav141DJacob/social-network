@@ -126,6 +126,8 @@ type FollowerData struct {
 	//	use JOIN and only use the ID values of tables
 	FollowerNickname string
 	FollowerUserId	 int
+	// ToDo:
+	// Avatar			 string
 }
 // type ErrorString struct {
 // 	s string
