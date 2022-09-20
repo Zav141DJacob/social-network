@@ -142,12 +142,17 @@ func (c *Client) reader(conn *websocket.Conn) {
 			value, isValid := manager.groupChats[target]
 
 			// If target's connection is valid then WriteMessage to their connection
-			if isValid {
-				err = value.WriteMessage(messageType, []byte(jsonTo))
-				if err != nil {
-					HandleErr(err)
+			for _, v := range value {
+				// value2, isValid := v
+
+				if isValid {
+					err = v.WriteMessage(messageType, []byte(jsonTo))
+					if err != nil {
+						HandleErr(err)
+					}
 				}
 			}
+			
 
 			to.Sent = true
 
