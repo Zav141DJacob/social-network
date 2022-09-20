@@ -74,7 +74,8 @@ func Register(nickname, email, password, firstName, lastName, age, bio, avatar i
 	stmt, err := Db.Prepare(
 		`INSERT INTO users 
 		(nickname, eMail, password, firstName, lastName, age, bio, avatar, roleId, date, isPrivate) 
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		RETURNING userId;`)
 
 	if err != nil {
 		HandleErr(err)
@@ -89,13 +90,32 @@ func Register(nickname, email, password, firstName, lastName, age, bio, avatar i
 		return err
 	}
 
+	var id int
+	fmt.Println(id)
+
 	defer stmt.Close()
-  	_, err = stmt.Exec(nickname, email, hash, firstName, lastName, age.(string), bio, avatar, 1, time.Now(), true)
+  	err = stmt.QueryRow(nickname, email, hash, firstName, lastName, age.(string), bio, avatar, 1, time.Now(), true).Scan(&id)
+	// fmt.Println(res)
+
 	if err != nil {
-    	fmt.Println("toDb113", err)
-		HandleErr(err)
 		return err
 	}
+	fmt.Println(id)
+
+	stmt, err = Db.Prepare(
+		`INSERT INTO groupMembers 
+		(userId, catId) 
+		VALUES (?, ?);`)
+	
+	
+	_, err = stmt.Exec(id, 1)
+	_, err = stmt.Exec(id, 2)
+	_, err = stmt.Exec(id, 3)
+	if err != nil {
+		return err
+	}
+
+
 	return nil
 }
 

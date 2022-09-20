@@ -24,10 +24,6 @@ func Initialize() error{
 		if err != nil {
 			return err
 		}
-		// err = sqlite.CreatePostCategory(Db, GetCategoryNames)
-		// if err != nil {
-		// 	return err
-		// }
 		err = All()
 		if err != nil {
 			return err
@@ -40,5 +36,4 @@ func Initialize() error{
 		}
 	}	
 	return nil
-	
 }

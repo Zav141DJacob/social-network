@@ -175,7 +175,7 @@ function Textbox({scrollRef, handleSubmit, messages, setMessages, currentMessage
   function handleOnEnter (text) {
     console.log('enter', text)
     if (text !== '') {
-      ws.send(JSON.stringify({message: text, targetId: target.UserId, init: false}))
+      ws.send(JSON.stringify({message: text, targetId: target.UserId, mode: "default"}))
     }
   }
   return (
