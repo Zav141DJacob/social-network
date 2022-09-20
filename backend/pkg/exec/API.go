@@ -314,7 +314,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			getStruct.Post = c
 
 			getStruct.User = user[0].Nickname
-			getStruct.Category = category[0]
+			// getStruct.Category = category[0]
 
 			toAPI = append(toAPI, getStruct)
 		}
@@ -371,7 +371,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 	  }
 	  postId := strconv.Itoa(len(posts))
 	  w.Write([]byte(postId))
-		w.WriteHeader(http.StatusCreated)
+		// w.WriteHeader(http.StatusCreated)
 	}
 }
 
