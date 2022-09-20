@@ -36,8 +36,8 @@ export function Feed({selectedCat, dispatch, forwardRef, scrollValue}) {
   })
 
   useEffect(() => {
-     if (selectedCat.postCat) {
-       switch (selectedCat.postCat) {
+    if (selectedCat.postCat) {
+      switch (selectedCat.postCat) {
         case 'rust':
           setPostCopy(posts?.filter(post => post.Category.HasRust === true))
           return;
@@ -48,14 +48,14 @@ export function Feed({selectedCat, dispatch, forwardRef, scrollValue}) {
           setPostCopy(posts?.filter(post => post.Category.HasGolang === true))
           return;
       }
-     }
+    }
     setPostCopy(posts?.slice())
   }, [posts, selectedCat])
   return (
     <div className={styles.feed} ref={forwardRef}>
       <CreatePost dispatch={dispatch}/>
       <div className={styles.posts} >
-      {postCopy?.map(i => <PostComponent key={i?.Post?.PostId} postInfo={i} dispatch={dispatch}/>)}
+        {postCopy?.map(i => <PostComponent key={i?.Post?.PostId} postInfo={i} dispatch={dispatch}/>)}
       </div>
     </div>
   )
@@ -140,31 +140,31 @@ function Description({nickname, title, value, setDesc, categories, dispatch}) {
         case 'go':
           return 1;
         default:
-        return null
+          return null
       }
     })
     cats.sort()
     let cookieStruct = {}
     for (const i of document.cookie.split("; ")) {
-        let split = i.split("=")
-        cookieStruct[split[0]] = split[1]
-      }
+      let split = i.split("=")
+      cookieStruct[split[0]] = split[1]
+    }
     const postObj = {title: title, body: value, categories: cats, userToken: cookieStruct.session}
     postData('http://localhost:8000/api/v1/posts/', postObj).then(i => dispatch({type: 'create', postId:i}))
   }
   if (title && value && categories?.length > 0) {
     return (
       <>
-      <textarea className={styles.description} value={value} onChange={(e) => setDesc(e.target.value)} placeholder={"Please describe your thought..."}></textarea>
-      <div className={styles.submitready} onClick={submitPost}>Post</div>
+        <textarea className={styles.description} value={value} onChange={(e) => setDesc(e.target.value)} placeholder={"Please describe your thought..."}></textarea>
+        <div className={styles.submitready} onClick={submitPost}>Post</div>
       </>
-     ) 
+    ) 
   }
 
   return (
-  <>
+    <>
       <textarea className={styles.description} value={value} onChange={(e) => setDesc(e.target.value)} placeholder={"Please describe your thought..."}></textarea>
       <div className={styles.submit}>Post</div>
-  </>
+    </>
   ) 
 }

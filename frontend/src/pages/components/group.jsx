@@ -33,11 +33,11 @@ export function Group({dispatch}) {
   }
   return (
     <div className={styles.feed}>
-    <div className={styles.creator}>
-    <h1 style={{"color": "white"}}>Create a group</h1>
-    <input className={styles.title} placeholder={"What do you want to post, " + nickname} value={title} onChange={handleTitleChange} />
-    <Description nickname={nickname} title={title} value={desc} dispatch={dispatch} setDesc={setDesc} />
-    </div>
+      <div className={styles.creator}>
+        <h1 style={{"color": "white"}}>Create a group</h1>
+        <input className={styles.title} placeholder={"What do you want to post, " + nickname} value={title} onChange={handleTitleChange} />
+        <Description nickname={nickname} title={title} value={desc} dispatch={dispatch} setDesc={setDesc} />
+      </div>
     </div>
   )
 }
@@ -53,16 +53,16 @@ function Description({nickname, title, value, setDesc, dispatch}) {
   if (title && value) {
     return (
       <>
-      <textarea className={styles.description} value={value} onChange={(e) => setDesc(e.target.value)} placeholder={"Please describe your thought..."}></textarea>
-      <div className={styles.submitready} onClick={submitPost}>Create</div>
+        <textarea className={styles.description} value={value} onChange={(e) => setDesc(e.target.value)} placeholder={"Please describe your thought..."}></textarea>
+        <div className={styles.submitready} onClick={submitPost}>Create</div>
       </>
-     ) 
+    ) 
   }
 
   return (
-  <>
+    <>
       <textarea className={styles.description} value={value} onChange={(e) => setDesc(e.target.value)} placeholder={"Please describe your thought..."}></textarea>
       <div className={styles.submit}>Create</div>
-  </>
+    </>
   ) 
 }

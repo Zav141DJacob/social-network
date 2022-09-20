@@ -28,38 +28,36 @@ const getNotifications = async (notification, setNotification) => {
       'Authentication': cookies.session,
     },
   })
-  .then(resp => {
-    resp.json()
-    .then(notificationList => {
-      let returnArr = {
-        0: 0,
-      }
-      if (notificationList != null) {
-        notificationList.forEach((notif) => {
-          if (!returnArr[notif.FromUserId]) {
-            returnArr[notif.FromUserId] = 1
-          } else {
-            returnArr[notif.FromUserId]++
+    .then(resp => {
+      resp.json()
+        .then(notificationList => {
+          let returnArr = {
+            0: 0,
           }
+          if (notificationList != null) {
+            notificationList.forEach((notif) => {
+              if (!returnArr[notif.FromUserId]) {
+                returnArr[notif.FromUserId] = 1
+              } else {
+                returnArr[notif.FromUserId]++
+              }
+            })
+          } 
+
+          setNotification(returnArr)
         })
-      } 
-      
-      setNotification(returnArr)
-    })
-  }).catch(() => console.log("BAD THING in right-sidebar 49"))
+    }).catch(() => console.log("BAD THING in right-sidebar 49"))
 }
 const wsOnMessage = (notification, setNotification, setUsers) => {
   ws.onmessage = function(event) {
     getOnlineUsers(notification, setNotification, setUsers)
     postData("http://localhost:8000/api/v1/notifications/", {FromUserId: JSON.parse(event.data).SenderId}, false)
-    .then(resp => {
-
-      getNotifications(notification, setNotification)
-
-    })
-    .catch(err => {
-      console.log("found error in wsOnMessage!: ", err)
-    })
+      .then(resp => {
+        getNotifications(notification, setNotification)
+      })
+      .catch(err => {
+        console.log("found error in wsOnMessage!: ", err)
+      })
   }
 }
 const deleteNotification = (fromUserId, notification, setNotification) => {
@@ -88,9 +86,9 @@ export const wsSetup = () => {
   let nickname = cookieStruct.uID
 
   ws.onopen = function() {
-    ws.send(JSON.stringify({nickname: nickname, init: true}))
+    ws.send(JSON.stringify({nickname: nickname, init: true})) //TODO: init to string
   }
-  
+
 }
 
 const getOnlineUsers = (notification, setNotification, setUsers) => {
@@ -132,23 +130,23 @@ export function RightSideBar({dispatch}) {
   if (users) {
     return (
       <div className={styles.sidebar}>
-      {users.map(item => {
-        return (
-          <div key={item.UserId} className={styles.user}>
-          <img className={styles.profilePicture} src={`http://localhost:8000/static/${item.Avatar}`}  /> 
-          <div className={item.Online ? styles.onlineIndicator : styles.offlineIndicator}>
-          {notification[item.UserId] && <div className={styles.notificationCount}>{notification[item.UserId] > 9 ? "9+" : notification[item.UserId]}</div>}
-          </div>
-          <h1 className={styles.nickname} onClick={() => {
-            setmessageUser(item)
-            setMessageboxOpen(true)
-            deleteNotification(item.UserId, notification, setNotification)
-          }}>{item.Nickname} </h1>
-          {notification[item.UserId] && <div className={styles.notification} />}
-          </div>
-        )
-      })}
-      {messageboxOpen && <MessageBox dispatch={dispatch} user={messageUser} closeHandler={closeMessageBox} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}}/>}
+        {users.map(item => {
+          return (
+            <div key={item.UserId} className={styles.user}>
+              <img className={styles.profilePicture} src={`http://localhost:8000/static/${item.Avatar}`}  /> 
+              <div className={item.Online ? styles.onlineIndicator : styles.offlineIndicator}>
+                {notification[item.UserId] && <div className={styles.notificationCount}>{notification[item.UserId] > 9 ? "9+" : notification[item.UserId]}</div>}
+              </div>
+              <h1 className={styles.nickname} onClick={() => {
+                setmessageUser(item)
+                setMessageboxOpen(true)
+                deleteNotification(item.UserId, notification, setNotification)
+              }}>{item.Nickname} </h1>
+              {notification[item.UserId] && <div className={styles.notification} />}
+            </div>
+          )
+        })}
+        {messageboxOpen && <MessageBox dispatch={dispatch} user={messageUser} closeHandler={closeMessageBox} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}}/>}
       </div>
     )
   }
