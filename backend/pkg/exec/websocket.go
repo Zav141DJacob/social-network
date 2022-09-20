@@ -32,6 +32,17 @@ var manager = ClientManager{
 	groupChats: make(map[idType](map[idType]*websocket.Conn)),
 }
 
+func WsSetup() error {
+	categories, err := FromCategories("", "") 
+	if err != nil {
+		return err
+	}
+	for _, category := range categories {
+		manager.groupChats[idType(category.CatId)] = make(map[idType]*websocket.Conn)
+	}
+	return nil
+}
+
 func (manager *ClientManager) start() {
     for {
         select {
@@ -43,6 +54,7 @@ func (manager *ClientManager) start() {
 				for _, member := range members {
 					manager.groupChats[idType(member.CatId)][conn.id] = conn.socket
 				}
+				log.Println(manager.groupChats)
 			}
 
             manager.clients[conn.id] = conn.socket
@@ -66,13 +78,13 @@ func (c *Client) reader(conn *websocket.Conn) {
 		 conn.Close()
 		 log.Println("Client Connection Terminated")
 	}
-	for {
 
+	for {
 		// reads the message from a clients connection
 		messageType, p, err := c.socket.ReadMessage()
 
 		if err != nil {
-      fmt.Println(err)
+      		fmt.Println(err)
 			unregister()
 			return
 		}
@@ -93,13 +105,11 @@ func (c *Client) reader(conn *websocket.Conn) {
 		var v map[string]interface{}
 		json.Unmarshal([]byte(p), &v)
 
-		// ToDo: change init.(bool) to string in frontend and backend
-		//	(It's for the group creation so it saves the new group chat in the manager)
-		init := v["init"]
+		mode := v["mode"]
 		
 		// registers the user with their ID
-		switch init.(bool) {
-		case true:
+		switch mode.(string) {
+		case "register":
 			nickname := v["nickname"]
 			user, err := FromUsers("nickname", nickname)
 
@@ -111,54 +121,93 @@ func (c *Client) reader(conn *websocket.Conn) {
 
 			c.id = idType(user[0].UserId)
 			manager.register <- c
-			continue
-		
-		}
+		case "groupMessage":
+			message  := v["message"]
+			targetId := v["targetId"]
 
+			var to toClient
+			to.Message = message.(string)
+			to.Sent = false
+			to.SenderId = c.id
 
-		message  := v["message"]
-		targetId := v["targetId"]
+			jsonTo, err := json.Marshal(to)
+			if err != nil {
+				break
+			}
+			//look through global variable clientArray
+			//find targetId and write message to the senders and the targets connection
+			
+			target := idType(targetId.(float64))
 
-		var to toClient
-		to.Message = message.(string)
-		to.Sent = false
-		to.SenderId = c.id
+			value, isValid := manager.groupChats[target]
 
-		jsonTo, err := json.Marshal(to)
-		if err != nil {
-			continue
-		}
-		//look through global variable clientArray
-		//find targetId and write message to the senders and the targets connection
-		
-		target := idType(targetId.(float64))
+			// If target's connection is valid then WriteMessage to their connection
+			if isValid {
+				err = value.WriteMessage(messageType, []byte(jsonTo))
+				if err != nil {
+					HandleErr(err)
+				}
+			}
 
-		value, isValid := manager.clients[target]
+			to.Sent = true
 
-		// If target's connection is valid then WriteMessage to his connection
-		if isValid {
-			err = value.WriteMessage(messageType, []byte(jsonTo))
+			jsonTo, err = json.Marshal(to)
+			if err != nil {
+				HandleErr(err)
+				continue
+			}
+
+			Message(c.id, targetId, message)
+			
+			err = conn.WriteMessage(messageType,[]byte(jsonTo))
+
 			if err != nil {
 				HandleErr(err)
 			}
-		}
 
-		to.Sent = true
+		default:
+			message  := v["message"]
+			targetId := v["targetId"]
 
-		jsonTo, err = json.Marshal(to)
-		if err != nil {
-			HandleErr(err)
-			continue
-		}
+			var to toClient
+			to.Message = message.(string)
+			to.Sent = false
+			to.SenderId = c.id
 
-		Message(c.id, targetId, message)
-		
-		
+			jsonTo, err := json.Marshal(to)
+			if err != nil {
+				break
+			}
+			//look through global variable clientArray
+			//find targetId and write message to the senders and the targets connection
+			
+			target := idType(targetId.(float64))
 
-		err = conn.WriteMessage(messageType,[]byte(jsonTo))
+			value, isValid := manager.clients[target]
 
-		if err != nil {
-			HandleErr(err)
+			// If target's connection is valid then WriteMessage to his connection
+			if isValid {
+				err = value.WriteMessage(messageType, []byte(jsonTo))
+				if err != nil {
+					HandleErr(err)
+				}
+			}
+
+			to.Sent = true
+
+			jsonTo, err = json.Marshal(to)
+			if err != nil {
+				HandleErr(err)
+				continue
+			}
+
+			Message(c.id, targetId, message)
+			
+			err = conn.WriteMessage(messageType,[]byte(jsonTo))
+
+			if err != nil {
+				HandleErr(err)
+			}
 		}
 	}
 }

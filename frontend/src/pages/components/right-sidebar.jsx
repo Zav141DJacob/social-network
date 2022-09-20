@@ -86,7 +86,7 @@ export const wsSetup = () => {
   let nickname = cookieStruct.uID
 
   ws.onopen = function() {
-    ws.send(JSON.stringify({nickname: nickname, init: true})) //TODO: init to string
+    ws.send(JSON.stringify({nickname: nickname, mode: "register"}))
   }
 
 }
