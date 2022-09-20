@@ -982,19 +982,20 @@ func MessagesAPI(w http.ResponseWriter, r *http.Request) {
 func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "OPTIONS" {
 		auth := AuthenticateSession(r.Header["Authentication"])
-		if (auth == SessionData{}) {
-			w.WriteHeader(401)
-			return
-		}
+		auth.UserId = 0
+		// if (auth == SessionData{}) {
+		// 	w.WriteHeader(401)
+		// 	return
+		// }
 		switch r.Method {
 		case "GET":
 			type profileStruct struct {
-				user		 UserData
+				User		 UserData
 				
-				followers    []FollowerData
-				nonFollowers []UserData
+				Followers    []FollowerData
+				NonFollowers []UserData
 
-				posts	  	 []PostData
+				Posts	  	 []PostData
 
 			}
 
@@ -1042,7 +1043,7 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 
 				if !found {
 					// w.WriteHeader(401)
-					profile.user = user[0]
+					profile.User = user[0]
 
 					jsonProfile, err := json.Marshal(profile)
 					if err != nil {
@@ -1051,7 +1052,7 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 					}
 
 					fmt.Fprintf(w, string(jsonProfile))
-					w.WriteHeader(200)
+					// w.WriteHeader(200)
 					return
 				}
 			}
@@ -1079,12 +1080,12 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 				return true
 			})
 
-			profile.user = user[0]
+			profile.User = user[0]
 
-			profile.followers = followers
-			profile.nonFollowers = nonFollowers.([]UserData)
+			profile.Followers = followers
+			profile.NonFollowers = nonFollowers.([]UserData)
 
-			profile.posts = posts
+			profile.Posts = posts
 
 			jsonProfile, err := json.Marshal(profile)
 			if err != nil {
