@@ -6,11 +6,11 @@ import { wsSetup } from './components/right-sidebar'
 import { useEffect } from 'react'
 
 export default function Post({post, dispatch}) {
-    const {postId} = useParams();
-    useEffect(() => {
-      wsSetup()
-    }, [])
-    return (
+  const {postId} = useParams();
+  useEffect(() => {
+    wsSetup()
+  }, [])
+  return (
     <>
       <LeftSideBar post={post} dispatch={dispatch} postPage={true}/>
       <div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", minwidth: "100px"}}>
@@ -18,5 +18,5 @@ export default function Post({post, dispatch}) {
       </div>
       <RightSideBar dispatch={dispatch}/>
     </>
-    )
+  )
 }
