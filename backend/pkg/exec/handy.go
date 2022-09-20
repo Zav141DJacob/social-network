@@ -3,27 +3,12 @@ package exec
 import (
 	"fmt"
 	"strings"
+	"errors"
 )
 
 //Handles the error when called
 func HandleErr(err error) {
 	fmt.Printf("Found error: \n%v\n", err.Error())
-}
-
-func GetCategoryNames() ([]string, error){
-
-	categoryList, err := FromCategories("", "")
-
-	if err != nil {
-		return nil, err
-	}
-
-	var returnStringArr []string
-	for _, category := range categoryList {
-		returnStringArr = append(returnStringArr, "has" + category.Title) 
-	}
-
-	return returnStringArr, nil
 }
 
 //ToDo:
@@ -69,4 +54,26 @@ func SortAlpha(argArr []string, allUsers []OnlineUserData) []OnlineUserData {
 	}
 
 	return allUsers
+}
+
+// type myError struct{}
+
+// func (m *myError) error() string {
+// 	return s
+// }
+
+func CreateErr(s string) error {
+	// https://www.digitalocean.com/community/tutorials/creating-custom-errors-in-go
+	return errors.New(s)
+}
+
+func Filter(slice interface{}, f func(interface{}) bool) interface{} {
+	returnSlice := make([]interface{}, 0)
+
+	for _, v := range slice.([]interface{}) {
+		if f(v) {
+			returnSlice = append(returnSlice, v)
+		}
+	}
+	return returnSlice
 }

@@ -2,7 +2,7 @@ package exec
 
 import (
   "net/mail"
-  // "fmt"
+  "fmt"
   "golang.org/x/crypto/bcrypt"
 )
 
@@ -30,9 +30,9 @@ func AuthLogin(nickname, password interface{}) (bool, string) {
 	// If it cant find a nickname then look for email instead
 	if len(allUsers) == 0 {
 
-		if len(allUsers) == 0 {
-			return false, "Invalid nickname or password"
-		} 
+		// if len(allUsers) == 0 {
+		// 	return false, "Invalid nickname or password"
+		// } 
 		// ToDo: allow for email login
 		allUsers, err = FromUsers("email", nickname)
 
@@ -78,7 +78,8 @@ func AuthRegister(nickname, email, password, firstName, lastName, age, bio, avat
   
 	// if nickname length is less than 4, return error string
 	if len(nickname.(string)) < 4 {
-    	respUser.Nickname = "nickname error"
+		fmt.Println(nickname)
+    	// respUser.Nickname = "nickname error"
     }
 
 	// if email address is not valid, return error string
@@ -114,8 +115,8 @@ func AuthRegister(nickname, email, password, firstName, lastName, age, bio, avat
 }
 
 func AuthenticateSession(header []string) SessionData {
-  var authId string
-  if len(header) == 0 {
+	var authId string
+	if len(header) == 0 {
 		return SessionData{}
 	}
 	authId = header[0]

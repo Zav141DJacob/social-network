@@ -28,60 +28,37 @@ func Post(userId, catId, title, body interface{}) error {
 	}	
 
 	defer stmt.Close()
+
 	stmt.Exec(userId, title, body, time.Now())
-	
-
-	categoryList, err := FromCategories("", "")
-
-	if err != nil {
-		return err
-	}
 
 	posts, err := FromPosts("", "")
 
 	if err != nil {
 		return err
-	}
-
-	
+	}	
 
 	postId := len(posts)
-	var categoryListString string
-	var boolValues []bool
-
-	var count = 0
-
-	var values string
 	
-
-	for _, category := range categoryList {
-		values += "?, "
-		categoryListString += "has" + category.Title  + ", "
-		if len(catId.([]interface{})) <= count {
-			boolValues = append(boolValues, false)
-			continue
-		}
-		if category.CatId == int(catId.([]interface{})[count].(float64)) {
-			boolValues = append(boolValues, true)
-			count++
-		} else {
-			boolValues = append(boolValues, false)
-		}
-
-	}
-	stmt, err = Db.Prepare("INSERT INTO postCategory (postId, " + categoryListString[:len(categoryListString) - 2] + ") VALUES (?, " + values[:len(values)-2] + ");")
-
+	stmt, err = Db.Prepare("INSERT INTO postCategory (postId, catId, categoryTitle) VALUES (?, ?, ?);")
 	if err != nil {
 		return err
 	}
 
-	//ToDo
-	// make this dynamic (allow for non-hardcoded solution)
-	stmt.Exec(postId, boolValues[0], boolValues[1], boolValues[2])
+	for _, c := range catId.([]interface{}) {
 
-	// for _, c := range catId.([]interface{}) {
-	// 	stmt.Exec(userId, c, title, body, time.Now())
-	// }
+		category, err := FromCategories("catId", c)
+
+		if err != nil {
+			return err
+		}
+
+		_, err = stmt.Exec(postId, category[0].CatId, category[0].Title)
+
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -96,11 +73,11 @@ func Post(userId, catId, title, body interface{}) error {
 func Register(nickname, email, password, firstName, lastName, age, bio, avatar interface{}) error {
 	stmt, err := Db.Prepare(
 		`INSERT INTO users 
-		(nickname, eMail, password, firstName, lastName, age, bio, avatar, roleId, date) 
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`)
+		(nickname, eMail, password, firstName, lastName, age, bio, avatar, roleId, date, isPrivate) 
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`)
 
 	if err != nil {
-    fmt.Println("toDb98", err)
+		HandleErr(err)
 		return err
 	}
 
@@ -113,9 +90,9 @@ func Register(nickname, email, password, firstName, lastName, age, bio, avatar i
 	}
 
 	defer stmt.Close()
-  	_, err = stmt.Exec(nickname, email, hash, firstName, lastName, age.(string), bio, avatar, 1, time.Now())
+  	_, err = stmt.Exec(nickname, email, hash, firstName, lastName, age.(string), bio, avatar, 1, time.Now(), true)
 	if err != nil {
-    fmt.Println("toDb113", err)
+    	fmt.Println("toDb113", err)
 		HandleErr(err)
 		return err
 	}
@@ -266,21 +243,20 @@ func LikeComment(userId, commentId, value interface{}) error{
 }
 
 // Inserts a category into the database
-func InsertCategory(title interface{}, userId int, isMain bool) error {
-	stmt, err := Db.Prepare("INSERT INTO categories (title, userId, isMain) VALUES (?, ?, ?)")
+func InsertCategory(title interface{}, userId int, isPublic bool) error {
+	stmt, err := Db.Prepare("INSERT INTO categories (title, userId, isPublic) VALUES (?, ?, ?)")
 	
 	if err != nil {
 		return err
 	}
-
 	
-	stmt.Exec(title, userId, isMain)
+	stmt.Exec(title, userId, isPublic)
 
-	_, err = Db.Exec(`ALTER TABLE postCategory ADD COLUMN "has` + title.(string) + `" BOOLEAN NOT NULL`)
+	// _, err = Db.Exec(`ALTER TABLE postCategory ADD COLUMN "has` + title.(string) + `" BOOLEAN NOT NULL`)
 
-	if err != nil {
-		return err
-	}
+	// if err != nil {
+	// 	return err
+	// }
 	
 	// stmt.Exec("has" + title.(string))
 
@@ -330,5 +306,30 @@ func Message(senderId, targetId, message interface{}) error {
 
 	defer stmt.Close()
 	stmt.Exec(senderId, message, targetId, time.Now())
+	return nil
+}
+
+func Follow(userId, followerUserId interface{}) error{
+	stmt, err := Db.Prepare("INSERT INTO followers (nickname, userId, followerNickname, followerUserId) VALUES (?, ?, ?, ?);")
+
+	if err != nil {
+		return err
+	}
+	
+	user, err := FromUsers("userId", userId)
+	if err != nil {
+		return err
+	}
+
+	follower, err := FromUsers("userId", followerUserId)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+	_, err = stmt.Exec(user[0].Nickname, userId, follower[0].Nickname, followerUserId)
+	if err != nil {
+		return err
+	}
 	return nil
 }

@@ -35,9 +35,9 @@ export function LeftSideBar({dispatch, postPage}) {
       <div className={styles.topics}>
         <h2 className={styles.topicsHeader}>Groups</h2>
         <ul className={styles.topicslist}>
-          {groups && groups.map(group => {
-            return <li key={group.Title} className={styles.topic} id={(group.Title).toLowerCase()} onClick={categoryHandler}>{group.Title}</li>
-          })}
+            {groups && groups.map(group => {
+              return <li key={group.Title} className={styles.topic} id={(group.Title).toLowerCase()} onClick={categoryHandler}>{group.Title}</li>
+            })}
           <li className={styles.seemore} id="seemore">See more</li>
         </ul>
       </div>

@@ -6,6 +6,9 @@ import(
 	"database/sql"
 )
 
+// SPECIAL ToDo:
+//	add a length check to all "From..()" functions
+
 func FromUsers(condition string, value interface{}) ([]UserData, error){
 
 	rows, err := doRows("users", condition, value)
@@ -30,9 +33,10 @@ func FromUsers(condition string, value interface{}) ([]UserData, error){
 			&user.LastName,
 			&user.Age,
 			&user.Bio,
-      &user.Avatar,
+      		&user.Avatar,
 			&user.RoleId,
-			&user.Date)
+			&user.Date,
+			&user.IsPrivate)
 
 		if err != nil {
         fmt.Println("API168", err)
@@ -93,18 +97,11 @@ func FromPostCategory(condition string, value interface{}) ([]PostCategoryData, 
 	for rows.Next() {
 		var postCategory PostCategoryData
 
-		// postCategory.Categories[catNames[0]] = false
-		// postCategory.Categories[catNames[1]] = false
-		// postCategory.Categories[catNames[2]] = false
-
 		err = rows.Scan(
+			&postCategory.Id,
 			&postCategory.PostId,
-			// &postCategory.Categories[catNames[0]],
-			// &postCategory.Categories[catNames[1]],
-			// &postCategory.Categories[catNames[2]],
-			&postCategory.HasGolang,
-			&postCategory.HasJavascript,
-			&postCategory.HasRust,
+			&postCategory.CatId,
+			&postCategory.CategoryTitle,
 			)
 
 		if err != nil {
@@ -166,7 +163,7 @@ func FromCategories(condition string, value interface{}) ([]CategoryData, error)
 			&category.CatId, 
 			&category.Title,
 			&category.UserId,
-			&category.IsMain)
+			&category.IsPublic)
 
 		if err != nil {
 			return nil, err
@@ -414,6 +411,36 @@ func FromMessages(senderValue, targetValue interface{}) ([]MessageData, error){
 	}
 
 	return returnMessage, nil
+}
+
+func FromFollowers(condition string, value interface{}) ([]FollowerData, error) {
+	rows, err := doRows("followers", condition, value)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var returnFollowers []FollowerData
+	for rows.Next() {
+		var follower FollowerData
+
+		err = rows.Scan(
+			&follower.Id,
+			&follower.Nickname,
+			&follower.UserId,
+			&follower.FollowerNickname,
+			&follower.FollowerUserId)
+
+		if err != nil {
+			return nil, err
+		}
+
+		returnFollowers = append(returnFollowers, follower)
+	}
+
+	return returnFollowers, nil
 }
 
 // Pulls data from the database

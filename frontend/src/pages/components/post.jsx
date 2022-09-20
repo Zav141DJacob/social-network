@@ -95,10 +95,10 @@ export function PostComponent({post, postInfo, dispatch}) {
         {!postInfo &&
         <div className={styles.close} onClick={closePostHandler}>
           <svg  viewBox="0 0 24 24">
-            <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
-          </svg>
+              <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+              </svg>
         </div>
-        }
+      }
         <span className={styles.author} onClick={(e) => {e.stopPropagation();dispatch({type: "profile", Id: `${postData?.User}` })}}>{postData?.User}</span>
         <div className={styles.title} >{postData?.Post?.Title}</div>
         <ul className={styles.ul}>
@@ -106,26 +106,26 @@ export function PostComponent({post, postInfo, dispatch}) {
           {postData?.Category?.HasJavascript && <li className={styles.li}><div className={styles.category} style={{top: "-14px"}}><div style={{width: "20px"}}><div className={styles.jslogo}/></div>JavaScript</div></li>}
           {postData?.Category?.HasGolang && <li className={styles.li}><div className={styles.category} style={{position: "relative", top: "-14px", left: "17px", marginLeft: "0px"}}><div style={{width: "40px", height: "20px"}}><div className={styles.gologo}/></div>Golang</div></li>}
         </ul>
-        {!postInfo && 
-        <>
-          <p className={styles.desc}>
-            {postData?.Post?.Body}
-          </p>
-        </>
-        }
+          {!postInfo && 
+          <>
+        <p className={styles.desc}>
+          {postData?.Post?.Body}
+        </p>
+      </>
+      }
       </div>
       {!postInfo && <div className={styles.commentBox}>
         <textarea className={styles.commentInput} rows="3" value={currentComment.value} onChange={handleCommentChange} placeholder={"Write a comment..."}/>
         <p className={styles.commentsLabel}>Comments</p>
         <div className={styles.comments}>
           {commentData?.map(comment => {
-            return (
-              <div className={styles.comment} key={comment?.Comment?.CommentId}>
+          return (
+            <div className={styles.comment} key={comment?.Comment?.CommentId}>
                 <div className={styles.commentAuthor}>{comment?.User}</div>
                 <p className={styles.commentBody}>{comment?.Comment?.Body}</p>
                 <p className={styles.commentTime}>{timeago.format(comment?.Comment?.Date)}</p>
-              </div>
-            )
+            </div>
+          )
           })}
         </div>
       </div>}

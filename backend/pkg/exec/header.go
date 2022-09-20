@@ -2,19 +2,6 @@ package exec
 
 import ()
 
-
-type PageTemplate struct {
-	Nickname   		string
-	RoleID     		int
-	Categories 		[]CategoryData
-	Posts      		[]PostData
-	PostLikes  		[]PLikeData
-	Comments   		[]CommentData
-	Post       		PostData
-	InvalidLogin	string
-	Page	   		string
-}
-
 // The date in the structs is the time when the table element was created
 
 type UserData struct {
@@ -29,6 +16,7 @@ type UserData struct {
 	Avatar		  string
 	RoleId	  int
 	Date	  string
+	IsPrivate bool
 }
 
 type PostData struct {
@@ -39,19 +27,13 @@ type PostData struct {
 	Date   string
 }
 
-
-//ToDo
-// make this dynamic somehow (with maps maybe?)
-// I'm a bit too lazy at the moment to do that -Jacob
-// map[string]bool
 type PostCategoryData struct {
+	Id			  int
 	PostId		  int
-
-	Categories	map[string]bool
-	HasGolang 	  bool
-	HasJavascript bool
-	HasRust		  bool
+	CatId		  int
+	CategoryTitle string
 }
+
 type CommentData struct {
 	CommentId int
 	Body	  string
@@ -64,7 +46,7 @@ type CategoryData struct {
 	CatId	int
 	Title 	string
 	UserId	int
-	IsMain	bool
+	IsPublic	bool
 }
 
 // Post like struct
@@ -84,8 +66,10 @@ type CLikeData struct {
 // Session struct
 type SessionData struct {
 	SessionId string
+
+	// ToDo: implement First name
 	Nickname  string
-	Avatar  string
+	Avatar	  string
 	UserId	  int
 	RoleId	  int
 	Date	  string
@@ -108,6 +92,8 @@ type MessageData struct {
 
 type ResponseRegisterUser struct {
 	Email           string
+
+	// ToDo: make Nickname optional; Talk with Alex
 	Nickname        string
 	Password        string
 	ConfirmPassword string
@@ -119,14 +105,27 @@ type ResponseRegisterUser struct {
 type OnlineUserData struct {
 	UserId	 int
 	Online	 bool
+
+	// ToDo: implement First name
 	Nickname string
-	Avatar  string
+	Avatar	 string
 }
 
 type GroupMembersData struct {
-	Id	int
+	Id		int
 	UserId	int
 	CatId	int
+}
+
+type FollowerData struct {
+	Id				 int
+	Nickname		 string
+	UserId			 int
+
+	//Optional ToDo:
+	//	use JOIN and only use the ID values of tables
+	FollowerNickname string
+	FollowerUserId	 int
 }
 // type ErrorString struct {
 // 	s string
