@@ -25,14 +25,16 @@ func main(){
   http.Handle("/", fileServer)
   // ToDo: change Middleware function name
   http.HandleFunc("/api/v1/users/", Middleware(exec.UserAPI))
-  http.HandleFunc("/api/v1/posts/", Middleware(exec.PostApi))
+  http.HandleFunc("/api/v1/posts/", Middleware(exec.PostAPI))
   http.HandleFunc("/api/v1/categories/", Middleware(exec.CategoryAPI))
   http.HandleFunc("/api/v1/sessions/", Middleware(exec.SessionAPI))
   http.HandleFunc("/api/v1/comments/", Middleware(exec.CommentAPI))
-  http.HandleFunc("/api/v1/post-likes/", Middleware(exec.PostLikeAPI))
+  // http.HandleFunc("/api/v1/post-likes/", Middleware(exec.PostLikeAPI))
   http.HandleFunc("/api/v1/online-users/", Middleware(exec.OnlineUsersAPI))
   http.HandleFunc("/api/v1/messages/", Middleware(exec.MessagesAPI))
   http.HandleFunc("/api/v1/notifications/", Middleware(exec.NotificationsApi))
+  http.HandleFunc("/api/v1/followers/", Middleware(exec.FollowerAPI))
+  http.HandleFunc("/api/v1/profile/", Middleware(exec.ProfileAPI))
   http.HandleFunc("/api/v1/upload/", Middleware(exec.UploadFile))
 
 

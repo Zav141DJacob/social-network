@@ -13,10 +13,9 @@ import (
 
 type ClientManager struct {
     clients    map[idType]*websocket.Conn
-	// ToDo:
-	// groupChats map[idType][clients]
     register   chan *Client
     unregister chan *Client
+	groupChats map[idType](map[idType]*websocket.Conn)
 }
 
 type Client struct {
@@ -30,12 +29,22 @@ var manager = ClientManager{
     register:   make(chan *Client),
     unregister: make(chan *Client),
     clients:    make(map[idType]*websocket.Conn),
+	groupChats: make(map[idType](map[idType]*websocket.Conn)),
 }
 
 func (manager *ClientManager) start() {
     for {
         select {
         case conn := <-manager.register:
+
+			members, err := FromGroupMembers("userId", conn.id)
+
+			if err == nil && len(members) != 0 {
+				for _, member := range members {
+					manager.groupChats[idType(member.CatId)][conn.id] = conn.socket
+				}
+			}
+
             manager.clients[conn.id] = conn.socket
 
         case conn := <-manager.unregister:
@@ -84,17 +93,18 @@ func (c *Client) reader(conn *websocket.Conn) {
 		var v map[string]interface{}
 		json.Unmarshal([]byte(p), &v)
 
-		message  := v["message"]
-		targetId := v["targetId"]
-		init 	 := v["init"]
+		// ToDo: change init.(bool) to string in frontend and backend
+		//	(It's for the group creation so it saves the new group chat in the manager)
+		init := v["init"]
 		
 		// registers the user with their ID
-		if init.(bool) {
+		switch init.(bool) {
+		case true:
 			nickname := v["nickname"]
 			user, err := FromUsers("nickname", nickname)
 
 			if err != nil || len(user) == 0 {
-        fmt.Println(err, user)
+				fmt.Println(err, user)
 				unregister()
 				return
 			}
@@ -102,7 +112,12 @@ func (c *Client) reader(conn *websocket.Conn) {
 			c.id = idType(user[0].UserId)
 			manager.register <- c
 			continue
+		
 		}
+
+
+		message  := v["message"]
+		targetId := v["targetId"]
 
 		var to toClient
 		to.Message = message.(string)

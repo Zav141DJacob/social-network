@@ -31,6 +31,10 @@ func All() error {
 	if err != nil {
 		return err
 	}
+	err = follows()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -104,6 +108,18 @@ func messages() error {
 	Message(3, 1, "Message to jacob! from Alex.")
 
 	Message(2, 1, "Message to jacob!")
+
+	return nil
+}
+
+func follows() error {
+	err := Follow(1, 2)
+	if err != nil {
+		return errors.New("ERROR in follow: " + err.Error())
+	}
+	Follow(1, 3)
+
+	Follow(2, 1)
 
 	return nil
 }
