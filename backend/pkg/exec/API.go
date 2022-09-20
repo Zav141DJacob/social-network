@@ -212,7 +212,8 @@ func UserAPI(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// ?categoryId=
+// api/v1/posts?categoryId=Id
+// api/v1/posts/
 func PostAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "OPTIONS" {
 		auth := AuthenticateSession(r.Header["Authentication"])
