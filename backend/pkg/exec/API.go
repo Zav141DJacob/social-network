@@ -212,6 +212,7 @@ func UserAPI(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// ?categoryId=
 func PostAPI(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
@@ -977,7 +978,7 @@ func MessagesAPI(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// http://localhost:8000/api/v1/profile/?userId=0
+// http://localhost:8000/api/v1/profile/?nicknage=Jacob
 func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "OPTIONS" {
 		auth := AuthenticateSession(r.Header["Authentication"])
@@ -1011,20 +1012,20 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			if len(m["userId"]) == 0 {
+			if len(m["nickname"]) == 0 {
 				w.WriteHeader(419)
 				return
 			}
 
-			userId := m["userId"][0]
+			nickname := m["nickname"][0]
 
-			user, err := FromUsers("userId", userId)
+			user, err := FromUsers("nickname", nickname)
 			if err != nil {
 				w.WriteHeader(500)
 				return
 			}
 
-			followers, err := FromFollowers("userId", userId)
+			followers, err := FromFollowers("userId", user[0].userId)
 			if err != nil {
 				w.WriteHeader(500)
 				return
@@ -1040,12 +1041,22 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 				}
 
 				if !found {
-					w.WriteHeader(401)
+					// w.WriteHeader(401)
+					profile.user = user
+
+					jsonProfile, err := json.Marshal(profile)
+					if err != nil {
+						w.WriteHeader(500)
+						return
+					}
+
+					fmt.Fprintf(w, string(jsonProfile))
+					w.WriteHeader(200)
 					return
 				}
 			}
 			
-			posts, err := FromPosts("userId", userId)
+			posts, err := FromPosts("userId", user[0].userId)
 			if err != nil {
 				w.WriteHeader(500)
 				return
