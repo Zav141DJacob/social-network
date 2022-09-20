@@ -16,7 +16,7 @@ export function Profile({userId, state, dispatch}) {
   useEffect(() => {
     if (state?.profile) {
       if (state.profileId) {
-        fetch(`http://localhost:8000/api/v1/profile/?nickname=${nickname}`,
+        fetch(`http://localhost:8000/api/v1/profile/?nickname=${state.profileId}`,
           {mode: 'cors',
             cache: 'no-cache',
             credentials: 'include',
@@ -27,7 +27,7 @@ export function Profile({userId, state, dispatch}) {
           .then((item) => item.json().then(res =>  setProfile(res)))
         window.history.pushState("y2", "x3", `/users/${state.profileId}`)
       } else if (userId) {
-        fetch(`http://localhost:8000/api/v1/profile/?nickname=${nickname}`,
+        fetch(`http://localhost:8000/api/v1/profile/?nickname=${userId}`,
           {mode: 'cors',
             cache: 'no-cache',
             credentials: 'include',
@@ -61,10 +61,10 @@ export function Profile({userId, state, dispatch}) {
         <div className={styles.profile}>
           <img className={styles.avatar} src={`http://localhost:8000/static/${profile.User.Avatar}`} />
           {profile.User.Nickname !== nickname && <button className={styles.followBtn}>Follow</button>}
-          <h2 className={styles.name}>{profile.FirstName} {profile.LastName}</h2>
+          <h2 className={styles.name}>{profile.User.FirstName} {profile.User.LastName}</h2>
           <div className={styles.stats}>
-            <span>0 posts</span>
-            <span>0 followers</span>
+            <span>{profile?.Posts ?? 0} posts</span>
+            <span>{profile?.Followers?.length ?? 0} followers</span>
             <span>0 following</span>
           </div>
           {profile.User.Nickname && <span className={styles.nickname}>{profile.User.Nickname}</span>}

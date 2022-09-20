@@ -28,6 +28,58 @@ function ProfileDropdown({dispatch}) {
   )
 }
 
+const mockNotifications = [
+  {
+    user: "Jacob",
+    avatar: "jacob.png",
+    type: "Follow",
+  },
+  {
+    user: "Kertu",
+    avatar: "kertu.png",
+    type: "Follow"
+  },
+  {
+    user: "Alexxx",
+    avatar: "alex.png",
+    type: "Event"
+  }
+]
+function NotificationDropdown({dispatch}) {
+  return (
+    <>
+      <div className={styles.arrowUpNotification}></div>
+      <div className={styles.notificationDrop}>
+        {mockNotifications.map(item => {
+          switch (item.type) {
+            case "Follow": {
+              return (
+                <div className={styles.notification}>
+                  <img className={styles.notificationAvatar} src={`http://localhost:8000/static/${item.avatar}`} />
+                  <span><strong>{item.user}</strong><br/> has requested to follow you</span>
+                  <button className={styles.notificationAcceptBtn}>Accept</button>
+                  <button className={styles.notificationDeclineBtn}>Decline</button>
+                  <hr />
+                </div>
+              )
+            }
+            case "Event": {
+              return (
+                <div className={styles.notification}>
+                  <img className={styles.notificationAvatar} src={`http://localhost:8000/static/${item.avatar}`} />
+                  <span><strong>{item.user}</strong><br/> has created a new event</span>
+                  <button className={styles.notificationAcceptBtn}>Join</button>
+                  <button className={styles.notificationDeclineBtn}>Refuse</button>
+                </div>
+              )
+            }
+          }
+        })}
+      </div>
+    </>
+  )
+}
+
 export function TopBar({dispatch, state}) {
   let {nickname} = useAuth()
   let [avatar, setAvatar] = useState()
@@ -37,13 +89,14 @@ export function TopBar({dispatch, state}) {
     <div className={styles.topbar}>
       <div className={styles.logo} onClick={() => {dispatch({type: "home"})}}>Meetup</div>
       <div className={styles.actions}>
-        <div className={styles.notifications}>
+        <div className={styles.notifications} onClick={() => dispatch({type: "notificationDrop"})}>
           <svg className={styles.bell} viewBox="0 0 24 24">
             <path fill="whitesmoke" d="M10 21h4l-2 2-2-2m11-2v1H3v-1l2-2v-6c0-3 2-6 5-7l2-2 2 2c3 1 5 4 5 7v6l2 2m-4-8c0-3-2-5-5-5s-5 2-5 5v7h10v-7Z"/>
           </svg>
         </div>
         <img className={styles.profile} onClick={() => dispatch({type: "profileDrop"})}src={`http://localhost:8000/static/${avatar}`} />
       </div>
+      {state.notificationDrop && <NotificationDropdown dispatch={dispatch}/>}
       {state.profileDrop && <ProfileDropdown dispatch={dispatch} />}
     </div>
   )
