@@ -218,12 +218,10 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 		auth := AuthenticateSession(r.Header["Authentication"])
 
 
-		// ToDo
-		auth.UserId = 1
-		// if (auth == SessionData{}) {
-		// 	w.WriteHeader(401)
-		// 	return
-		// }
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
+			return
+		}
 
 		switch r.Method {
 		case "GET":
