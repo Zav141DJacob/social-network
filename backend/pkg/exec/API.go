@@ -1025,7 +1025,7 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			followers, err := FromFollowers("userId", user[0].userId)
+			followers, err := FromFollowers("userId", user[0].UserId)
 			if err != nil {
 				w.WriteHeader(500)
 				return
@@ -1042,7 +1042,7 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 
 				if !found {
 					// w.WriteHeader(401)
-					profile.user = user
+					profile.user = user[0]
 
 					jsonProfile, err := json.Marshal(profile)
 					if err != nil {
@@ -1056,7 +1056,7 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 			
-			posts, err := FromPosts("userId", user[0].userId)
+			posts, err := FromPosts("userId", user[0].UserId)
 			if err != nil {
 				w.WriteHeader(500)
 				return
