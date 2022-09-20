@@ -989,12 +989,12 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
 			type profileStruct struct {
-				user		 UserData
+				User		 UserData
 				
-				followers    []FollowerData
-				nonFollowers []UserData
+				Followers    []FollowerData
+				NonFollowers []UserData
 
-				posts	  	 []PostData
+				Posts	  	 []PostData
 
 			}
 
