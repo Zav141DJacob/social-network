@@ -305,7 +305,7 @@ func InsertSession(session, nickname, avatar string, userId, roleId int) error {
 	return nil
 }
 
-func Notify(userId, fromUserId interface{}) error {
+func PingUser(userId, fromUserId interface{}) error {
 	stmt, err := Db.Prepare("INSERT INTO notifications (userId, fromUserId) VALUES (?, ?)")
 	
 	if err != nil {
@@ -314,6 +314,29 @@ func Notify(userId, fromUserId interface{}) error {
 
 	defer stmt.Close()
 	stmt.Exec(userId, fromUserId)
+	return nil
+}
+
+func Notify(userId, avatar, targetId, mode interface{}) error {
+
+	list, err := FromNotificationsList("userId", userId)
+	if err != nil {
+		return err
+	}
+
+	for _, l := range list {
+		if l.TargetId == targetId && l.Type == mode {
+			return CreateErr("409")
+		} 
+	}
+	stmt, err := Db.Prepare("INSERT INTO notificationsList (userId, avatar, targetId, mode) VALUES (?, ?, ?, ?)")
+	
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+	stmt.Exec(userId, avatar, targetId, mode)
 	return nil
 }
 
