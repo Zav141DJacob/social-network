@@ -109,7 +109,7 @@ export default function Login() {
       formData.append("file", file)
       let x = await postImg('http://localhost:8000/api/v1/upload/', formData)
       saveCredentials('Avatar', x)
-    } else if ((element.name === 'Email' || element.name === 'Nickname' || element.name === 'Password') && element.value.length < 5) {
+    } else if ((element.name === 'Email' || element.name === 'Password') && element.value.length < 5) {
       setError({...error, [element.name]: `${[element.name]} is too short!`})
       return
     } else if (error && Object.keys(error).includes(element.name)) {

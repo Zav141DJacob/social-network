@@ -218,3 +218,9 @@
   min-width: 820px;
   cursor:default;
 }
+
+.dropdownVisibility {
+  position: relative;
+  top: 20px;
+  color: white;
+}
