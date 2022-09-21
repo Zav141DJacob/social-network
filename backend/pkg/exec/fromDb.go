@@ -162,6 +162,7 @@ func FromCategories(condition string, value interface{}) ([]CategoryData, error)
 		err = rows.Scan(
 			&category.CatId, 
 			&category.Title,
+			&category.Description,
 			&category.UserId,
 			&category.IsPublic)
 
@@ -431,7 +432,8 @@ func FromFollowers(condition string, value interface{}) ([]FollowerData, error) 
 			&follower.Nickname,
 			&follower.UserId,
 			&follower.FollowerNickname,
-			&follower.FollowerUserId)
+			&follower.FollowerUserId,
+			&follower.FollowerAvatar)
 
 		if err != nil {
 			return nil, err

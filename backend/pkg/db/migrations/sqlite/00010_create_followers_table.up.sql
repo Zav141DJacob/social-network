@@ -5,6 +5,8 @@ CREATE TABLE "followers" (
     "userId"	        INTEGER NOT NULL,
     "followerNickName"  TEXT NOT NULL,
     "followerUserId"    INTEGER NOT NULL,
+    "followerAvatar"    TEXT NOT NULL,
     FOREIGN KEY ("userId") REFERENCES "users"("userId")
     FOREIGN KEY ("followerUserId") REFERENCES "users"("userId")
+    FOREIGN KEY ("followerAvatar") REFERENCES "users"("avatar")
 );

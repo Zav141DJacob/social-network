@@ -263,14 +263,14 @@ func LikeComment(userId, commentId, value interface{}) error{
 }
 
 // Inserts a category into the database
-func InsertCategory(title interface{}, userId int, isPublic bool) error {
-	stmt, err := Db.Prepare("INSERT INTO categories (title, userId, isPublic) VALUES (?, ?, ?)")
+func InsertCategory(title, description , userId, isPublic interface{}) error {
+	stmt, err := Db.Prepare("INSERT INTO categories (title, description, userId, isPublic) VALUES (?, ?, ?, ?)")
 	
 	if err != nil {
 		return err
 	}
 	
-	stmt.Exec(title, userId, isPublic)
+	stmt.Exec(title, description, userId, isPublic)
 
 	// _, err = Db.Exec(`ALTER TABLE postCategory ADD COLUMN "has` + title.(string) + `" BOOLEAN NOT NULL`)
 
@@ -330,7 +330,7 @@ func Message(senderId, targetId, message interface{}) error {
 }
 
 func Follow(userId, followerUserId interface{}) error{
-	stmt, err := Db.Prepare("INSERT INTO followers (nickname, userId, followerNickname, followerUserId) VALUES (?, ?, ?, ?);")
+	stmt, err := Db.Prepare("INSERT INTO followers (nickname, userId, followerNickname, followerUserId, followerAvatar) VALUES (?, ?, ?, ?, ?);")
 
 	if err != nil {
 		return err
@@ -347,7 +347,7 @@ func Follow(userId, followerUserId interface{}) error{
 	}
 
 	defer stmt.Close()
-	_, err = stmt.Exec(user[0].Nickname, userId, follower[0].Nickname, followerUserId)
+	_, err = stmt.Exec(user[0].Nickname, userId, follower[0].Nickname, followerUserId, follower[0].Avatar)
 	if err != nil {
 		return err
 	}

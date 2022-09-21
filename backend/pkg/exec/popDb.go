@@ -91,12 +91,12 @@ func commentLikes() error {
 }
 
 func Categories() error {
-	err := InsertCategory("Golang", 0, true)
+	err := InsertCategory("Golang", "For all of your Golang needs!", 0, true)
 	if err != nil {
 		return errors.New("ERROR in categories: " + err.Error())
 	}
-	InsertCategory("Javascript", 0, true)
-	InsertCategory("Rust", 0, true)
+	InsertCategory("Javascript", "For all of your Javascript wants!", 0, true)
+	InsertCategory("Rust", "For all of your Rust requirements!", 0, true)
 	return nil
 }
 
@@ -120,6 +120,10 @@ func follows() error {
 	Follow(1, 3)
 
 	Follow(2, 1)
+
+	Follow(3, 1)
+
+	Follow(3, 2)
 
 	return nil
 }
