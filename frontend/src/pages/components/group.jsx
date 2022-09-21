@@ -58,8 +58,9 @@ function Description({nickname, title, value, visibility, setDesc, dispatch}) {
     const postObj = {title: title, description: value, isPrivate: isPrivate}
     // postData('http://localhost:8000/api/v1/categories/', postObj).then(i => dispatch({type: 'create', postId:i}))
     // postData('http://localhost:8000/api/v1/categories/', postObj, false).then(i => console.log(i));
-      let x = ws.send(JSON.stringify({...postObj, mode: "registerGroup"}))
-    console.log(x)
+    let y = JSON.stringify({...postObj, mode: "registerGroup"})
+    // let x = ws.send(JSON.stringify({...postObj, mode: "registerGroup"}))
+    console.log(y)
     return
   }
   if (title && value) {
