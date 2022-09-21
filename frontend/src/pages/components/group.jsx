@@ -45,7 +45,7 @@ export function Group({dispatch}) {
           <option value="private">Private</option>
         </select>
           </div>
-        <Description nickname={nickname} title={title} value={desc} dispatch={dispatch} setDesc={setDesc} />
+        <Description nickname={nickname} title={title} value={desc} visibility={visibility} dispatch={dispatch} setDesc={setDesc} />
       </div>
     </div>
   )
@@ -54,14 +54,12 @@ export function Group({dispatch}) {
 function Description({nickname, title, value, visibility, setDesc, dispatch}) {
   function submitPost() {
     let cookieStruct = findCookies();
-    let isPrivate = visibility === "private"
-    const postObj = {title: title, description: value, isPrivate: isPrivate}
+
+    let isPublic = visibility === "public"
+    const postObj = {title: title, description: value, isPublic: isPublic}
     // postData('http://localhost:8000/api/v1/categories/', postObj).then(i => dispatch({type: 'create', postId:i}))
     // postData('http://localhost:8000/api/v1/categories/', postObj, false).then(i => console.log(i));
-    let y = JSON.stringify({...postObj, mode: "registerGroup"})
-    // let x = ws.send(JSON.stringify({...postObj, mode: "registerGroup"}))
-    console.log(y)
-    return
+    ws.send(JSON.stringify({...postObj, mode: "registerGroup"}))
   }
   if (title && value) {
     return (
