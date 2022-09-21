@@ -5,7 +5,6 @@ export function Profile({userId, state, dispatch}) {
   const {nickname} = useAuth();
   const [profile, setProfile] = useState()
   let cookies = document.cookie
-  console.log(123, userId)
 
   let output = {};
   cookies.split(/\s*;\s*/).forEach(function(pair) {
@@ -53,7 +52,6 @@ export function Profile({userId, state, dispatch}) {
   }, [state?.profile, state?.profileId])
 
   let isPrivate = true
-  console.log(profile)
 
   if (profile?.User) {
     return (
@@ -63,9 +61,9 @@ export function Profile({userId, state, dispatch}) {
           {profile.User.Nickname !== nickname && <button className={styles.followBtn}>Follow</button>}
           <h2 className={styles.name}>{profile.User.FirstName} {profile.User.LastName}</h2>
           <div className={styles.stats}>
-            <span>{profile?.Posts ?? 0} posts</span>
+            <span>{(profile?.Posts?.length || profile?.Posts ) ?? 0} posts</span>
             <span>{profile?.Followers?.length ?? 0} followers</span>
-            <span>0 following</span>
+            <span>{profile?.Following?.length ?? 0} following</span>
           </div>
           {profile.User.Nickname && <span className={styles.nickname}>{profile.User.Nickname}</span>}
           <span className={styles.age}>{profile.User.Age}</span>
