@@ -43,9 +43,10 @@ type CommentData struct {
 }
 
 type CategoryData struct {
-	CatId	int
-	Title 	string
-	UserId	int
+	CatId		int
+	Title 		string
+	Description string
+	UserId		int
 	IsPublic	bool
 }
 
@@ -127,7 +128,7 @@ type FollowerData struct {
 	FollowerNickname string
 	FollowerUserId	 int
 	// ToDo:
-	// Avatar			 string
+	FollowerAvatar	 string
 }
 // type ErrorString struct {
 // 	s string

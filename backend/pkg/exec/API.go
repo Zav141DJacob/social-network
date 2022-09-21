@@ -665,6 +665,7 @@ func CategoryAPI(w http.ResponseWriter, r *http.Request) {
 			}
 
 			var title = v["title"]
+			var description = v["description"]
 			// var userToken = v["userToken"]
 
 
@@ -685,7 +686,7 @@ func CategoryAPI(w http.ResponseWriter, r *http.Request) {
 			// 	w.WriteHeader(419)
 			// 	w.Write([]byte(errMsg))
 			// } else {
-			InsertCategory(title, auth.UserId, false)
+			InsertCategory(title, description, auth.UserId, false)
 			w.WriteHeader(http.StatusCreated)
 			// }
 		

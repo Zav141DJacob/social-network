@@ -12,10 +12,11 @@ import (
 // 	https://www.thepolyglotdeveloper.com/2016/12/create-real-time-chat-app-golang-angular-2-websockets/
 
 type ClientManager struct {
-    clients    map[idType]*websocket.Conn
-    register   chan *Client
-    unregister chan *Client
-	groupChats map[idType](map[idType]*websocket.Conn)
+    clients    	  map[idType]*websocket.Conn
+    register   	  chan *Client
+    unregister 	  chan *Client
+    registerGroup chan *Client
+	groupChats 	  map[idType](map[idType]*websocket.Conn)
 }
 
 type Client struct {
@@ -63,6 +64,15 @@ func (manager *ClientManager) start() {
             if _, ok := manager.clients[conn.id]; ok {
                 delete(manager.clients, conn.id)
             }
+
+		case conn := <-manager.registerGroup:
+			all, err := FromCategories("", "")
+
+			if err != nil {
+				// errCode = 500
+				// ToDo: idk what to add here
+			}
+			manager.groupChats[idType(len(all))][conn.id] = conn.socket
         }
     }
 }
@@ -90,22 +100,20 @@ func (c *Client) reader(conn *websocket.Conn) {
 		}
 
 
-		type toClient struct {
-			Message  string
-			Sent	 bool
-			SenderId idType
-		}
+		
 
 		// Clients message should be a json {
 		// 	message string
 		// 	senderId float64
 		// 	targetId float64
-		// 	init bool
+		//	(title string)
+		//	mode string
 		// }
 		var v map[string]interface{}
 		json.Unmarshal([]byte(p), &v)
 
 		mode := v["mode"]
+		
 		
 		// registers the user with their ID
 		switch mode.(string) {
@@ -122,6 +130,12 @@ func (c *Client) reader(conn *websocket.Conn) {
 			c.id = idType(user[0].UserId)
 			manager.register <- c
 		case "groupMessage":
+			type toClient struct {
+				Message  string
+				Sent	 bool
+				SenderId idType
+			}
+
 			message  := v["message"]
 			targetId := v["targetId"]
 
@@ -152,7 +166,6 @@ func (c *Client) reader(conn *websocket.Conn) {
 					}
 				}
 			}
-			
 
 			to.Sent = true
 
@@ -169,8 +182,54 @@ func (c *Client) reader(conn *websocket.Conn) {
 			if err != nil {
 				HandleErr(err)
 			}
+		case "registerGroup":
+			type toClient struct {
+				ErrorCode int
+			}
+
+			title  		:= v["title"]
+			description := v["description"]
+			isPublic	:= v["isPublic"]
+
+			var errCode int
+			category, err := FromCategories("title", title)
+
+			if err != nil {
+				HandleErr(err)
+				break
+			}
+
+			errCode = 409
+
+			if len(category) == 0 {
+
+				err = InsertCategory(title, description, int(c.id), isPublic)
+				if err == nil {
+					errCode = 201
+					
+					manager.registerGroup <- c
+				}
+			}
+
+			jsonTo, err := json.Marshal(toClient{ErrorCode: errCode})
+			if err != nil {
+				HandleErr(err)
+				break
+			}
+			
+			err = conn.WriteMessage(messageType,[]byte(jsonTo))
+			if err != nil {
+				HandleErr(err)
+				break
+			}
 
 		default:
+			type toClient struct {
+				Message  string
+				Sent	 bool
+				SenderId idType
+			}
+
 			message  := v["message"]
 			targetId := v["targetId"]
 
