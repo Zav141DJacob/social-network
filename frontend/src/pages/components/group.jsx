@@ -39,12 +39,12 @@ export function Group({dispatch}) {
         <h1 style={{"color": "white"}}>Create a group</h1>
         <input className={styles.title} placeholder={"What is the group name, " + nickname + "?"} value={title} onChange={handleTitleChange} />
         <div className={styles.dropdownVisibility}>
-        <label htmlFor="visibility">Visibility</label>
-        <select name="visibility" id="visibility" value={visibility} onChange={(e) => setVisibility(e.target.value)}>
-          <option value="public">Public</option>
-          <option value="private">Private</option>
-        </select>
-          </div>
+          <label htmlFor="visibility">Visibility</label>
+          <select name="visibility" id="visibility" value={visibility} onChange={(e) => setVisibility(e.target.value)}>
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+          </select>
+        </div>
         <Description nickname={nickname} title={title} value={desc} visibility={visibility} dispatch={dispatch} setDesc={setDesc} />
       </div>
     </div>
@@ -53,8 +53,6 @@ export function Group({dispatch}) {
 
 function Description({nickname, title, value, visibility, setDesc, dispatch}) {
   function submitPost() {
-    let cookieStruct = findCookies();
-
     let isPublic = visibility === "public"
     const postObj = {title: title, description: value, isPublic: isPublic}
     // postData('http://localhost:8000/api/v1/categories/', postObj).then(i => dispatch({type: 'create', postId:i}))
