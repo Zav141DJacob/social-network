@@ -222,6 +222,20 @@ func (c *Client) reader(conn *websocket.Conn) {
 				HandleErr(err)
 				break
 			}
+		case "follow":
+			targetId := v["targetId"]
+			user, err := FromUsers("userId", c.id)
+			if err != nil {
+				HandleErr(err)
+				break
+			}
+			err = Notify(user[0].UserId, user[0].Avatar, targetId, mode)
+			if err != nil {
+				HandleErr(err)
+				break
+			}
+
+
 
 		default:
 			type toClient struct {

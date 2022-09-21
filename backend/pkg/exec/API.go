@@ -995,7 +995,7 @@ func OnlineUsersAPI(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func NotificationsApi(w http.ResponseWriter, r *http.Request) {
+func PingAPI(w http.ResponseWriter, r *http.Request) {
 	
 	if r.Method != "OPTIONS" {
 
@@ -1025,6 +1025,10 @@ func NotificationsApi(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			notificationJson, err := json.Marshal(notification)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
 			w.Write(notificationJson)
 		case "POST":
 			var v map[string]interface{}
@@ -1036,7 +1040,7 @@ func NotificationsApi(w http.ResponseWriter, r *http.Request) {
 			// var postType = v["postType"]
 			var fromUserId = v["FromUserId"]
 
-			err = Notify(userId, fromUserId)
+			err = PingUser(userId, fromUserId)
 			if err != nil {
 				HandleErr(err)
 				w.WriteHeader(http.StatusInternalServerError)
@@ -1337,6 +1341,31 @@ func FollowerAPI(w http.ResponseWriter, r *http.Request) {
 		// fmt.Fprintf(w, string(jsonFollowers))
 		w.WriteHeader(204)
 
+	}
+}
+
+func NotificationsListAPI(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "OPTIONS" {
+		auth := AuthenticateSession(r.Header["Authentication"])
+
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
+			return
+		}
+		switch r.Method {
+		case "GET":
+			notifications, err := FromNotificationsList("targetId", auth.UserId)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+			jsonNotif, err := json.Marshal(notifications)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+			fmt.Fprintf(w, string(jsonNotif))
+		}
 	}
 }
 // func PostLikeAPI(w http.ResponseWriter, r *http.Request) {

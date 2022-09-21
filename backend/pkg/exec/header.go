@@ -130,6 +130,14 @@ type FollowerData struct {
 	// ToDo:
 	FollowerAvatar	 string
 }
+
+type NotificationsListData struct {
+	Id			int
+	UserId		int
+	UserAvatar	string
+	TargetId	int
+	Type		string
+}
 // type ErrorString struct {
 // 	s string
 // }

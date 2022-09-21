@@ -334,6 +334,38 @@ func FromNotifications(condition string, value interface{}) ([]NotificationData,
 	return returnNotification, nil
 }
 
+func FromNotificationsList(condition string, value interface{}) ([]NotificationsListData, error){
+
+	rows, err := doRows("notificationsList", condition, value)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var returnNotification []NotificationsListData
+	for rows.Next() {
+		var notification NotificationsListData
+
+		err = rows.Scan(
+			&notification.Id,
+			&notification.UserId,
+			&notification.UserAvatar,
+			&notification.TargetId,
+			&notification.Type)
+
+		if err != nil {
+			return nil, err
+		}
+
+		returnNotification = append(returnNotification, notification)
+	}
+
+	return returnNotification, nil
+}
+
+
 func FromMessages(senderValue, targetValue interface{}) ([]MessageData, error){
 
 	var rows *sql.Rows
