@@ -64,7 +64,7 @@ export function Feed({selectedCat, dispatch, forwardRef, scrollValue}) {
 function CreatePost({dispatch}) {
   const [openDesc, setOpenDesc] = useState()
   const { nickname } = useAuth();
-  const [title, setTitle] = useState()
+  const [title, setTitle] = useState("")
   const [desc, setDesc] = useState()
   const [categories, setCategories] = useState([])
 

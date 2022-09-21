@@ -1,4 +1,5 @@
 import styles from './group.module.css'
+import { ws } from './right-sidebar'
 import { useState } from 'react'
 import {useAuth} from './../../App'
 import { findCookies } from './right-sidebar';
@@ -24,7 +25,8 @@ import { postData } from '../Login';
 
 export function Group({dispatch}) {
   const { nickname } = useAuth();
-  const [title, setTitle] = useState()
+  const [title, setTitle] = useState("")
+  const [visibility, setVisibility] = useState("public")
   const [desc, setDesc] = useState()
 
   function handleTitleChange(e) {
@@ -35,20 +37,30 @@ export function Group({dispatch}) {
     <div className={styles.feed}>
       <div className={styles.creator}>
         <h1 style={{"color": "white"}}>Create a group</h1>
-        <input className={styles.title} placeholder={"What do you want to post, " + nickname} value={title} onChange={handleTitleChange} />
+        <input className={styles.title} placeholder={"What is the group name, " + nickname + "?"} value={title} onChange={handleTitleChange} />
+        <div className={styles.dropdownVisibility}>
+        <label htmlFor="visibility">Visibility</label>
+        <select name="visibility" id="visibility" value={visibility} onChange={(e) => setVisibility(e.target.value)}>
+          <option value="public">Public</option>
+          <option value="private">Private</option>
+        </select>
+          </div>
         <Description nickname={nickname} title={title} value={desc} dispatch={dispatch} setDesc={setDesc} />
       </div>
     </div>
   )
 }
 
-function Description({nickname, title, value, setDesc, dispatch}) {
+function Description({nickname, title, value, visibility, setDesc, dispatch}) {
   function submitPost() {
     let cookieStruct = findCookies();
-    const postObj = {title: title, body: value}
-    console.log(postObj);
+    let isPrivate = visibility === "private"
+    const postObj = {title: title, description: value, isPrivate: isPrivate}
     // postData('http://localhost:8000/api/v1/categories/', postObj).then(i => dispatch({type: 'create', postId:i}))
-    postData('http://localhost:8000/api/v1/categories/', postObj, false).then(i => console.log(i));
+    // postData('http://localhost:8000/api/v1/categories/', postObj, false).then(i => console.log(i));
+      let x = ws.send(JSON.stringify({...postObj, mode: "registerGroup"}))
+    console.log(x)
+    return
   }
   if (title && value) {
     return (
