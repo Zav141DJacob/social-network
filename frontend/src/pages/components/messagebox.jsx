@@ -82,8 +82,10 @@ export function MessageBox({user, closeHandler, getOnlineUsers, dispatch}) {
   }, [user])
 
   ws.onmessage = function(event) {
-    getOnlineUsers()
     let jsonData = JSON.parse(event.data)
+    console.log(jsonData)
+    if (jsonData.Type === "") {}
+    getOnlineUsers()
     handleSubmit(jsonData);
   }
 

@@ -1,6 +1,7 @@
 import styles from './topbar.module.css'
 import {useAuth} from './../../App'
 import { useState } from 'react'
+import { ws } from './right-sidebar'
 
 function ProfileDropdown({dispatch}) {
   const {onLogout, nickname} = useAuth();
@@ -46,11 +47,13 @@ const mockNotifications = [
   }
 ]
 function NotificationDropdown({dispatch}) {
+  const [notifications, setNotifications] = useState(mockNotifications);
+
   return (
     <>
       <div className={styles.arrowUpNotification}></div>
       <div className={styles.notificationDrop}>
-        {mockNotifications.map(item => {
+        {notifications.map(item => {
           switch (item.type) {
             case "Follow": {
               return (
@@ -72,6 +75,9 @@ function NotificationDropdown({dispatch}) {
                   <button className={styles.notificationDeclineBtn}>Refuse</button>
                 </div>
               )
+            }
+            default: {
+              return <></>
             }
           }
         })}
