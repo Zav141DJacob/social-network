@@ -276,6 +276,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 				Message  string
 				Sent	 bool
 				SenderId idType
+				Type	 string
 			}
 
 			message  := v["message"]
@@ -306,6 +307,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 			}
 
 			to.Sent = true
+			to.Type = mode.(string)
 
 			jsonTo, err = json.Marshal(to)
 			if err != nil {
