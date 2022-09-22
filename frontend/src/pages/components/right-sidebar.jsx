@@ -50,6 +50,8 @@ const getNotifications = async (notification, setNotification) => {
 }
 const wsOnMessage = (notification, setNotification, setUsers) => {
   ws.onmessage = function(event) {
+    let jsonData = JSON.parse(event.data)
+    console.log(jsonData)
     getOnlineUsers(notification, setNotification, setUsers)
     postData("http://localhost:8000/api/v1/notifications/", {FromUserId: JSON.parse(event.data).SenderId}, false)
       .then(resp => {
