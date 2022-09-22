@@ -276,11 +276,9 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 				posts, err = FromPosts("catId", m["categoryId"][0])
 
 			}
-			// fmt.Println(memberTo)
 
 
 			for _, post := range posts {
-				
 				found := false
 
 				for _, v := range memberTo {

@@ -42,7 +42,7 @@ func All() error {
 // 
 func posts() error{
 	// interfaceArr := make([]interface{}, 1)
-	err := Post(1, []interface{}{float64(1)}, "this is a test1 post", "this is the body of the test1")
+	err := Post(1, 1, "this is a test1 post", "this is the body of the test1")
 	if err != nil {
 		return errors.New("ERROR in post: " + err.Error())
 	}

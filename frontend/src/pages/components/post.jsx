@@ -37,7 +37,10 @@ export function PostComponent({post, postInfo, dispatch}) {
       if (postInfo) {
         setPostData(postInfo)
       } else {
-        fetch(`http://localhost:8000/api/v1/posts?postId=${post}`, {method: "GET", mode:'cors', cache:"no-cache", credentials:"include", headers: {Authentication: output.session}}).then(res => res.json().then(i => setPostData(i[0])))
+        fetch(`http://localhost:8000/api/v1/posts/?postId=${post}`, {method: "GET", credentials:"include", headers: {Authentication: output.session}})
+        .then(res => res.json()
+        .then(i => setPostData(i[0])))
+        .catch((e) => console.log(e))
       }
     }
     if (!commentData && !postInfo) {
