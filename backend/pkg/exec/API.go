@@ -219,11 +219,12 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 		auth := AuthenticateSession(r.Header["Authentication"])
 
 
-		if (auth == SessionData{}) {
-			w.WriteHeader(401)
-			return
-		}
+		// if (auth == SessionData{}) {
+		// 	w.WriteHeader(401)
+		// 	return
+		// }
 
+		auth.UserId = 0
 		switch r.Method {
 		case "GET":
 
@@ -266,7 +267,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			if len(m["categoryId"]) == 0{
 				posts, err = FromPosts("", "")
  
-			} else if len(m["postId"]) == 0{
+			} else if len(m["postId"]) != 0{
 				posts, err = FromPosts("postId", m["postId"][0])
 
 			} else {
@@ -275,6 +276,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			}
 
 			for _, post := range posts {
+				fmt.Println(post)
 				found := false
 
 				for _, v := range memberTo {
