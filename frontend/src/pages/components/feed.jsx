@@ -26,9 +26,15 @@ export function Feed({selectedCat, dispatch, forwardRef, scrollValue}) {
   const [posts, setPosts] = useState()
   const throttler = useRef(throttle((newVal, ref) => ref?.current?.scroll({top: newVal}), 40))
   const [postCopy, setPostCopy] = useState()
+  let cookies = document.cookie
+  let output = {};
+  cookies.split(/\s*;\s*/).forEach(function(pair) {
+    pair = pair.split(/\s*=\s*/);
+    output[pair[0]] = pair.slice(1).join('=');
+  });
   useEffect(() => {
     if (!posts) {
-      fetch(`http://localhost:8000/api/v1/posts/`).then(res => res.json().then(i => setPosts(i)))
+      fetch(`http://localhost:8000/api/v1/posts/`, {method: "GET", mode:'cors', cache:"no-cache", credentials:"include", headers: {Authentication: output.session}}).then(res => res.json().then(i => setPosts(i)))
     }
     if (forwardRef.current) {
       throttler.current(scrollValue, forwardRef)
