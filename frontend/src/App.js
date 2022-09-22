@@ -29,7 +29,7 @@ function postReducer(state, action) {
     case 'create':
       return {postSelected: true, postId: action.postId, profile: false, profileDrop: false}
     case 'category':
-      return {postSelected: false, profile: false, profileDrop: false, postCat: state.postCat === action.category ? 'all' : action.category}
+      return {postSelected: false, profile: false, profileDrop: false, postCat: action.category}
     case 'group':
       return {...defaultFalse, createGroup: true}
     case 'profile':

@@ -37,7 +37,7 @@ export function PostComponent({post, postInfo, dispatch}) {
       if (postInfo) {
         setPostData(postInfo)
       } else {
-        fetch(`http://localhost:8000/api/v1/posts/${post}/`, {method: "GET", mode:'cors', cache:"no-cache", credentials:"include", headers: {Authentication: output.session}}).then(res => res.json().then(i => setPostData(i[0])))
+        fetch(`http://localhost:8000/api/v1/posts?postId=${post}`, {method: "GET", mode:'cors', cache:"no-cache", credentials:"include", headers: {Authentication: output.session}}).then(res => res.json().then(i => setPostData(i[0])))
       }
     }
     if (!commentData && !postInfo) {
@@ -45,7 +45,7 @@ export function PostComponent({post, postInfo, dispatch}) {
         i === null ? setCommentData([]) : setCommentData(i)
       }))
     }
-  }, [postData, commentData, postInfo, post]) 
+  }, [postData, commentData, postInfo, post, output]) 
 
   const closePostHandler = (e) => {
     e.stopPropagation()
