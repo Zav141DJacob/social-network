@@ -266,6 +266,9 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			if len(m["categoryId"]) == 0{
 				posts, err = FromPosts("", "")
  
+			} else if len(m["postId"]) == 0{
+				posts, err = FromPosts("postId", m["postId"][0])
+
 			} else {
 				posts, err = FromPosts("catId", m["categoryId"][0])
 
