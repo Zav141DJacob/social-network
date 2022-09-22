@@ -1,6 +1,8 @@
 import {useAuth} from './../../App'
+import { ws } from './right-sidebar'
 import {useState, useEffect} from 'react'
 import styles from './profile.module.css'
+
 export function Profile({userId, state, dispatch}) {
   const {nickname} = useAuth();
   const [profile, setProfile] = useState()
@@ -53,12 +55,18 @@ export function Profile({userId, state, dispatch}) {
 
   let isPrivate = true
 
+  function follow(user) {
+    const postObj = {userId: user}
+    console.log(postObj)
+    ws.send(JSON.stringify({...postObj, mode: "follow"}))
+  }
+
   if (profile?.User) {
     return (
       <div className={styles.feed}>
         <div className={styles.profile}>
           <img className={styles.avatar} src={`http://localhost:8000/static/${profile.User.Avatar}`} />
-          {profile.User.Nickname !== nickname && <button className={styles.followBtn}>Follow</button>}
+          {profile.User.Nickname !== nickname && <button className={styles.followBtn} onClick={() => follow(profile.User.UserId)}>Follow</button>}
           <h2 className={styles.name}>{profile.User.FirstName} {profile.User.LastName}</h2>
           <div className={styles.stats}>
             <span>{(profile?.Posts?.length || profile?.Posts ) ?? 0} posts</span>
