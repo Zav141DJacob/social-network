@@ -46,9 +46,9 @@ func posts() error{
 	if err != nil {
 		return errors.New("ERROR in post: " + err.Error())
 	}
-	Post(2, []interface{}{float64(1)}, "this is a test2 post from Kertu", "this is the body of the test2 from Kertu")
-	Post(1, []interface{}{float64(2)}, "I am posting into Javascript", "Javascript is a great language!")
-	Post(2, []interface{}{float64(1), float64(2), float64(3)}, "Kertu is posting into everything", "I dont like Javascript :(")
+	Post(2, 1, "this is a test2 post from Kertu", "this is the body of the test2 from Kertu")
+	Post(1, 2, "I am posting into Javascript", "Javascript is a great language!")
+	Post(2, 3, "Kertu is posting into RuS!", "I dont like Rust :(")
 	return nil
 }
 
@@ -74,21 +74,6 @@ func comments() error {
 	return nil
 }
 
-func postLikes() error {
-	err := LikePost(1, 1, 1)
-	if err != nil {
-		return errors.New("ERROR in postLikes: " + err.Error())
-	}
-	return nil
-}
-
-func commentLikes() error {
-	err := LikeComment(1, 1, 1)
-	if err != nil {
-		return errors.New("ERROR in commentLikes: " + err.Error())
-	}
-	return nil 
-}
 
 func Categories() error {
 	err := InsertCategory("Golang", "For all of your Golang needs!", 0, true)

@@ -22,7 +22,7 @@ import (
 //	post body
 func Post(userId, catId, title, body interface{}) error {
 	
-	stmt, err := Db.Prepare("INSERT INTO posts (userId, title, body, date) VALUES (?, ?, ?, ?);")
+	stmt, err := Db.Prepare("INSERT INTO posts (userId, title, body, catId, date) VALUES (?, ?, ?, ?, ?);")
 
 	if err != nil {
 		return err
@@ -30,35 +30,35 @@ func Post(userId, catId, title, body interface{}) error {
 
 	defer stmt.Close()
 
-	stmt.Exec(userId, title, body, time.Now())
+	stmt.Exec(userId, title, body, catId, time.Now())
 
-	posts, err := FromPosts("", "")
+	// posts, err := FromPosts("", "")
 
-	if err != nil {
-		return err
-	}	
+	// if err != nil {
+	// 	return err
+	// }	
 
-	postId := len(posts)
+	// postId := len(posts)
 	
-	stmt, err = Db.Prepare("INSERT INTO postCategory (postId, catId, categoryTitle) VALUES (?, ?, ?);")
-	if err != nil {
-		return err
-	}
+	// stmt, err = Db.Prepare("INSERT INTO postCategory (postId, catId, categoryTitle) VALUES (?, ?, ?);")
+	// if err != nil {
+	// 	return err
+	// }
 
-	for _, c := range catId.([]interface{}) {
+	// for _, c := range catId.([]interface{}) {
 
-		category, err := FromCategories("catId", c)
+	// 	category, err := FromCategories("catId", c)
 
-		if err != nil {
-			return err
-		}
+	// 	if err != nil {
+	// 		return err
+	// 	}
 
-		_, err = stmt.Exec(postId, category[0].CatId, category[0].Title)
+	// 	_, err = stmt.Exec(postId, category[0].CatId, category[0].Title)
 
-		if err != nil {
-			return err
-		}
-	}
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// }
 
 	return nil
 }
