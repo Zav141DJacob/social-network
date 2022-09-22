@@ -97,7 +97,7 @@ export function PostComponent({post, postInfo, dispatch}) {
     });
   }
 
-  console.log(postData)
+    // console.log(postData)
   return (
     <div className={styles.postC}>
       <div className={styles.postContainer} onClick={() => dispatch({type: 'select', postId: postData?.Post?.PostId})}>

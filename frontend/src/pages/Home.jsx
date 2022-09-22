@@ -48,7 +48,7 @@ export default function Home({post, dispatch}) {
     return (
       <>
         <LeftSideBar dispatch={dispatch} />
-        {post.postSelected ? postLayout : post.createGroup ? <Group/> : post.profile ? <Profile state={post} user={post.profileId}/> : <Feed forwardRef={feedScroll} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
+        {post.postSelected ? postLayout : post.createGroup ? <Group/> : post.profile ? <Profile state={post} user={post.profileId}/> : <Feed forwardRef={feedScroll} state={post} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
         <RightSideBar dispatch={dispatch} />
       </>
     )

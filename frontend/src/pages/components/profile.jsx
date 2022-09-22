@@ -57,7 +57,7 @@ export function Profile({userId, state, dispatch}) {
 
   function follow(user) {
     const postObj = {targetId: user}
-    console.log(postObj)
+    // console.log(postObj)
     ws.send(JSON.stringify({...postObj, mode: "follow"}))
   }
 

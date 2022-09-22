@@ -22,7 +22,7 @@ import { postData } from '../Login'
 //   return response.json(); // parses JSON response into native JavaScript objects
 // }
 
-export function Feed({selectedCat, dispatch, forwardRef, scrollValue}) {
+export function Feed({selectedCat, dispatch, state, forwardRef, scrollValue}) {
   const [posts, setPosts] = useState()
   const throttler = useRef(throttle((newVal, ref) => ref?.current?.scroll({top: newVal}), 40))
   const [postCopy, setPostCopy] = useState()
@@ -42,6 +42,7 @@ export function Feed({selectedCat, dispatch, forwardRef, scrollValue}) {
   })
 
   useEffect(() => {
+    console.log(posts)
     if (selectedCat.postCat) {
       switch (selectedCat.postCat) {
         case 'rust':
@@ -59,7 +60,7 @@ export function Feed({selectedCat, dispatch, forwardRef, scrollValue}) {
   }, [posts, selectedCat])
   return (
     <div className={styles.feed} ref={forwardRef}>
-      <CreatePost dispatch={dispatch}/>
+      <CreatePost dispatch={dispatch} state={state}/>
       <div className={styles.posts} >
         {postCopy?.map(i => <PostComponent key={i?.Post?.PostId} postInfo={i} dispatch={dispatch}/>)}
       </div>
@@ -67,7 +68,7 @@ export function Feed({selectedCat, dispatch, forwardRef, scrollValue}) {
   )
 }
 
-function CreatePost({dispatch}) {
+function CreatePost({state, dispatch}) {
   const [openDesc, setOpenDesc] = useState()
   const { nickname } = useAuth();
   const [title, setTitle] = useState("")
@@ -123,7 +124,7 @@ function CreatePost({dispatch}) {
   return (
     <div className={styles.creator}>
       <input className={styles.title} placeholder={"What do you want to post, " + nickname} value={title} onChange={handleTitleChange} onClick={() => setOpenDesc(true)}/>
-      {openDesc && <Description nickname={nickname} title={title} value={desc} dispatch={dispatch} setDesc={setDesc} categories={categories}/>}
+      {openDesc && <Description nickname={nickname} state={state} title={title} value={desc} dispatch={dispatch} setDesc={setDesc} categories={categories}/>}
       <div className={styles.categories}>
         <ul className={styles.ul}>
           <li className={styles.li} id="rust" onClick={selectCategory}><div className={styles.category} style={{top: "-14px"}}><div style={{width: "22px"}}><div className={styles.rustlogo}/></div>Rust</div></li>
@@ -135,27 +136,15 @@ function CreatePost({dispatch}) {
   )
 }
 
-function Description({nickname, title, value, setDesc, categories, dispatch}) {
+function Description({nickname, state, title, value, setDesc, categories, dispatch}) {
+  console.log(state)
   function submitPost() {
-    let cats = categories.map(i => {
-      switch(i) {
-        case 'rust':
-          return 3;
-        case 'js':
-          return 2;
-        case 'go':
-          return 1;
-        default:
-          return null
-      }
-    })
-    cats.sort()
     let cookieStruct = {}
     for (const i of document.cookie.split("; ")) {
       let split = i.split("=")
       cookieStruct[split[0]] = split[1]
     }
-    const postObj = {title: title, body: value, categories: cats, userToken: cookieStruct.session}
+    const postObj = {title: title, body: value, categories: state.postCat, userToken: cookieStruct.session}
     postData('http://localhost:8000/api/v1/posts/', postObj).then(i => dispatch({type: 'create', postId:i}))
   }
   if (title && value && categories?.length > 0) {
