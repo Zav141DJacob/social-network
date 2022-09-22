@@ -15,6 +15,14 @@ export function PostComponent({post, postInfo, dispatch}) {
     minRows: 3,
     maxRows: 5,
   })
+
+  let cookies = document.cookie
+  let output = {};
+  cookies.split(/\s*;\s*/).forEach(function(pair) {
+    pair = pair.split(/\s*=\s*/);
+    output[pair[0]] = pair.slice(1).join('=');
+  });
+
   useEffect(() => {
     if (post) {
       window.history.pushState("y2", "x3", `/post/${post}`)
@@ -23,16 +31,17 @@ export function PostComponent({post, postInfo, dispatch}) {
   const { nickname } = useAuth()
   const nav = useNavigate()
 
+
   useEffect(() => {
     if (!postData) {
       if (postInfo) {
         setPostData(postInfo)
       } else {
-        fetch(`http://localhost:8000/api/v1/posts/${post}/`).then(res => res.json().then(i => setPostData(i[0])))
+        fetch(`http://localhost:8000/api/v1/posts/${post}/`, {method: "GET", mode:'cors', cache:"no-cache", credentials:"include", headers: {Authentication: output.session}}).then(res => res.json().then(i => setPostData(i[0])))
       }
     }
     if (!commentData && !postInfo) {
-      fetch(`http://localhost:8000/api/v1/comments/post/${post}/`).then(res => res.json().then(i => {
+      fetch(`http://localhost:8000/api/v1/comments/post/${post}/`, {method: "GET", mode:'cors', cache:"no-cache", credentials:"include", headers: {Authentication: output.session}}).then(res => res.json().then(i => {
         i === null ? setCommentData([]) : setCommentData(i)
       }))
     }
