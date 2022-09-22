@@ -4,6 +4,7 @@ import (
 	// "fmt"
 	"fmt"
 	"strconv"
+	"database/sql"
 	"time"
 
 	// "net/http"
@@ -317,7 +318,10 @@ func PingUser(userId, fromUserId interface{}) error {
 	return nil
 }
 
-func Notify(userId, avatar, targetId, mode interface{}) error {
+func Notify(userId, avatar, targetId, catId, mode interface{}) error {
+
+	var stmt *sql.Stmt
+	var err error
 
 	list, err := FromNotificationsList("userId", userId)
 	if err != nil {
@@ -325,18 +329,19 @@ func Notify(userId, avatar, targetId, mode interface{}) error {
 	}
 
 	for _, l := range list {
-		if l.TargetId == targetId && l.Type == mode {
+		if l.TargetId == targetId && l.Type == mode && l.CatId == catId {
 			return CreateErr("409")
 		} 
 	}
-	stmt, err := Db.Prepare("INSERT INTO notificationsList (userId, avatar, targetId, mode) VALUES (?, ?, ?, ?)")
+	
+	stmt, err = Db.Prepare("INSERT INTO notificationsList (userId, avatar, targetId, mode) VALUES (?, ?, ?, ?)")
 	
 	if err != nil {
 		return err
 	}
 
 	defer stmt.Close()
-	stmt.Exec(userId, avatar, targetId, mode)
+	stmt.Exec(userId, avatar, targetId, catId, mode)
 	return nil
 }
 

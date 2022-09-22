@@ -136,6 +136,7 @@ type NotificationsListData struct {
 	UserId		int
 	UserAvatar	string
 	TargetId	int
+	CatId		int
 	Type		string
 }
 // type ErrorString struct {

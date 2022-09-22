@@ -2,10 +2,11 @@ package exec
 
 import (
 	"log"
+	"strconv"
 	"net/http"
 	"encoding/json"
 	"github.com/gorilla/websocket"
-  "fmt"
+  	"fmt"
 )
 
 // This article helped me a lot with this project:
@@ -183,10 +184,6 @@ func (c *Client) reader(conn *websocket.Conn) {
 				HandleErr(err)
 			}
 		case "registerGroup":
-			type toClient struct {
-				ErrorCode int
-			}
-
 			title  		:= v["title"]
 			description := v["description"]
 			isPublic	:= v["isPublic"]
@@ -203,25 +200,20 @@ func (c *Client) reader(conn *websocket.Conn) {
 
 			if len(category) == 0 {
 
+
 				err = InsertCategory(title, description, int(c.id), isPublic)
-				if err == nil {
-					errCode = 201
-					
-					manager.registerGroup <- c
+				if err != nil {
+					HandleErr(err)
+					break
 				}
+				errCode = 201
+				
+				manager.registerGroup <- c
+				
+			} else {
+				HandleErr(CreateErr("ERROR " + strconv.Itoa(errCode)))
 			}
 
-			jsonTo, err := json.Marshal(toClient{ErrorCode: errCode})
-			if err != nil {
-				HandleErr(err)
-				break
-			}
-			
-			err = conn.WriteMessage(messageType,[]byte(jsonTo))
-			if err != nil {
-				HandleErr(err)
-				break
-			}
 		case "follow":
 			targetId := v["targetId"]
 			user, err := FromUsers("userId", c.id)
@@ -229,14 +221,17 @@ func (c *Client) reader(conn *websocket.Conn) {
 				HandleErr(err)
 				break
 			}
-			err = Notify(user[0].UserId, user[0].Avatar, targetId, mode)
+			err = Notify(user[0].UserId, user[0].Avatar, targetId, "", mode)
 			if err != nil {
 				HandleErr(err)
 				break
 			}
 
-
-
+			err = Follow(c.id, targetId)
+			if err != nil {
+				HandleErr(err)
+				break
+			}
 		default:
 			type toClient struct {
 				Message  string
