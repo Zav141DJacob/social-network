@@ -135,6 +135,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 				Message  string
 				Sent	 bool
 				SenderId idType
+				Type	 string
 			}
 
 			message  := v["message"]
@@ -144,6 +145,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 			to.Message = message.(string)
 			to.Sent = false
 			to.SenderId = c.id
+			to.Type = mode.(string)
 
 			jsonTo, err := json.Marshal(to)
 			if err != nil {
@@ -215,6 +217,11 @@ func (c *Client) reader(conn *websocket.Conn) {
 			}
 
 		case "follow":
+			type toClient struct {
+				User	string
+				Avatar	string
+				Type	string
+			}
 			targetId := v["targetId"]
 			fmt.Println(targetId)
 			user, err := FromUsers("userId", c.id)
@@ -222,7 +229,15 @@ func (c *Client) reader(conn *websocket.Conn) {
 				HandleErr(err)
 				break
 			}
-			err = Notify(user[0].UserId, user[0].Avatar, targetId, "", mode)
+
+			target, err := FromUsers("userId", targetId)
+			if err != nil {
+				
+				HandleErr(err)
+				break
+			}
+
+			err = Notify(user, target, "", mode)
 			if err != nil {
 				HandleErr(err)
 				break
@@ -233,6 +248,29 @@ func (c *Client) reader(conn *websocket.Conn) {
 				HandleErr(err)
 				break
 			}
+
+			to := toClient{}
+			to.Type   = mode.(string)
+			to.User   = user[0].Nickname
+			to.Avatar = user[0].Avatar
+
+			jsonTo, err := json.Marshal(to)
+			if err != nil {
+				HandleErr(err)
+				return
+			}
+			// targetId := idType(target[0].UserId)
+
+			value, isValid := manager.clients[idType(target[0].UserId)]
+
+			if isValid {
+				err = value.WriteMessage(messageType, []byte(jsonTo))
+				if err != nil {
+					HandleErr(err)
+				}
+			}
+
+			
 		default:
 			type toClient struct {
 				Message  string

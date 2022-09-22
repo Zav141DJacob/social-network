@@ -318,30 +318,36 @@ func PingUser(userId, fromUserId interface{}) error {
 	return nil
 }
 
-func Notify(userId, avatar, targetId, catId, mode interface{}) error {
+func Notify(user, target []UserData, catId, mode interface{}) error {
 
 	var stmt *sql.Stmt
 	var err error
 
-	list, err := FromNotificationsList("userId", userId)
+	list, err := FromNotificationsList("userId", user[0].UserId)
 	if err != nil {
 		return err
 	}
 
 	for _, l := range list {
-		if l.TargetId == targetId && l.Type == mode && l.CatId == catId {
+		if l.TargetId == target[0].UserId && l.Type == mode && l.CatId == catId {
 			return CreateErr("409")
 		} 
 	}
 	
-	stmt, err = Db.Prepare("INSERT INTO notificationsList (userId, userAvatar, targetId, type) VALUES (?, ?, ?, ?)")
+	stmt, err = Db.Prepare("INSERT INTO notificationsList (userId, nickname, userAvatar, targetId, targetName, catId, type) VALUES (?, ?, ?, ?, ?, ?)")
 	
 	if err != nil {
 		return err
 	}
 
+	// user, err := FromUsers("userId", userId)
+	// if err != nil {
+	// 	return err
+	// }
+
+
 	defer stmt.Close()
-	stmt.Exec(userId, avatar, targetId, catId, mode)
+	stmt.Exec(user[0].UserId, user[0].Nickname, user[0].Avatar, target[0].UserId, target[0].Nickname, catId, mode)
 	return nil
 }
 

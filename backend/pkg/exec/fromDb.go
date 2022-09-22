@@ -351,8 +351,10 @@ func FromNotificationsList(condition string, value interface{}) ([]Notifications
 		err = rows.Scan(
 			&notification.Id,
 			&notification.UserId,
+			&notification.Nickname,
 			&notification.UserAvatar,
 			&notification.TargetId,
+			&notification.TargetName,
 			&notification.Type)
 
 		if err != nil {
