@@ -194,5 +194,3 @@ function Textbox({scrollRef, handleSubmit, messages, setMessages, currentMessage
   //  return <div style={{height: `${(24*currentMessage.rows)}px`}}><textarea rows={currentMessage.rows} style={{top: `${414+(-24*currentMessage.rows)}px` }} value={currentMessage.value}
   //  className={styles.messageInput} placeholder={"Aa..."} onChange={handleChange} /></div>;
 }
-message.txt
-7 KB
