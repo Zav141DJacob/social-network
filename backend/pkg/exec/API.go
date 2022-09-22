@@ -219,12 +219,12 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 		auth := AuthenticateSession(r.Header["Authentication"])
 
 
-		// if (auth == SessionData{}) {
-		// 	w.WriteHeader(401)
-		// 	return
-		// }
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
+			return
+		}
 
-		auth.UserId = 0
+		// auth.UserId = 1
 		switch r.Method {
 		case "GET":
 
@@ -263,20 +263,24 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			// }
 			var posts []PostData
 			// var err error
+			// fmt.Println(len(m["postId"]))
 
-			if len(m["categoryId"]) == 0{
-				posts, err = FromPosts("", "")
- 
-			} else if len(m["postId"]) != 0{
+			if len(m["postId"]) > 0{
+				// fmt.Println(m["postId"][0])
 				posts, err = FromPosts("postId", m["postId"][0])
 
+			} else if len(m["categoryId"]) == 0{
+				posts, err = FromPosts("", "")
+ 
 			} else {
 				posts, err = FromPosts("catId", m["categoryId"][0])
 
 			}
+			// fmt.Println(memberTo)
+
 
 			for _, post := range posts {
-				fmt.Println(post)
+				
 				found := false
 
 				for _, v := range memberTo {
@@ -295,6 +299,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 					w.WriteHeader(500)
 					return
 				}
+				// fmt.Println(post)
 				toAPI = append(toAPI, toPosts{Post: post, User: user[0].Nickname})
 			}
 			jsonPosts, err := json.Marshal(toAPI)
