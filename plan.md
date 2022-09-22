@@ -83,4 +83,4 @@ body {
 
 //    500: "Internal Server Error"
 
-
+TODO: if on a group page the post will be in that group only

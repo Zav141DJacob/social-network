@@ -230,7 +230,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			type toPosts struct {
 				Post	 PostData
 				User     string
-				Category []PostCategoryData
+				// Category CategoryData
 			}
 			var toAPI []toPosts
 
@@ -260,186 +260,38 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			// 	w.WriteHeader(500)
 			// 	return
 			// }
-			if len(m["categoryId"]) == 0 {
-				posts, err := FromPosts("", "")
+			posts, err := FromPosts("catId", m["categoryId"])
 
-				for i := len(posts) - 1; i >= 0; i-- {
-					found := false
+			for _, post := range posts {
+				found := false
 
-					postCategory, err := FromPostCategory("postId", posts[i].PostId)
-					if err != nil {
-						HandleErr(err)
-						w.WriteHeader(500)
-						return
+				for _, v := range memberTo {
+					if v.CatId == post.CatId {
+						found = true
+						break
 					}
-					for _, category := range postCategory {
-						for _, group := range memberTo {
-							if category.CatId == group.CatId {
-								found = true
-								break
-							}
-						}
-						if found == true {
-							break
-						}
-					}
-					
-
-					if !found {
-						continue
-					}
-					post := posts[i]
-					user, err := FromUsers("UserId", post.UserId)
-		
-					if err != nil {
-						HandleErr(err)
-						w.WriteHeader(http.StatusInternalServerError)
-						return
-					}
-		
-					var getStruct toPosts
-		
-					getStruct.Post = post
-		
-					getStruct.User = user[0].Nickname
-		
-					getStruct.Category = postCategory
-
-					toAPI = append(toAPI, getStruct)
-				}
-			
-				jsonPosts, err := json.Marshal(toAPI)
-				if err != nil {
-					HandleErr(err)
-					w.WriteHeader(http.StatusInternalServerError)
-					return
 				}
 
-				fmt.Fprintln(w, string(jsonPosts))
-				return
-			}
-
-			// else {
-			categoryId := m["categoryId"][0]
-	
-			found := false
-			for _, group := range memberTo {
-				catId, err := strconv.Atoi(categoryId)
+				if found == false {
+					continue
+				}
+				user, err := FromUsers("userId", post.UserId)
 
 				if err != nil {
-					HandleErr(err)
-					w.WriteHeader(http.StatusInternalServerError)
+					w.WriteHeader(500)
 					return
 				}
-
-				if catId == group.CatId {
-					found = true
-					break
-				}
-				
+				toAPI = append(toAPI, toPosts{Post: post, User: user[0].Nickname})
 			}
-			if !found {
-				w.WriteHeader(401)
-				return
-			}
-
-			categories, err := FromPostCategory("catId", categoryId)
-	
-			if err != nil {
-				HandleErr(err)
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-
-			for _, category := range categories {
-				post, err := FromPosts("postId", category.PostId)
-				fmt.Println(post)
-				if err != nil {
-					HandleErr(err)
-					w.WriteHeader(http.StatusInternalServerError)
-					return
-				}
-
-				if len(post) == 0 {
-					fmt.Println(`ERROR: 500,
-					This probably happened because the developers aren't finished with a feature
-					(Possibly Delete Post?)`)
-					w.WriteHeader(http.StatusInternalServerError)
-					return
-				}
-
-				user, err := FromUsers("UserId", post[0].UserId)
-		
-				if err != nil {
-					HandleErr(err)
-					w.WriteHeader(http.StatusInternalServerError)
-					return
-				}
-
-				postCategories, err := FromPostCategory("postId", category.CatId)
-				if err != nil {
-					HandleErr(err)
-					w.WriteHeader(http.StatusInternalServerError)
-					return
-				}
-
-				var getStruct toPosts
-		
-				getStruct.Post = post[0]
-	
-				getStruct.User = user[0].Nickname
-	
-				getStruct.Category = postCategories
-
-				toAPI = append(toAPI, getStruct)
-			}
-	
-			
-	
-			// path := strings.Split(r.URL.Path, "/")
-	
-			// var posts []PostData
-			// var err error
-	
-	
-			// if len(path) == 7 {
-			// 	if path[4] != "category" {
-			// 		w.WriteHeader(http.StatusInternalServerError)
-			// 		return
-			// 	}
-			// 	category, err = FromPostCategory("catId", path[5])
-	
-			// 	if err != nil {
-			// 		HandleErr(err)
-			// 		w.WriteHeader(http.StatusInternalServerError)
-			// 		return
-			// 	}
-	
-	
-			// } else if len(path) == 6 {
-			// 	posts, err = FromPosts("PostId", path[4])
-			// } else {
-			// 	posts, err = FromPosts("", "")
-			// }
-			
-			// if err != nil {
-			// 	HandleErr(err)
-			// 	// https://golangbyexample.com/500-status-http-response-golang/
-			// 	w.WriteHeader(http.StatusInternalServerError)
-			// 	return
-			// }
-	
-	
-	
-			// posts, err := FromPosts("", "")
-	
 			jsonPosts, err := json.Marshal(toAPI)
 			if err != nil {
 				HandleErr(err)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
+
 			fmt.Fprintln(w, string(jsonPosts))
+			return
 		case "POST":
 			var v map[string]interface{}
 	
@@ -451,7 +303,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			}
 	
 			// userToken	:= v["userToken"]
-			categoryIds := v["categories"]
+			categoryId  := v["categoryId"]
 			title  		:= v["title"]
 			body   		:= v["body"]
 			// ToDo:
@@ -471,7 +323,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			// 	return
 			// }
 	
-			err = Post(auth.UserId, categoryIds, title, body)
+			err = Post(auth.UserId, categoryId, title, body)
 			if err != nil {
 				HandleErr(err)
 				w.WriteHeader(http.StatusInternalServerError)

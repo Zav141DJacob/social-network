@@ -24,6 +24,7 @@ type PostData struct {
 	UserId int
 	Title  string
 	Body   string
+	CatId  int
 	Date   string
 }
 
