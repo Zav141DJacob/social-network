@@ -216,6 +216,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 
 		case "follow":
 			targetId := v["targetId"]
+			fmt.Println(targetId)
 			user, err := FromUsers("userId", c.id)
 			if err != nil {
 				HandleErr(err)

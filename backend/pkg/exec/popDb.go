@@ -113,17 +113,17 @@ func messages() error {
 }
 
 func follows() error {
-	err := Follow(1, 2)
-	if err != nil {
-		return errors.New("ERROR in follow: " + err.Error())
-	}
-	Follow(1, 3)
+	// err := Follow(1, 2)
+	// if err != nil {
+	// 	return errors.New("ERROR in follow: " + err.Error())
+	// }
+	// Follow(1, 3)
 
-	Follow(2, 1)
+	// Follow(2, 1)
 
-	Follow(3, 1)
+	// Follow(3, 1)
 
-	Follow(3, 2)
+	// Follow(3, 2)
 
 	return nil
 }

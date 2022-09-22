@@ -56,7 +56,7 @@ export function Profile({userId, state, dispatch}) {
   let isPrivate = true
 
   function follow(user) {
-    const postObj = {userId: user}
+    const postObj = {targetId: user}
     console.log(postObj)
     ws.send(JSON.stringify({...postObj, mode: "follow"}))
   }
