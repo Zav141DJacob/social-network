@@ -52,14 +52,16 @@ const wsOnMessage = (notification, setNotification, setUsers) => {
   ws.onmessage = function(event) {
     let jsonData = JSON.parse(event.data)
     console.log(jsonData)
-    getOnlineUsers(notification, setNotification, setUsers)
-    postData("http://localhost:8000/api/v1/notifications/", {FromUserId: JSON.parse(event.data).SenderId}, false)
-      .then(resp => {
-        getNotifications(notification, setNotification)
-      })
-      .catch(err => {
-        console.log("found error in wsOnMessage!: ", err)
-      })
+    if (jsonData.Type === "default") {
+      getOnlineUsers(notification, setNotification, setUsers)
+      postData("http://localhost:8000/api/v1/notifications/", {FromUserId: JSON.parse(event.data).SenderId}, false)
+        .then(resp => {
+          getNotifications(notification, setNotification)
+        })
+        .catch(err => {
+          console.log("found error in wsOnMessage!: ", err)
+        })
+    }
   }
 }
 const deleteNotification = (fromUserId, notification, setNotification) => {

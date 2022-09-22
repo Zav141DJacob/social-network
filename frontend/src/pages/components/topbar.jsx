@@ -48,7 +48,7 @@ const mockNotifications = [
 ]
 function NotificationDropdown({dispatch}) {
   const [notifications, setNotifications] = useState(mockNotifications);
-
+// 
   return (
     <>
       <div className={styles.arrowUpNotification}></div>
