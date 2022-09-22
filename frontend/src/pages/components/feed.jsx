@@ -43,7 +43,8 @@ export function Feed({selectedCat, dispatch, state, forwardRef, scrollValue}) {
 
   useEffect(() => {
     console.log(posts)
-    if (selectedCat.postCat) {
+    if (420, selectedCat.postCat) {
+      console.log(123, selectedCat)
       switch (selectedCat.postCat) {
         case 'rust':
           setPostCopy(posts?.filter(post => post.Category.HasRust === true))
