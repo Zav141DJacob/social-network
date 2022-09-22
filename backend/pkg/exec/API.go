@@ -260,7 +260,16 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			// 	w.WriteHeader(500)
 			// 	return
 			// }
-			posts, err := FromPosts("catId", m["categoryId"])
+			var posts []PostData
+			// var err error
+
+			if len(m["categoryId"]) == 0{
+				posts, err = FromPosts("", "")
+ 
+			} else {
+				posts, err = FromPosts("catId", m["categoryId"][0])
+
+			}
 
 			for _, post := range posts {
 				found := false
