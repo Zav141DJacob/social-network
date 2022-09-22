@@ -450,28 +450,28 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 	
-			userToken	:= v["userToken"]
+			// userToken	:= v["userToken"]
 			categoryIds := v["categories"]
 			title  		:= v["title"]
 			body   		:= v["body"]
 			// ToDo:
 			// image		:= v["image"]
 	
-			user, err := FromSessions("sessionId", userToken)
+			// user, err := FromSessions("sessionId", auth.)
 			
-			if err != nil {
-				HandleErr(err)
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
+			// if err != nil {
+			// 	HandleErr(err)
+			// 	w.WriteHeader(http.StatusInternalServerError)
+			// 	return
+			// }
 	
-			if len(user) == 0 {
-				w.WriteHeader(http.StatusInternalServerError)
-				HandleErr(err)
-				return
-			}
+			// if len(user) == 0 {
+			// 	w.WriteHeader(http.StatusInternalServerError)
+			// 	HandleErr(err)
+			// 	return
+			// }
 	
-			err = Post(user[0].UserId, categoryIds, title, body)
+			err = Post(auth.UserId, categoryIds, title, body)
 			if err != nil {
 				HandleErr(err)
 				w.WriteHeader(http.StatusInternalServerError)

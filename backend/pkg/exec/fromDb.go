@@ -355,6 +355,7 @@ func FromNotificationsList(condition string, value interface{}) ([]Notifications
 			&notification.UserAvatar,
 			&notification.TargetId,
 			&notification.TargetName,
+			&notification.CatId,
 			&notification.Type)
 
 		if err != nil {

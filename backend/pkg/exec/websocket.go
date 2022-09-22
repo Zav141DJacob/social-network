@@ -243,11 +243,11 @@ func (c *Client) reader(conn *websocket.Conn) {
 				break
 			}
 
-			err = Follow(c.id, targetId)
-			if err != nil {
-				HandleErr(err)
-				break
-			}
+			// err = Follow(c.id, targetId)
+			// if err != nil {
+			// 	HandleErr(err)
+			// 	break
+			// }
 
 			to := toClient{}
 			to.Type   = mode.(string)
@@ -269,6 +269,9 @@ func (c *Client) reader(conn *websocket.Conn) {
 					HandleErr(err)
 				}
 			}
+		case "unfollow":
+			targetId := v["targetId"]
+			UnFollow(c.id, targetId)
 
 			
 		default:
@@ -286,6 +289,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 			to.Message = message.(string)
 			to.Sent = false
 			to.SenderId = c.id
+			to.Type = mode.(string)
 
 			jsonTo, err := json.Marshal(to)
 			if err != nil {

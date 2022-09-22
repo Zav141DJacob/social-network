@@ -334,7 +334,7 @@ func Notify(user, target []UserData, catId, mode interface{}) error {
 		} 
 	}
 	
-	stmt, err = Db.Prepare("INSERT INTO notificationsList (userId, nickname, userAvatar, targetId, targetName, catId, type) VALUES (?, ?, ?, ?, ?, ?)")
+	stmt, err = Db.Prepare("INSERT INTO notificationsList (userId, nickname, userAvatar, targetId, targetName, catId, type) VALUES (?, ?, ?, ?, ?, ?, ?)")
 	
 	if err != nil {
 		return err
