@@ -48,7 +48,7 @@ export function PostComponent({post, postInfo, dispatch}) {
         i === null ? setCommentData([]) : setCommentData(i)
       }))
     }
-  }, [postData, commentData, postInfo, post, output]) 
+  }, [postData, commentData, postInfo, post, output.session]) 
 
   const closePostHandler = (e) => {
     e.stopPropagation()

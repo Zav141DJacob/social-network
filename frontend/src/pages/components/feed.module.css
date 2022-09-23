@@ -10,7 +10,7 @@
   max-width: 600px;
   min-width: 450px;
   padding-left:20px;
-  min-height: 87px;
+  min-height: 57px;
   top: 71px;
   background: rgb(48, 52, 54);
   border-radius: 12px;
@@ -51,9 +51,9 @@
 .description {
   position: relative;
   width: 94%;
-  top: 60px;
+  top: 10px;
   height: 72px;
-  margin: 0 auto 80px;
+  margin: 0 auto 20px;
   padding-left: 10px;
   padding-right: 10px;
   background: rgb(89, 96, 100);
@@ -67,6 +67,144 @@
   font-size: 14px;
   line-height: 24px;
   resize: none;
+}
+.postVisibility {
+  position: relative;
+  top: 20px;
+  display: flex;
+}
+
+
+.postVisibility > * > span {
+  position: relative;
+  top: 7px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.postVisibility > .visBtn {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 10px;
+  outline: none;
+  border: 1px rgb(88, 88, 88) solid;
+  left: 90px;
+  padding-left: 40px;
+  padding-right: 10px;
+  margin: 0px 10px 20px 0px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  color: #D0D0D0;
+  background: rgb(47, 47, 47);
+  height: 30px;
+}
+
+.postVisibility > .visBtn:hover {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: gray;
+  outline: none;
+  border-radius: 10px;
+  background: rgb(89, 96, 100);
+  border-radius: 10px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  cursor: pointer;
+}
+
+.activePostVisibility {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 10px;
+  outline: none;
+  border: 1px rgb(89, 96, 100) solid;
+  left: 90px;
+  padding-left: 40px;
+  padding-right: 10px;
+  margin: 0px 10px 20px 0px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  color: #D0D0D0;
+  background: rgb(89, 96, 100);
+  height: 30px;
+}
+
+.publicIcon {
+  position: absolute;
+  scale: 0.02;
+  top: -564px;
+  left: -560px;
+  fill: #D0D0D0;
+}
+
+.privateIcon {
+  position: absolute;
+  scale: 0.028;
+  top: -460px;
+  left: -350px;
+  fill: #D0D0D0;
+}
+
+.almostPrivateIcon {
+  position: absolute;
+  scale: 0.037;
+  top: -347px;
+  left: -129px;
+  fill: #D0D0D0;
+}
+
+.addImageBtn {
+  display: block;
+  border-radius: 10px;
+  outline: none;
+  border: 1px rgb(88, 88, 88) solid;
+  left: 90px;
+  padding-left: 40px;
+  padding-right: 10px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 800;
+  font-size: 14px;
+  color: #D0D0D0;
+  background: rgb(47, 47, 47);
+  height: 30px;
+  width: 99px;
+}
+
+.addImageBtn:hover {
+  display: block;
+  border-radius: 10px;
+  outline: none;
+  border: 1px rgb(88, 88, 88) solid;
+  left: 90px;
+  padding-left: 40px;
+  padding-right: 12px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  color: #D0D0D0;
+  background: rgb(87, 87, 87);
+  height: 30px;
+  width: 99px;
+}
+
+.addImageBtn > span {
+  position: relative;
+  top: 8px;
+}
+
+
+.addImageIcon{
+  position: absolute;
+  scale: 0.02;
+  top: -376px;
+  left: -529px;
+  fill: #D0D0D0;
 }
 
 .description::placeholder {
@@ -171,10 +309,10 @@
 
 .submitready {
   position: relative;
-  background: rgb(89, 96, 100);
   width: 97%;
   text-align: center;
   top: -7px;
+  margin-top: 17px;
   padding-top: 2px;
   padding-bottom: 2px;
   border-radius: 7px;
@@ -194,6 +332,7 @@
   width: 97%;
   text-align: center;
   top: -7px;
+  margin-top: 17px;
   padding-top: 2px;
   padding-bottom: 2px;
   border-radius: 7px;

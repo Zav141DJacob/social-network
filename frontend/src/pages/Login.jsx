@@ -107,8 +107,7 @@ export default function Login() {
       let formData = new FormData()
       let file = element.files[0]
       formData.append("file", file)
-      let x = await postImg('http://localhost:8000/api/v1/upload/', formData)
-      saveCredentials('Avatar', x)
+      postImg('http://localhost:8000/api/v1/upload/', formData).then(x => saveCredentials('Avatar', x))
     } else if ((element.name === 'Email' || element.name === 'Password') && element.value.length < 5) {
       setError({...error, [element.name]: `${[element.name]} is too short!`})
       return
@@ -218,6 +217,22 @@ export default function Login() {
   }
 
   function handleSubmit(e) {
+    console.log(typeof e)
+    if (typeof e === "object") {
+      console.log(e)
+        postData('http://localhost:8000/api/v1/sessions/', e).then(item => {
+          flushSync(() => {
+            let invalidFields = {...item}
+            if ('Name' in invalidFields) {
+              document.cookie = `session=${invalidFields.Value}; path=/;`
+              document.cookie = `uID=${e.Nickname}; path=/;`
+              navigate('/', {replace: true})
+            }
+          })
+        })
+      console.log(godLogin)
+      return
+    }
     e.stopPropagation()
     let submitField
     switch (e.target.id) {
@@ -238,7 +253,7 @@ export default function Login() {
     if (e.target.className === 'submit') {
       submitField = e.target.previousElementSibling
     }
-    setupField(submitField)
+    setupField(submitField).then()
   }
 
   function handleKeyDown(event) {
@@ -258,7 +273,10 @@ export default function Login() {
     setError(null)
     setErrorFields(['Password', ...errorFields])
   }
-
+  const godLogin = {
+    "Nickname": "Jacob",
+    "Password": "q1w2e3r4t5y6"
+  }
 
 
   if (userCreator) {
@@ -318,7 +336,8 @@ export default function Login() {
         setError(null)
       }
         }>
-        <h5>or create a new user</h5>
+        <h5 style={{"text-align": "center", "cursor": "pointer"}} >or create a new user</h5>
+        <h3 style={{"text-align": "center", "cursor": "pointer"}} onClick={() => handleSubmit(godLogin)}>God</h3>
       </div>
     </div>
   );
