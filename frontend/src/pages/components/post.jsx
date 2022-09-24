@@ -113,11 +113,6 @@ export function PostComponent({post, postInfo, dispatch}) {
         }
         <span className={styles.author} onClick={(e) => {e.stopPropagation();dispatch({type: "profile", Id: `${postData?.User}` })}}>{postData?.User}</span>
         <div className={styles.title} >{postData?.Post?.Title}</div>
-        <ul className={styles.ul}>
-          {postData?.Category?.HasRust && <li className={styles.li}><div className={styles.category} style={{top: "-16px"}}><div style={{width: "22px"}}><div className={styles.rustlogo}/></div>Rust</div></li>}
-          {postData?.Category?.HasJavascript && <li className={styles.li}><div className={styles.category} style={{top: "-14px"}}><div style={{width: "20px"}}><div className={styles.jslogo}/></div>JavaScript</div></li>}
-          {postData?.Category?.HasGolang && <li className={styles.li}><div className={styles.category} style={{position: "relative", top: "-14px", left: "17px", marginLeft: "0px"}}><div style={{width: "40px", height: "20px"}}><div className={styles.gologo}/></div>Golang</div></li>}
-        </ul>
         {!postInfo && 
         <>
           <p className={styles.desc}>

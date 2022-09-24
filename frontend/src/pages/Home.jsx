@@ -6,6 +6,7 @@ import { useState, useEffect, useReducer, createRef } from 'react'
 import { wsSetup } from './components/right-sidebar'
 import {Group} from './components/group'
 import {Profile} from './components/profile'
+import {Event} from './components/event'
 import {useParams} from 'react-router-dom'
 import { ws2Setup } from './components/topbar'
 
@@ -53,7 +54,7 @@ export default function Home({post, dispatch}) {
     return (
       <>
         <LeftSideBar dispatch={dispatch} />
-        {post.postSelected ? postLayout : post.createGroup ? <Group/> : post.profile ? <Profile state={post} user={post.profileId}/> : <Feed forwardRef={feedScroll} state={post} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
+        {post.postSelected ? postLayout : post.createGroup ? <Group/> : post.event? <Event/> : post.profile ? <Profile state={post} user={post.profileId}/> : <Feed forwardRef={feedScroll} state={post} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
         <RightSideBar dispatch={dispatch} />
       </>
     )

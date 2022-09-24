@@ -1,0 +1,109 @@
+.feed {
+  width: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.creator {
+  position: relative;
+  left: 50%;
+  transform: translate(-50%);
+  max-width: 600px;
+  min-width: 450px;
+  padding-left:20px;
+  min-height: 57px;
+  top: 71px;
+  background: rgb(48, 52, 54);
+  border-radius: 12px;
+}
+
+.title {
+  position: relative;
+  width: 94%;
+  top: 10px;
+  height: 33px;
+  margin: 0 auto;
+  padding-left: 9px;
+  padding-right: 9px;
+  background: rgb(89, 96, 100);
+  border-radius: 9px;
+  outline: none;
+  border: none;
+  color: whitesmoke;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  padding-right: 10px;
+}
+
+.title::placeholder {
+  position: relative;
+  padding: 4px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  color: #D0D0D0;
+}
+
+.description {
+  position: relative;
+  width: 94%;
+  top: 10px;
+  height: 72px;
+  margin: 0 auto 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  background: rgb(89, 96, 100);
+  border-radius: 9px;
+  outline: none;
+  border: none;
+  color: whitesmoke;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  resize: none;
+}
+
+.submitready {
+  position: relative;
+  width: 97%;
+  text-align: center;
+  top: -7px;
+  margin-top: 17px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border-radius: 7px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 24px;
+  color: #D0D0D0;
+  background: rgb(14, 57, 122);
+  cursor: pointer;
+}
+
+.submit {
+  position: relative;
+  background: rgb(89, 96, 100);
+  width: 97%;
+  text-align: center;
+  top: -7px;
+  margin-top: 17px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border-radius: 7px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 24px;
+  color: #D0D0D0;
+  cursor: not-allowed;
+}

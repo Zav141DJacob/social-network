@@ -21,12 +21,13 @@ export function LeftSideBar({dispatch, postPage}) {
     fetch('http://localhost:8000/api/v1/categories/',
       {method: "GET", mode:'cors', cache:'no-cache', credentials: 'include',  headers: {Authentication: output.session}})
       .then(item => {
-        item.json().then(item => setGroups(item))
+        item.json().then(item => {console.log(item);setGroups(item)})
       })
   }, [])
 
   const categoryHandler = (e) => {
-    dispatch({type: "category", category: e.target.id}) 
+    let select = groups.filter(i => i.CatId == e.target.id);
+    dispatch({type: "category", category: e.target.id, public: select[0].IsPublic}) 
     window.history.pushState("y2", "x3", `/group/${e.target.id}`)
   }
   return (
