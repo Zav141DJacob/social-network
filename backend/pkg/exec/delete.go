@@ -53,3 +53,21 @@ func UnFollow(userId, FollowerUserId interface{}) error {
 
 	return nil
 }
+
+func DeleteNotificationsList(id interface{}) error {
+
+	stmt, err := Db.Prepare("DELETE FROM notificationsList WHERE id = ?")
+
+	if err != nil {
+		// HandleErr(err)
+		return err
+	}
+
+	_, err = stmt.Exec(id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

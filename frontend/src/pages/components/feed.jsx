@@ -35,7 +35,13 @@ export function Feed({selectedCat, dispatch, state, forwardRef, scrollValue}) {
   });
   useEffect(() => {
     if (!posts) {
-      fetch(`http://localhost:8000/api/v1/posts/`, {method: "GET", mode:'cors', cache:"no-cache", credentials:"include", headers: {Authentication: output.session}}).then(res => res.json().then(i => setPosts(i)))
+      fetch(`http://localhost:8000/api/v1/posts/`, {
+        method: "GET", 
+        mode:'cors', 
+        cache:"no-cache", 
+        credentials:"include", 
+        headers: {Authentication: output.session}})
+        .then(res => res.json().then(i => setPosts(i)))
     }
     if (forwardRef.current) {
       throttler.current(scrollValue, forwardRef)
@@ -94,8 +100,10 @@ function Description({nickname, state, title, value, setDesc, categories, dispat
     formData.append("file", file)
     postImg('http://localhost:8000/api/v1/upload/', formData).then(x => {
       console.log(x)
-      const postObj = {title: title, body: value, categoryId: state.postCat}
-      postData('http://localhost:8000/api/v1/posts/', postObj).then(i => dispatch({type: 'create', postId:i}))
+      const postObj = {title: title, body: value, categoryId: parseInt(state.postCat)}
+      postData('http://localhost:8000/api/v1/posts/', postObj)
+      .then(i => dispatch({type: 'create', postId:i}))
+      .catch(err => console.log("FOUND ERROR\n", err))
     })
   }
   if (title && value) {

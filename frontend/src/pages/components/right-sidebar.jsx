@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import styles from './rightsidebar.module.css'
 import { MessageBox } from './messagebox.jsx'
 import { postData } from '../Login'
+import { FollowCase } from '../../utils/WsCases'
 
 
 export { ws }
@@ -63,6 +64,10 @@ const wsOnMessage = (notification, setNotification, setUsers) => {
             console.log("found error in wsOnMessage!: ", err)
           })
         break
+      case "follow":
+        FollowCase(jsonData)
+        
+        
     }
   }
 }

@@ -35,62 +35,74 @@ type LoginUser struct {
 
 func UploadFile(w http.ResponseWriter, r *http.Request) {
 
-	//Path for storing image in server
-	path := "./static/"
+	if r.Method != "OPTIONS" {
+		//Path for storing image in server
+		path := "./static/"
 
-	mr, err := r.MultipartReader()
-	if err != nil {
-		fmt.Println("err", err)
-		return
-	}
-	fileName := ""
-
-	for {
-		part, err := mr.NextPart()
-
-		//Break, if no more file
-		if err == io.EOF {
-			break
-		}
-        	//Get File Name attribute
-		fileName = part.FileName()
-    absPath, _ := filepath.Abs(path)
-
-	  sessionToken := uuid.NewV4().String()
-    c, _ := regexp.Compile(`\.\w*`)
-    match := c.FindString(fileName)
-    fileName = sessionToken + match
-		//Open the file, Create file if it's not existing
-		dst, err := os.OpenFile(absPath+"/"+fileName, os.O_WRONLY|os.O_CREATE, 0644)
+		mr, err := r.MultipartReader()
 		if err != nil {
-      fmt.Println(dst, err)
+			HandleErr(err)
 			return
 		}
+		fileName := ""
 
 		for {
-			//Create and read the file into temparory byte array
-			buffer := make([]byte, 100000)
-			cBytes, err := part.Read(buffer)
+			part, err := mr.NextPart()
 
-			//break when the reading process is finished
+			//Break, if no more file
 			if err == io.EOF {
-      fmt.Println(err)
+				HandleErr(err)
 				break
 			}
 
-			//Write into the file from byte array
-      _, err = dst.Write(buffer[0:cBytes])
-      if err != nil {
-        fmt.Println(err)
-      }
-      
-		}
-		defer dst.Close()
-	}
+			//Get File Name attribute
+			fileName = part.FileName()
+			absPath, _ := filepath.Abs(path)
 
-	// w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(fileName)
+			sessionToken := uuid.NewV4().String()
+
+
+			c, _ := regexp.Compile(`\.\w*`)
+
+			match := c.FindString(fileName)
+			fileName = sessionToken + match
+
+			//Open the file, Create file if it's not existing
+			dst, err := os.OpenFile(
+				absPath+"/"+fileName, 
+				os.O_WRONLY|os.O_CREATE, 
+				0644)
+			if err != nil {
+				HandleErr(err)
+				fmt.Println(dst)
+				return
+			}
+
+			for {
+				//Create and read the file into temparory byte array
+				buffer := make([]byte, 100000)
+				cBytes, err := part.Read(buffer)
+
+				//break when the reading process is finished
+				if err == io.EOF {
+					HandleErr(err)
+					break
+				}
+
+				//Write into the file from byte array
+				_, err = dst.Write(buffer[0:cBytes])
+				if err != nil {
+					HandleErr(err)
+				}
+		
+			}
+			defer dst.Close()
+		}
+
+		// w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(fileName)
+	}
 }
 
 func UserAPI(w http.ResponseWriter, r *http.Request) {
@@ -224,6 +236,8 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+
+		// fmt.Println(auth)
 		// auth.UserId = 1
 		switch r.Method {
 		case "GET":
@@ -318,6 +332,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
+			
 	
 			// userToken	:= v["userToken"]
 			categoryId  := v["categoryId"]
@@ -325,6 +340,30 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			body   		:= v["body"]
 			// ToDo:
 			// image		:= v["image"]
+			found := false
+
+			memberTo, err := FromGroupMembers("userId", auth.UserId)
+
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			
+			for _, v := range memberTo {
+
+				if v.CatId == int(categoryId.(float64)) {
+					fmt.Println(v.CatId, categoryId)
+
+					found = true
+					break
+				}
+			}
+
+			if found == false {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
 	
 			// user, err := FromSessions("sessionId", auth.)
 			
@@ -347,14 +386,14 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 	
-		  posts, err := FromPosts("", "")
-		  if err != nil {
-			  HandleErr(err)
-			  w.WriteHeader(http.StatusInternalServerError)
-			  return
-		  }
-		  postId := strconv.Itoa(len(posts))
-		  w.Write([]byte(postId))
+			posts, err := FromPosts("", "")
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			postId := strconv.Itoa(len(posts))
+			w.Write([]byte(postId))
 			// w.WriteHeader(http.StatusCreated)
 		}
 	}
@@ -971,11 +1010,11 @@ func MessagesAPI(w http.ResponseWriter, r *http.Request) {
 func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "OPTIONS" {
 		auth := AuthenticateSession(r.Header["Authentication"])
-		auth.UserId = 0
-		// if (auth == SessionData{}) {
-		// 	w.WriteHeader(401)
-		// 	return
-		// }
+		// auth.UserId = 0
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
+			return
+		}
 		switch r.Method {
 		case "GET":
 			type profileStruct struct {
@@ -1154,6 +1193,23 @@ func FollowerAPI(w http.ResponseWriter, r *http.Request) {
 		}
 		var userId = v["userId"]
 
+		followers, err := FromFollowers("userId", auth.UserId)
+		if err != nil {
+			HandleErr(err)
+			w.WriteHeader(500)
+			return
+		}
+
+		fmt.Println(followers)
+
+		for _, follower := range followers {
+			fmt.Println(follower.FollowerUserId, userId)
+			if follower.FollowerUserId == int(userId.(float64)) {
+				w.WriteHeader(419)
+				return
+			}
+		}
+
 		err = Follow(userId, auth.UserId)
 
 		if err != nil {
@@ -1223,6 +1279,21 @@ func NotificationsListAPI(w http.ResponseWriter, r *http.Request) {
 		}
 		switch r.Method {
 		case "GET":
+
+			// requestUrl := r.URL.RawQuery
+
+			// m, err := url.ParseQuery(requestUrl)
+			// if err != nil {
+			// 	HandleErr(err)
+			// 	w.WriteHeader(419)
+			// 	return
+			// }
+			// if len(m["userId"]) == 0 {
+			// 	w.WriteHeader(419)
+			// 	return
+			// }
+			// userId := m["userId"][0]
+
 			notifications, err := FromNotificationsList("targetId", auth.UserId)
 			if err != nil {
 				w.WriteHeader(500)
@@ -1234,6 +1305,23 @@ func NotificationsListAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			fmt.Fprintf(w, string(jsonNotif))
+		case "DELETE":
+			var v map[string]interface{}
+			err := json.NewDecoder(r.Body).Decode(&v)
+			if err != nil {
+				HandleErr(err)
+			}
+
+			var id = v["id"]
+
+			err = DeleteNotificationsList(id)
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(419)
+				w.Write([]byte("Uh oh! something went wrong"))
+			} else {
+				w.WriteHeader(204)
+			}
 		}
 	}
 }

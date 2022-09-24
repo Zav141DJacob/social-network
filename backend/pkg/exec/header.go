@@ -133,14 +133,15 @@ type FollowerData struct {
 }
 
 type NotificationsListData struct {
-	Id			int
-	UserId		int
-	Nickname	string
-	UserAvatar	string
-	TargetId	int
-	TargetName	string
-	CatId		int
-	Type		string
+	Id				int
+	UserId			int
+	Nickname		string
+	UserAvatar		string
+	TargetId		int
+	TargetName		string
+	CatId			int
+	CategoryTitle	string
+	Type			string
 }
 // type ErrorString struct {
 // 	s string

@@ -45,6 +45,7 @@ func main(){
 
 	// websocket stuff
 	http.HandleFunc("/ws/", Middleware(exec.WsEndpoint))
+	http.HandleFunc("/empty-ws/", Middleware(exec.Empty))
 
   err = exec.WsSetup()
 
@@ -64,7 +65,7 @@ func Middleware(fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Middleware method: " + r.Method)
 
-	  	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authentication")
+    w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authentication")
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
     w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")

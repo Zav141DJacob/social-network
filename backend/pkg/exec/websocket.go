@@ -13,67 +13,93 @@ import (
 // 	https://www.thepolyglotdeveloper.com/2016/12/create-real-time-chat-app-golang-angular-2-websockets/
 
 type ClientManager struct {
-    clients    	  map[idType]*websocket.Conn
+    clients    	  map[IdType]*websocket.Conn
     register   	  chan *Client
     unregister 	  chan *Client
     registerGroup chan *Client
-	groupChats 	  map[idType](map[idType]*websocket.Conn)
+	groupChats 	  map[IdType](map[IdType]*websocket.Conn)
 }
 
 type Client struct {
-	id     idType
+	id     IdType
     socket *websocket.Conn
 }
 
-type idType int
+type IdType int
 
-var manager = ClientManager{
+var Manager = ClientManager{
     register:   make(chan *Client),
     unregister: make(chan *Client),
-    clients:    make(map[idType]*websocket.Conn),
-	groupChats: make(map[idType](map[idType]*websocket.Conn)),
+    clients:    make(map[IdType]*websocket.Conn),
+	groupChats: make(map[IdType](map[IdType]*websocket.Conn)),
 }
 
+func Empty(w http.ResponseWriter, r *http.Request) {
+
+	connection, err := (&websocket.Upgrader{CheckOrigin: func(r *http.Request) bool { return true }}).Upgrade(w, r, nil)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
+	conn := connection
+
+	log.Println("Empty Client Connection Established")
+	for {
+		messageType, p, err := conn.ReadMessage()
+
+		if err != nil {
+      		HandleErr(err)
+			return
+		}
+		err = conn.WriteMessage(messageType,[]byte(p))
+
+		if err != nil {
+			HandleErr(err)
+		}
+	}
+	// client.reader(connection)
+	
+}
 func WsSetup() error {
 	categories, err := FromCategories("", "") 
 	if err != nil {
 		return err
 	}
 	for _, category := range categories {
-		manager.groupChats[idType(category.CatId)] = make(map[idType]*websocket.Conn)
+		Manager.groupChats[IdType(category.CatId)] = make(map[IdType]*websocket.Conn)
 	}
 	return nil
 }
 
-func (manager *ClientManager) start() {
+func (Manager *ClientManager) start() {
     for {
         select {
-        case conn := <-manager.register:
+        case conn := <-Manager.register:
 
 			members, err := FromGroupMembers("userId", conn.id)
 
 			if err == nil && len(members) != 0 {
 				for _, member := range members {
-					manager.groupChats[idType(member.CatId)][conn.id] = conn.socket
+					Manager.groupChats[IdType(member.CatId)][conn.id] = conn.socket
 				}
-				log.Println(manager.groupChats)
+				log.Println(Manager.groupChats)
 			}
 
-            manager.clients[conn.id] = conn.socket
+            Manager.clients[conn.id] = conn.socket
 
-        case conn := <-manager.unregister:
-            if _, ok := manager.clients[conn.id]; ok {
-                delete(manager.clients, conn.id)
+        case conn := <-Manager.unregister:
+            if _, ok := Manager.clients[conn.id]; ok {
+                delete(Manager.clients, conn.id)
             }
 
-		case conn := <-manager.registerGroup:
+		case conn := <-Manager.registerGroup:
 			all, err := FromCategories("", "")
 
 			if err != nil {
 				// errCode = 500
 				// ToDo: idk what to add here
 			}
-			manager.groupChats[idType(len(all))][conn.id] = conn.socket
+			Manager.groupChats[IdType(len(all))][conn.id] = conn.socket
         }
     }
 }
@@ -85,7 +111,7 @@ func (manager *ClientManager) start() {
 //	think of a better name for this function
 func (c *Client) reader(conn *websocket.Conn) {
 	unregister := func() {
-		manager.unregister <- c
+		Manager.unregister <- c
 		 conn.Close()
 		 log.Println("Client Connection Terminated")
 	}
@@ -128,13 +154,13 @@ func (c *Client) reader(conn *websocket.Conn) {
 				return
 			}
 
-			c.id = idType(user[0].UserId)
-			manager.register <- c
+			c.id = IdType(user[0].UserId)
+			Manager.register <- c
 		case "groupMessage":
 			type toClient struct {
 				Message  string
 				Sent	 bool
-				SenderId idType
+				SenderId IdType
 				Type	 string
 			}
 
@@ -154,9 +180,9 @@ func (c *Client) reader(conn *websocket.Conn) {
 			//look through global variable clientArray
 			//find targetId and write message to the senders and the targets connection
 			
-			target := idType(targetId.(float64))
+			target := IdType(targetId.(float64))
 
-			value, isValid := manager.groupChats[target]
+			value, isValid := Manager.groupChats[target]
 
 			// If target's connection is valid then WriteMessage to their connection
 			for _, v := range value {
@@ -210,7 +236,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 				}
 				errCode = 201
 				
-				manager.registerGroup <- c
+				Manager.registerGroup <- c
 				
 			} else {
 				HandleErr(CreateErr("ERROR " + strconv.Itoa(errCode)))
@@ -218,9 +244,11 @@ func (c *Client) reader(conn *websocket.Conn) {
 
 		case "follow":
 			type toClient struct {
-				User	string
-				Avatar	string
-				Type	string
+				Nickname 	string
+				UserId		int
+				UserAvatar	string
+				Type	 	string
+				Category 	string
 			}
 			targetId := v["targetId"]
 			fmt.Println(targetId)
@@ -237,7 +265,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 				break
 			}
 
-			err = Notify(user, target, "", mode)
+			err = Notify(user, target, 0, mode)
 			if err != nil {
 				HandleErr(err)
 				break
@@ -251,17 +279,18 @@ func (c *Client) reader(conn *websocket.Conn) {
 
 			to := toClient{}
 			to.Type   = mode.(string)
-			to.User   = user[0].Nickname
-			to.Avatar = user[0].Avatar
+			to.Nickname   = user[0].Nickname
+			to.UserId = user[0].UserId
+			to.UserAvatar = user[0].Avatar
 
 			jsonTo, err := json.Marshal(to)
 			if err != nil {
 				HandleErr(err)
 				return
 			}
-			// targetId := idType(target[0].UserId)
+			// targetId := IdType(target[0].UserId)
 
-			value, isValid := manager.clients[idType(target[0].UserId)]
+			value, isValid := Manager.clients[IdType(target[0].UserId)]
 
 			if isValid {
 				err = value.WriteMessage(messageType, []byte(jsonTo))
@@ -278,7 +307,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 			type toClient struct {
 				Message  string
 				Sent	 bool
-				SenderId idType
+				SenderId IdType
 				Type	 string
 			}
 
@@ -298,9 +327,9 @@ func (c *Client) reader(conn *websocket.Conn) {
 			//look through global variable clientArray
 			//find targetId and write message to the senders and the targets connection
 			
-			target := idType(targetId.(float64))
+			target := IdType(targetId.(float64))
 
-			value, isValid := manager.clients[target]
+			value, isValid := Manager.clients[target]
 
 			// If target's connection is valid then WriteMessage to his connection
 			if isValid {
@@ -332,7 +361,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 
 func WsEndpoint(w http.ResponseWriter, r *http.Request){
 
-	go manager.start()
+	go Manager.start()
 	
 	connection, err := (&websocket.Upgrader{CheckOrigin: func(r *http.Request) bool { return true }}).Upgrade(w, r, nil)
 

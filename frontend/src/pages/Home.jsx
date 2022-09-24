@@ -7,6 +7,7 @@ import { wsSetup } from './components/right-sidebar'
 import {Group} from './components/group'
 import {Profile} from './components/profile'
 import {useParams} from 'react-router-dom'
+import { ws2Setup } from './components/topbar'
 
 export default function Home({post, dispatch}) {
   const x = useParams()
@@ -18,6 +19,7 @@ export default function Home({post, dispatch}) {
     if (x?.userId) {
       dispatch({type: "profile", Id: x.userId})
     }
+    ws2Setup()
     wsSetup()
   }, [])
 

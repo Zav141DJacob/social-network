@@ -1,8 +1,70 @@
 import styles from './topbar.module.css'
 import {useAuth} from './../../App'
 import { useState } from 'react'
-import { ws } from './right-sidebar'
+import { findCookies, ws } from './right-sidebar'
+import { useEffect } from 'react'
+import { postData } from '../Login'
 
+export { ws2 }
+let ws2 = {}
+
+
+export async function getData(url = '', wantObject = true) {
+  // Default options are marked with *
+  let cookieStruct = findCookies()
+  const response = await fetch(url, {
+    method: 'GET',
+    mode: 'cors',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authentication': cookieStruct.session,
+    },
+    redirect: 'follow', 
+    referrerPolicy: 'no-referrer', 
+    // body: JSON.stringify(data) 
+  });
+  if (wantObject) {
+    return response.json(); // parses JSON response into native JavaScript objects
+  }
+  return response
+}
+
+export async function deleteData(url = '', data = {}, wantObject = true) {
+  // Default options are marked with *
+  let cookieStruct = findCookies()
+  const response = await fetch(url, {
+    method: 'DELETE',
+    mode: 'cors',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authentication': cookieStruct.session,
+    },
+    redirect: 'follow', 
+    referrerPolicy: 'no-referrer', 
+    body: JSON.stringify(data) 
+  });
+  if (wantObject) {
+    return response.json(); // parses JSON response into native JavaScript objects
+  }
+}
+
+export function ws2Setup() {
+  if (ws2.readyState != 0) {
+    ws2 = new WebSocket("ws://localhost:8000/empty-ws/")
+  } 
+
+  // let cookieStruct = findCookies()
+
+  // let nickname = cookieStruct.uID
+
+  ws2.onopen = function() {
+    console.log("\"ws2\" lock & loaded")
+  }
+}
 function ProfileDropdown({dispatch}) {
   const {onLogout, nickname} = useAuth();
   return (
@@ -29,48 +91,95 @@ function ProfileDropdown({dispatch}) {
   )
 }
 
-const mockNotifications = [
-  {
-    user: "Jacob",
-    avatar: "jacob.png",
-    type: "Follow",
-  },
-  {
-    user: "Kertu",
-    avatar: "kertu.png",
-    type: "Follow"
-  },
-  {
-    user: "Alexxx",
-    avatar: "alex.png",
-    type: "Event"
+export let mockNotifications = []
+
+function handleFollow(doFollow, id, notifications, setNotifications, userId) {
+  // event.preventDefault()
+  // console.log(option, id)
+  if (doFollow) {
+    postData("http://localhost:8000/api/v1/followers/", {userId: userId})
   }
-]
-function NotificationDropdown({dispatch}) {
-  const [notifications, setNotifications] = useState(mockNotifications);
+  deleteData("http://localhost:8000/api/v1/notifications-list/", {id: id}, false)
+  let newNotif = []
+  for (const i of notifications) {
+    console.log(i.Id, id)
+    if (i.Id != id) {
+      newNotif.push(i)
+    }
+  }
+  // mockNotifications = newNotif
+
+  // setNotifications(newNotif)
+  getData("http://localhost:8000/api/v1/notifications-list/")
+    .then(data => {
+      // d = data
+      // console.log(data)
+      if (data) {
+        setNotifications(data)
+      } else {
+        setNotifications([])
+      }
+    })
+  // ws2OnMessage(setNotifications)
+
+}
+
+
+function ws2OnMessage(setNotifications, notifications) {
+  // if (count) {
+
+  //   setCount(count + 1)
+  //   return
+  // }
+  ws2.onmessage = function(event) {
+    // let jsonData = JSON.parse(event.data)
+    getData("http://localhost:8000/api/v1/notifications-list/")
+    .then(data => {
+      // d = data
+      // console.log(data)
+      if (data) {
+        setNotifications(data)
+      } else {
+        setNotifications([])
+      }
+    })
+    // setNotifications(mockNotifications)
+  }
+}
+function NotificationDropdown({dispatch, setNotifications, notifications}) {
+  
+
+  useEffect(() => {
+
+  }, [notifications])
+  // let d;
+  
+  
+  // console.log("data here: ", mockNotifications)
 // 
   return (
     <>
       <div className={styles.arrowUpNotification}></div>
+
       <div className={styles.notificationDrop}>
         {notifications.map(item => {
-          switch (item.type) {
-            case "Follow": {
+          switch (item.Type) {
+            case "follow": {
               return (
-                <div className={styles.notification}>
-                  <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.avatar}`} />
-                  <span><strong>{item.user}</strong><br/> has requested to follow you</span>
-                  <button className={styles.notificationAcceptBtn}>Accept</button>
-                  <button className={styles.notificationDeclineBtn}>Decline</button>
+                <div className={styles.notification} onSubmit={handleFollow}>
+                  <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
+                  <span><strong>{item.Nickname}</strong><br/> has requested to follow you</span>
+                  <button onClick={() => handleFollow(true, item.Id, notifications, setNotifications, item.UserId)} className={styles.notificationAcceptBtn}>Accept</button>
+                  <button onClick={() => handleFollow(false, item.Id, notifications, setNotifications)} className={styles.notificationDeclineBtn}>Decline</button>
                   <hr />
                 </div>
               )
             }
-            case "Event": {
+            case "event": {
               return (
                 <div className={styles.notification}>
-                  <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.avatar}`} />
-                  <span><strong>{item.user}</strong><br/> has created a new event</span>
+                  <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
+                  <span><strong>{item.Nickname}</strong><br/> has created a new event in {item.CategoryTitle}</span>
                   <button className={styles.notificationAcceptBtn}>Join</button>
                   <button className={styles.notificationDeclineBtn}>Refuse</button>
                 </div>
@@ -87,14 +196,50 @@ function NotificationDropdown({dispatch}) {
 }
 
 export function TopBar({dispatch, state}) {
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    getData("http://localhost:8000/api/v1/notifications-list/")
+    .then(data => {
+      // d = data
+      // console.log(data)
+      if (data) {
+        setNotifications(data)
+      } else {
+        setNotifications([])
+      }
+    })
+  }, [])
+  ws2OnMessage(setNotifications, notifications)
+  // const [count, setCount] = useState(0);
+  // useEffect(() => {
+  //   getData("http://localhost:8000/api/v1/notifications-list/")
+  //   .then(data => {
+  //     // d = data
+  //     console.log(data)
+  //     if (data) {
+  //       let tempCount = 0
+  //       for (const i in data) {
+  //         tempCount += 1
+  //       }
+  //       setCount(tempCount)
+  //     }
+  //   })
+  // }, [])
+
+  // ws2OnMessage("setNotifications", setCount, count)
+
   let {nickname} = useAuth()
   let [avatar, setAvatar] = useState()
+  
   fetch("http://localhost:8000/api/v1/users/nickname/" + nickname + "/")
     .then((item) => item.json().then(res =>  setAvatar(res[0].Avatar)))
   return (
     <div className={styles.topbar}>
       <div className={styles.logo} onClick={() => {dispatch({type: "home"})}}>Meetup</div>
       <div className={styles.actions}>
+      <div>{notifications.length}</div>
+
         <div className={styles.notifications} onClick={() => dispatch({type: "notificationDrop"})}>
           <svg className={styles.bell} viewBox="0 0 24 24">
             <path fill="whitesmoke" d="M10 21h4l-2 2-2-2m11-2v1H3v-1l2-2v-6c0-3 2-6 5-7l2-2 2 2c3 1 5 4 5 7v6l2 2m-4-8c0-3-2-5-5-5s-5 2-5 5v7h10v-7Z"/>
@@ -102,7 +247,11 @@ export function TopBar({dispatch, state}) {
         </div>
         <img className={styles.profile} alt="avatar" onClick={() => dispatch({type: "profileDrop"})}src={`http://localhost:8000/static/${avatar}`} />
       </div>
-      {state.notificationDrop && <NotificationDropdown dispatch={dispatch}/>}
+      {state.notificationDrop && <NotificationDropdown 
+        dispatch={dispatch} 
+        setNotifications={setNotifications}
+        notifications={notifications}/>
+      }
       {state.profileDrop && <ProfileDropdown dispatch={dispatch} />}
     </div>
   )

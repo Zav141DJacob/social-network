@@ -3,12 +3,15 @@ package exec
 import (
 	// "fmt"
 	"fmt"
-	"strconv"
+	// "strconv"
 	"database/sql"
 	"time"
 
 	// "net/http"
+	
 	"golang.org/x/crypto/bcrypt"
+	"github.com/gorilla/websocket"
+
 )
 
 // http.HandleFunc("/api/v1/posts/category/" + strId + "/", main.Middleware(exec.PostCatAPI))
@@ -137,141 +140,32 @@ func Comment(body, postId, userId interface{}) error{
 	return nil
 }
 
-// Inserts a like into the postLikes table
-// Requires:
-//	user id
-//	post id
-//	value
-func LikePost(userId, postId, value interface{}) error{
-	var found bool
-	// Finds all records in the postLikes table where the userId matches
-	liked, err := FromPLikes("userId", userId)
-
-	if err != nil {
-		return err
-	}
-	// Loops through the records to find one where the postId matches
-	for _, c := range liked {
-		if strconv.Itoa(c.PostId) == postId.(string) {
-			found = true
-
-			// If the user has already liked the post 
-			// then it will remove the like
-			if strconv.Itoa(c.Value) == value.(string) {
-				_, err := Db.Exec(`
-				DELETE FROM postLikes 
-					WHERE userId = ? 
-					AND postId = ?`, 
-					userId, postId)
-				if err != nil {
-					return err
-				}
-
-			// If the user had already liked the post it will
-			// dislike it and also the other way around
-			} else {
-				_, err := Db.Exec(`
-				UPDATE postLikes 
-					SET value = ? 
-					WHERE userId = ? 
-					AND postId = ?`, 
-					value, userId, postId)
-				if err != nil {
-					return err
-				}
-			}
-			break
-		} 
-	}
-
-	// If there was no record of the user liking the post 
-	// then it will insert one into the database
-	if !found {
-		stmt, err := Db.Prepare("INSERT INTO postLikes (userId, postId, value) VALUES (?, ?, ?);")
-
-		if err != nil {
-			return err
-		}
-		
-		defer stmt.Close()
-		stmt.Exec(userId, postId, value)
-	}
-	return nil
-}
-
-// Inserts a like into the commentLikes table
-// Requires:
-//	user id
-//	comment id
-//	value
-func LikeComment(userId, commentId, value interface{}) error{
-	var found bool
-
-	// Finds all records in the postLikes table where the userId matches
-	liked, err := FromCLikes("userId", userId)
-
-	if err != nil {
-		return err
-	}
-
-	// Loops through the records to find one where the commentId matches
-	for _, c := range liked {
-		if c.CommentId == commentId {
-			found = true
-
-			// If the user had already liked the comment 
-			// then it will remove the like
-			if c.Value == value {
-				_, err := Db.Exec(`
-				DELETE FROM commentLikes 
-					WHERE userId = ? 
-					AND commentId = ?`, 
-					userId, commentId)
-				if err != nil {
-					return err
-				}
-
-			// If the user has already liked the comment it will
-			// dislike it and also the other way around
-			} else {
-				_, err := Db.Exec(`
-				UPDATE commentLikes 
-					SET value = ? 
-					WHERE userId = ? 
-					AND commentId = ?`, 
-					value, userId, commentId)
-				if err != nil {
-					return err
-				}
-			}
-			break
-		} 
-	}
-
-	// If there was no record of the user liking the comment
-	// then it will insert one into the database
-	if !found {
-		stmt, err := Db.Prepare("INSERT INTO commentLikes (userId, commentId, value) VALUES (?, ?, ?);")
-
-		if err != nil {
-			return err
-		}
-		
-		defer stmt.Close()
-		stmt.Exec(userId, commentId, value)
-	}
-	return nil
-}
 
 // Inserts a category into the database
 func InsertCategory(title, description , userId, isPublic interface{}) error {
-	stmt, err := Db.Prepare("INSERT INTO categories (title, description, userId, isPublic) VALUES (?, ?, ?, ?)")
+	var catId int
+	stmt, err := Db.Prepare(`INSERT INTO categories (title, description, userId, isPublic) 
+	VALUES (?, ?, ?, ?)
+	RETURNING catId`)
 	
 	if err != nil {
 		return err
 	}
 	
-	stmt.Exec(title, description, userId, isPublic)
+	err = stmt.QueryRow(title, description, userId, isPublic).Scan(&catId)
+
+	if err != nil {
+		return err
+	}
+
+	stmt, err = Db.Prepare("INSERT INTO groupMembers (userId, catId) VALUES (?, ?)")
+	
+	if err != nil {
+		return err
+	}
+	
+	stmt.Exec(userId, catId)
+	Manager.groupChats[IdType(catId)] = make(map[IdType]*websocket.Conn)
 
 	// _, err = Db.Exec(`ALTER TABLE postCategory ADD COLUMN "has` + title.(string) + `" BOOLEAN NOT NULL`)
 
@@ -334,7 +228,9 @@ func Notify(user, target []UserData, catId, mode interface{}) error {
 		} 
 	}
 	
-	stmt, err = Db.Prepare("INSERT INTO notificationsList (userId, nickname, userAvatar, targetId, targetName, catId, type) VALUES (?, ?, ?, ?, ?, ?, ?)")
+	stmt, err = Db.Prepare(`INSERT INTO notificationsList 
+	(userId, nickname, userAvatar, targetId, targetName, catId, categoryTitle, type) 
+	VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
 	
 	if err != nil {
 		return err
@@ -344,10 +240,19 @@ func Notify(user, target []UserData, catId, mode interface{}) error {
 	// if err != nil {
 	// 	return err
 	// }
+	category, err := FromCategories("catId", catId)
+	if err != nil {
+		return err
+	}
 
 
 	defer stmt.Close()
-	stmt.Exec(user[0].UserId, user[0].Nickname, user[0].Avatar, target[0].UserId, target[0].Nickname, catId, mode)
+	if len(category) == 0 {
+		stmt.Exec(user[0].UserId, user[0].Nickname, user[0].Avatar, target[0].UserId, target[0].Nickname, catId, "", mode)
+	} else {
+		stmt.Exec(user[0].UserId, user[0].Nickname, user[0].Avatar, target[0].UserId, target[0].Nickname, catId, category[0].Title, mode)
+
+	}
 	return nil
 }
 
@@ -363,8 +268,14 @@ func Message(senderId, targetId, message interface{}) error {
 	return nil
 }
 
-func Follow(userId, followerUserId interface{}) error{
-	stmt, err := Db.Prepare("INSERT INTO followers (nickname, userId, followerNickname, followerUserId, followerAvatar) VALUES (?, ?, ?, ?, ?);")
+
+// ToDo:
+//	rename followerUserId and userId because they are the opposite currently 
+//	(or idk its very confusing atm)
+func Follow(followerUserId, userId interface{}) error{
+	stmt, err := Db.Prepare(`INSERT INTO followers 
+	(nickname, userId, followerNickname, followerUserId, followerAvatar) 
+	VALUES (?, ?, ?, ?, ?);`)
 
 	if err != nil {
 		return err
