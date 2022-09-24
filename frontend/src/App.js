@@ -96,6 +96,7 @@ function App() {
           <Route element={<PrivateRoute dispatch={dispatch} state={post}/>}>
             <Route path='/post/:postId' element={<Home dispatch={dispatch} post={post} />} />
             <Route path='/users/:userId' element={<Home dispatch={dispatch} post={post} />} />
+            <Route path='/group/:groupId' element={<Home dispatch={dispatch} post={post} />} />
             <Route index element={<Home dispatch={dispatch} post={post} />} />
           </Route>
         </Routes>

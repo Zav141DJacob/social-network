@@ -62,8 +62,6 @@ function Description({nickname, title, value, visibility, setDesc, dispatch}) {
   function submitPost() {
     let isPublic = visibility === "public"
     const postObj = {title: title, description: value, isPublic: isPublic}
-    // postData('http://localhost:8000/api/v1/categories/', postObj).then(i => dispatch({type: 'create', postId:i}))
-    // postData('http://localhost:8000/api/v1/categories/', postObj, false).then(i => console.log(i));
     ws.send(JSON.stringify({...postObj, mode: "registerGroup"}))
   }
   if (title && value) {

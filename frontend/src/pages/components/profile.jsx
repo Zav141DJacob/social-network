@@ -65,9 +65,15 @@ export function Profile({userId, state, dispatch}) {
     return (
       <div className={styles.feed}>
         <div className={styles.profile}>
-          <img className={styles.avatar} src={`http://localhost:8000/static/${profile.User.Avatar}`} />
+          <img className={styles.avatar} alt="avatar" src={`http://localhost:8000/static/${profile.User.Avatar}`} />
+          <h2 className={styles.name}>{profile.User.FirstName} {profile.User.LastName}
           {profile.User.Nickname !== nickname && <button className={styles.followBtn} onClick={() => follow(profile.User.UserId)}>Follow</button>}
-          <h2 className={styles.name}>{profile.User.FirstName} {profile.User.LastName}</h2>
+          {profile.User.Nickname === nickname && <span onClick={() => {}}>
+          <svg viewBox="0 0 24 24"className={styles.settingsBtn}>
+            <path fill="white" d="M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4m0 2a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0-2-2m-2 12-1-3-2-1-2 1H4l-2-4 3-2v-2L2 9l2-4h1l2 1 2-1 1-3h5v3l2 1 2-1h1l2 4-3 2 1 1-1 1 3 2-2 4h-1l-2-1-2 1v3h-5m1-18v3L8 8 5 7v2l2 1v4l-2 1v2l3-1 3 1v3h2v-3l3-1 3 1v-2l-2-1v-4l2-1V7l-3 1-3-1V4h-2Z"/>
+          </svg>
+          </span>}
+        </h2>
           <div className={styles.stats}>
             <span>{(profile?.Posts?.length || profile?.Posts ) ?? 0} posts</span>
             <span>{profile?.Followers?.length ?? 0} followers</span>

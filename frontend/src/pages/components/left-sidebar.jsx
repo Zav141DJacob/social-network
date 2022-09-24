@@ -26,9 +26,8 @@ export function LeftSideBar({dispatch, postPage}) {
   }, [])
 
   const categoryHandler = (e) => {
-    if (postPage) {
-    }
     dispatch({type: "category", category: e.target.id}) 
+    window.history.pushState("y2", "x3", `/group/${e.target.id}`)
   }
   return (
     <div className={styles.sidebar}>

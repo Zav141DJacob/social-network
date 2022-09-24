@@ -19,6 +19,9 @@ export default function Home({post, dispatch}) {
     if (x?.userId) {
       dispatch({type: "profile", Id: x.userId})
     }
+    if (x?.groupId) {
+      dispatch({type: 'category', category: x.groupId})
+    }
     ws2Setup()
     wsSetup()
   }, [])

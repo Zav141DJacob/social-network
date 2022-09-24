@@ -84,3 +84,48 @@ body {
 //    500: "Internal Server Error"
 
 TODO: if on a group page the post will be in that group only
+Registration
+  If nickname and avatar is not provided
+    Generate nickname and avatar
+
+Profile
+  If profile is public dont send follow notification with Accept/Decline buttons
+  Settings button
+    Open modal
+      Display "Make profile public/private"
+  Unfollow button
+  Show posts
+  Show followers modal
+  Show following modal
+
+Events
+  Create event form
+  Event page
+    Invite users
+    Attending users
+    Event name, desc, date
+
+Left sidebar 
+  Update groups
+  Show more opens discover groups page
+
+Groups
+  Private group
+    Show Join button and no posts
+  Invite button
+    Open users modal
+    Send notification to target
+  Join button
+    Send notification to owner
+  After create it redirects to group page
+  Group chat
+
+Posts
+  Specify post privacy
+    Almost private
+      Open a users modal to choose who sees it
+  Display images
+
+Comments
+  Display images
+
