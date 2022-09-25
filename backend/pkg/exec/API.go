@@ -1391,7 +1391,7 @@ func GroupMessagesAPI(w http.ResponseWriter, r *http.Request) {
 func EventsAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "OPTIONS" {
 		auth := AuthenticateSession(r.Header["Authentication"])
-		if auth == SessionData{} {
+		if (auth == SessionData{}) {
 			w.WriteHeader(401)
 			return
 		}
@@ -1407,7 +1407,7 @@ func EventsAPI(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(500)
 				return
 			}
-			fmt.Fprintf(returnJson)
+			fmt.Fprintf(w, string(returnJson))
 		}
 	}
 }
