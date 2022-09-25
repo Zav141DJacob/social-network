@@ -21,8 +21,9 @@ type ClientManager struct {
 }
 
 type Client struct {
-	id     IdType
-    socket *websocket.Conn
+	id     	 IdType
+	nickname string
+    socket	 *websocket.Conn
 }
 
 type IdType int
@@ -126,24 +127,14 @@ func (c *Client) reader(conn *websocket.Conn) {
 			return
 		}
 
-
-		
-
-		// Clients message should be a json {
-		// 	message string
-		// 	senderId float64
-		// 	targetId float64
-		//	(title string)
-		//	mode string
-		// }
 		var v map[string]interface{}
 		json.Unmarshal([]byte(p), &v)
 
-		mode := v["mode"]
+		mode := v["mode"].(string)
 		
 		
 		// registers the user with their ID
-		switch mode.(string) {
+		switch mode {
 		case "register":
 			nickname := v["nickname"]
 			user, err := FromUsers("nickname", nickname)
@@ -155,13 +146,15 @@ func (c *Client) reader(conn *websocket.Conn) {
 			}
 
 			c.id = IdType(user[0].UserId)
+			c.nickname = user[0].Nickname
 			Manager.register <- c
 		case "groupMessage":
 			type toClient struct {
-				Message  string
-				Sent	 bool
-				SenderId IdType
-				Type	 string
+				Message		string
+				Sent		bool
+				SenderId 	IdType
+				SenderName	string
+				Type		string
 			}
 
 			message  := v["message"]
@@ -171,12 +164,18 @@ func (c *Client) reader(conn *websocket.Conn) {
 			to.Message = message.(string)
 			to.Sent = false
 			to.SenderId = c.id
-			to.Type = mode.(string)
+			to.SenderName = c.nickname
+			to.Type = mode
 
 			jsonTo, err := json.Marshal(to)
 			if err != nil {
 				break
 			}
+			
+			// senderId, senderName, message, targetId
+
+			GroupMessage(to.SenderId, to.SenderName, to.Message, targetId)
+
 			//look through global variable clientArray
 			//find targetId and write message to the senders and the targets connection
 			
@@ -185,10 +184,9 @@ func (c *Client) reader(conn *websocket.Conn) {
 			value, isValid := Manager.groupChats[target]
 
 			// If target's connection is valid then WriteMessage to their connection
-			for _, v := range value {
+			if isValid {
+				for _, v := range value {
 				// value2, isValid := v
-
-				if isValid {
 					err = v.WriteMessage(messageType, []byte(jsonTo))
 					if err != nil {
 						HandleErr(err)
@@ -212,6 +210,13 @@ func (c *Client) reader(conn *websocket.Conn) {
 				HandleErr(err)
 			}
 		case "registerGroup":
+
+			type toClient struct {
+				CategoryId	int
+				ErrCode		int
+			}
+			to := toClient{}
+
 			title  		:= v["title"]
 			description := v["description"]
 			isPublic	:= v["isPublic"]
@@ -226,6 +231,8 @@ func (c *Client) reader(conn *websocket.Conn) {
 
 			errCode = 409
 
+			// ToDo:
+			//	return id
 			if len(category) == 0 {
 
 
@@ -235,13 +242,41 @@ func (c *Client) reader(conn *websocket.Conn) {
 					break
 				}
 				errCode = 201
-				
+				category, err = FromCategories("title", title)
+
+				if err != nil {
+					HandleErr(err)
+					break
+				}
+				to.CategoryId = category[0].CatId
+				to.ErrCode = errCode
+
+				err = Post(1, to.CategoryId, "First post in " + title.(string), "Welcome to \"" + title.(string) + "\"")
+				if err != nil {
+					HandleErr(err)
+				}
 				Manager.registerGroup <- c
 				
 			} else {
 				HandleErr(CreateErr("ERROR " + strconv.Itoa(errCode)))
 			}
+			
 
+			jsonTo, err := json.Marshal(to)
+
+			if err != nil {
+				HandleErr(err)
+				to.ErrCode = 500
+				break
+			}
+
+			
+
+			err = conn.WriteMessage(messageType,[]byte(jsonTo))
+
+			if err != nil {
+				HandleErr(err)
+			}
 		case "follow":
 			type toClient struct {
 				Nickname 	string
@@ -278,7 +313,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 			// }
 
 			to := toClient{}
-			to.Type   = mode.(string)
+			to.Type   = mode
 			to.Nickname   = user[0].Nickname
 			to.UserId = user[0].UserId
 			to.UserAvatar = user[0].Avatar
@@ -318,7 +353,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 			to.Message = message.(string)
 			to.Sent = false
 			to.SenderId = c.id
-			to.Type = mode.(string)
+			to.Type = mode
 
 			jsonTo, err := json.Marshal(to)
 			if err != nil {
@@ -340,7 +375,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 			}
 
 			to.Sent = true
-			to.Type = mode.(string)
+			to.Type = mode
 
 			jsonTo, err = json.Marshal(to)
 			if err != nil {

@@ -243,8 +243,9 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 		case "GET":
 
 			type toPosts struct {
-				Post	 PostData
-				User     string
+				Post	PostData
+				User    string
+				Auth	bool
 				// Category CategoryData
 			}
 			var toAPI []toPosts
@@ -279,18 +280,26 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			// var err error
 			// fmt.Println(len(m["postId"]))
 
+			checkForCategory := false
 			if len(m["postId"]) > 0{
 				// fmt.Println(m["postId"][0])
 				posts, err = FromPosts("postId", m["postId"][0])
-
-			} else if len(m["categoryId"]) == 0{
-				posts, err = FromPosts("", "")
- 
-			} else {
+			} else if len(m["categoryId"]) > 0{
+				checkForCategory = true
 				posts, err = FromPosts("catId", m["categoryId"][0])
-
+			} else {
+				posts, err = FromPosts("", "")
 			}
 
+			// jsonProfile, err := json.Marshal(profile)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+
+			// // fmt.Fprintf(w, string(jsonProfile))
+			// w.WriteHeader(401)
+			// w.Write([]byte(jsonProfile))
 
 			for _, post := range posts {
 				found := false
@@ -303,6 +312,10 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 				}
 
 				if found == false {
+
+					if checkForCategory {
+						w.WriteHeader(401)
+					}
 					continue
 				}
 				user, err := FromUsers("userId", post.UserId)
@@ -312,7 +325,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				// fmt.Println(post)
-				toAPI = append(toAPI, toPosts{Post: post, User: user[0].Nickname})
+				toAPI = append(toAPI, toPosts{Post: post, User: user[0].Nickname, Auth: found})
 			}
 			jsonPosts, err := json.Marshal(toAPI)
 			if err != nil {
@@ -322,7 +335,6 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			}
 
 			fmt.Fprintln(w, string(jsonPosts))
-			return
 		case "POST":
 			var v map[string]interface{}
 	
@@ -595,6 +607,11 @@ func CategoryAPI(w http.ResponseWriter, r *http.Request) {
 			// 	w.Write([]byte(errMsg))
 			// } else {
 			InsertCategory(title, description, auth.UserId, false)
+			err = Post(auth.UserId, len(categories)+1, "First post in " + title.(string), "Welcome to \"" + title.(string) + "\"")
+
+			if err != nil {
+				HandleErr(err)
+			}
 			w.WriteHeader(http.StatusCreated)
 			// }
 		
@@ -1325,6 +1342,76 @@ func NotificationsListAPI(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+func GroupMessagesAPI(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "OPTIONS" {
+
+		auth := AuthenticateSession(r.Header["Authentication"])
+
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
+			return
+		}
+		switch r.Method {
+		case "GET":
+			requestUrl := r.URL.RawQuery
+
+			m, err := url.ParseQuery(requestUrl)
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(419)
+				return
+			}
+			if len(m["targetId"]) == 0 {
+				w.WriteHeader(419)
+				return
+			}
+			targetId := m["targetId"][0]
+
+			messages, err := FromGroupMessages("targetId", targetId)
+
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(500)
+				return
+			}
+
+			returnJson, err := json.Marshal(messages)
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(500)
+				return
+			}
+
+			fmt.Fprintf(w, string(returnJson))
+		}
+	}
+}
+
+func EventsAPI(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "OPTIONS" {
+		auth := AuthenticateSession(r.Header["Authentication"])
+		if auth == SessionData{} {
+			w.WriteHeader(401)
+			return
+		}
+		switch r.Method {
+		case "GET":
+			events, err := FromEvents("", "")
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+			returnJson, err := json.Marshal(events)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+			fmt.Fprintf(returnJson)
+		}
+	}
+}
+
 // func PostLikeAPI(w http.ResponseWriter, r *http.Request) {
 // 	switch r.Method {
 // 	case "GET":

@@ -3,6 +3,7 @@ import styles from './rightsidebar.module.css'
 import { MessageBox } from './messagebox.jsx'
 import { postData } from '../Login'
 import { FollowCase } from '../../utils/WsCases'
+import { getData } from './topbar'
 
 
 export { ws }
@@ -54,7 +55,11 @@ const wsOnMessage = (notification, setNotification, setUsers) => {
     let jsonData = JSON.parse(event.data)
     console.log(jsonData)
     switch (jsonData.Type) {
-      case "default":
+      case "follow":
+        FollowCase(jsonData)  
+      case "groupMessage":
+        
+      default:
         getOnlineUsers(notification, setNotification, setUsers)
         postData("http://localhost:8000/api/v1/notifications/", {FromUserId: JSON.parse(event.data).SenderId}, false)
           .then(resp => {
@@ -64,10 +69,7 @@ const wsOnMessage = (notification, setNotification, setUsers) => {
             console.log("found error in wsOnMessage!: ", err)
           })
         break
-      case "follow":
-        FollowCase(jsonData)
-        
-        
+            
     }
   }
 }
@@ -111,6 +113,7 @@ const getOnlineUsers = (notification, setNotification, setUsers) => {
     },
   }).then(item => {
     item.json().then((res) => {
+      
       setUsers(res)
       // getUserListOrder(users, setUsers, res)
       getNotifications(notification, setNotification)
@@ -157,7 +160,18 @@ export function RightSideBar({dispatch}) {
             </div>
           )
         })}
+        {
+          () => {
+            
+            getData("http://localhost:8000/api/v1/categories/")
+            .then(categoryResponse => {
+              console.log(categoryResponse)
+            }) 
+          }
+        }
         {messageboxOpen && <MessageBox dispatch={dispatch} user={messageUser} closeHandler={closeMessageBox} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}}/>}
+        <div>Hello!!!!!!</div>
+
       </div>
     )
   }

@@ -3,6 +3,7 @@ import styles from './messagebox.module.css'
 import { ws } from './right-sidebar'
 import TimeAgo from 'timeago-react';
 import InputEmoji from 'react-input-emoji'
+import { getData } from './topbar';
 // ws.onopen = function() {
 //   ws.send(JSON.stringify({message: "Initializing Websocket Connection", senderId: 1, targetId: 0, init: true}))
 // }
@@ -10,7 +11,7 @@ import InputEmoji from 'react-input-emoji'
 
 let MESSAGES = []
 
-const getMessages = (setMessages, messages, targetUser) => {
+const getMessages = (setMessages, messages, targetUser, mode = "default") => {
   let cookieStruct = {}
 
 
@@ -19,6 +20,13 @@ const getMessages = (setMessages, messages, targetUser) => {
     cookieStruct[split[0]] = split[1]
   }
 
+  if (mode == "groupMessage") {
+    getData("http://localhost:8000/api/v1/group-messages/")
+    .then(response => {
+      console.log(response)
+    })
+    return
+  }
 
   fetch("http://localhost:8000/api/v1/messages/", {
     method: "GET",
@@ -65,7 +73,7 @@ const getMessages = (setMessages, messages, targetUser) => {
 }
 
 
-export function MessageBox({user, closeHandler, getOnlineUsers, dispatch}) {
+export function MessageBox({user, closeHandler, getOnlineUsers, dispatch, mode = "default"}) {
   // console.log("user", user)
   let lastmsg = useRef()
   const [messages, setMessages] = useState(MESSAGES)
@@ -89,10 +97,13 @@ export function MessageBox({user, closeHandler, getOnlineUsers, dispatch}) {
         getOnlineUsers()
         handleSubmit(jsonData);
         break
+      case "groupMessage":
+        handleSubmit(jsonData, mode);
+        break
     }
   }
 
-  const handleSubmit = (message) => {
+  const handleSubmit = (message, mode = "default") => {
     let messagesCopy = [...messages]
     lastmsg.current?.scrollIntoView();
 
@@ -170,17 +181,18 @@ export function MessageBox({user, closeHandler, getOnlineUsers, dispatch}) {
           setCurrentMessage={setText} 
           currentMessage={text} 
           target={user} 
+          mode={mode}
         />
       </div>
     </div>
   )
 }
 
-function Textbox({scrollRef, handleSubmit, messages, setMessages, currentMessage, setCurrentMessage, target}) {
+function Textbox({scrollRef, handleSubmit, messages, setMessages, currentMessage, setCurrentMessage, target, mode = "default"}) {
   function handleOnEnter (text) {
     console.log('enter', text)
     if (text !== '') {
-      ws.send(JSON.stringify({message: text, targetId: target.UserId, mode: "default"}))
+      ws.send(JSON.stringify({message: text, targetId: target.UserId, mode: mode}))
     }
   }
   return (

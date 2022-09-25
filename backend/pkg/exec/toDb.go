@@ -33,35 +33,11 @@ func Post(userId, catId, title, body interface{}) error {
 
 	defer stmt.Close()
 
-	stmt.Exec(userId, title, body, catId, time.Now())
+	_, err = stmt.Exec(userId, title, body, catId, time.Now())
 
-	// posts, err := FromPosts("", "")
-
-	// if err != nil {
-	// 	return err
-	// }	
-
-	// postId := len(posts)
-	
-	// stmt, err = Db.Prepare("INSERT INTO postCategory (postId, catId, categoryTitle) VALUES (?, ?, ?);")
-	// if err != nil {
-	// 	return err
-	// }
-
-	// for _, c := range catId.([]interface{}) {
-
-	// 	category, err := FromCategories("catId", c)
-
-	// 	if err != nil {
-	// 		return err
-	// 	}
-
-	// 	_, err = stmt.Exec(postId, category[0].CatId, category[0].Title)
-
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// }
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -179,15 +155,6 @@ func InsertCategory(title, description , userId, isPublic interface{}) error {
 	return nil
 }
 
-// `CREATE TABLE "sessions" (
-// 	"sessionId" TEXT NOT NULL PRIMARY KEY,
-// 	"userId" INTEGER NOT NULL UNIQUE,
-// 	"roleId" INTEGER NOT NULL,
-// 	"date" DATETIME NOT NULL,
-// 	FOREIGN KEY ("user_id") REFERENCES "users"("user_id")
-// 	FOREIGN KEY ("role_id") REFERENCES "users"("role_id")
-// )`
-
 func InsertSession(session, nickname, avatar string, userId, roleId int) error {
 	stmt, err := Db.Prepare("INSERT INTO sessions (sessionId, nickname, avatar, userId, roleId, date) VALUES (?, ?, ?, ?, ?, ?)")
 	
@@ -257,21 +224,26 @@ func Notify(user, target []UserData, catId, mode interface{}) error {
 }
 
 func Message(senderId, targetId, message interface{}) error {
-	stmt, err := Db.Prepare("INSERT INTO messages (senderId, message, targetId, date) VALUES (?, ?, ?, ?)")
+	stmt, err := Db.Prepare("INSERT INTO messages (senderId, senderName, message, targetId, date) VALUES (?, ?, ?, ?, ?)")
 	
 	if err != nil {
 		return err
 	}
 
+	user, err := FromUsers("userId", senderId)
+	if err != nil {
+		return err
+	}
+
 	defer stmt.Close()
-	stmt.Exec(senderId, message, targetId, time.Now())
+	stmt.Exec(senderId, user[0].Nickname, message, targetId, time.Now())
 	return nil
 }
 
 
 // ToDo:
 //	rename followerUserId and userId because they are the opposite currently 
-//	(or idk its very confusing atm)
+//	(or idk its very confusing for me) -Jacob
 func Follow(followerUserId, userId interface{}) error{
 	stmt, err := Db.Prepare(`INSERT INTO followers 
 	(nickname, userId, followerNickname, followerUserId, followerAvatar) 
@@ -296,5 +268,25 @@ func Follow(followerUserId, userId interface{}) error{
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+
+// 		"messageId" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+// 		"senderId" INTEGER NOT NULL,
+// 		"message" TEXT NOT NULL, 
+// 		"targetId" INTEGER NOT NULL,
+// 		"date" DATETIME NOT NULL,
+func GroupMessage(senderId, senderName, message, targetId interface{}) error {
+	stmt, err := Db.Prepare("INSERT INTO groupMessages (senderId, senderName, message, targetId, date) VALUES (?, ?, ?, ?);")
+
+	if err != nil {
+		return err
+	}	
+
+	defer stmt.Close()
+
+	stmt.Exec(senderId, senderName, message, targetId, time.Now())
+
 	return nil
 }

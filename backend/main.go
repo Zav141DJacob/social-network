@@ -34,7 +34,10 @@ func main(){
   http.HandleFunc("/api/v1/comments/", Middleware(exec.CommentAPI))
 
   http.HandleFunc("/api/v1/online-users/", Middleware(exec.OnlineUsersAPI))
+
   http.HandleFunc("/api/v1/messages/", Middleware(exec.MessagesAPI))
+  http.HandleFunc("/api/v1/group-messages/", Middleware(exec.GroupMessagesAPI))
+
   http.HandleFunc("/api/v1/notifications/", Middleware(exec.PingAPI))
   http.HandleFunc("/api/v1/notifications-list/", Middleware(exec.NotificationsListAPI))
 

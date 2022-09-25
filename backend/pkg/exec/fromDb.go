@@ -437,6 +437,7 @@ func FromMessages(senderValue, targetValue interface{}) ([]MessageData, error){
 		err = rows.Scan(
 			&message.MessageId,
 			&message.SenderId,
+			&message.SenderName,
 			&message.Message,
 			&message.TargetId,
 			&message.Date)
@@ -481,6 +482,70 @@ func FromFollowers(condition string, value interface{}) ([]FollowerData, error) 
 
 	return returnFollowers, nil
 }
+
+
+func FromGroupMessages(condition string, value interface{}) ([]GroupMessageData, error){
+
+	rows, err := doRows("groupMessages", condition, value)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var returnMessage []GroupMessageData
+	for rows.Next() {
+		var message GroupMessageData
+
+		err = rows.Scan(
+			&message.MessageId,
+			&message.SenderId,
+			&message.SenderName,
+			&message.Message,
+			&message.TargetId,
+			&message.Date)
+
+		if err != nil {
+			return nil, err
+		}
+
+		returnMessage = append(returnMessage, message)
+	}
+
+	return returnMessage, nil
+}
+
+
+func FromEvents(condition string, value interface{}) ([]EventsData, error) {
+	rows, err := doRows("events", condition, value)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var returnEvents []EventsData
+	for rows.Next() {
+		var event EventsData
+
+		err = rows.Scan(
+			&event.Id,
+			&event.Title,
+			&event.Description,
+			&event.Date)
+
+		if err != nil {
+			return nil, err
+		}
+
+		returnEvents = append(returnEvents, event)
+	}
+
+	return returnEvents, nil
+}
+
 
 // Pulls data from the database
 // SELECT - how many arguments (* for all)

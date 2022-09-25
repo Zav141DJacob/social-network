@@ -2,6 +2,9 @@ package exec
 
 import ()
 
+//Optional ToDo:
+//	use JOIN and only use the ID values of tables
+
 // The date in the structs is the time when the table element was created
 
 type UserData struct {
@@ -13,7 +16,7 @@ type UserData struct {
 	LastName  string
 	Age		  string
 	Bio		  string
-	Avatar		  string
+	Avatar	  string
 	RoleId	  int
 	Date	  string
 	IsPrivate bool
@@ -85,11 +88,21 @@ type NotificationData struct {
 
 // Message struct
 type MessageData struct {
-	MessageId int
-	SenderId  int
-	Message   string
-	TargetId  int
-	Date	  string
+	MessageId	int
+	SenderId	int
+	SenderName	string
+	Message		string
+	TargetId	int
+	Date		string
+}
+
+type GroupMessageData struct {
+	MessageId	int
+	SenderId	int
+	SenderName	string
+	Message		string
+	TargetId	int
+	Date		string
 }
 
 type ResponseRegisterUser struct {
@@ -124,11 +137,8 @@ type FollowerData struct {
 	Nickname		 string
 	UserId			 int
 
-	//Optional ToDo:
-	//	use JOIN and only use the ID values of tables
 	FollowerNickname string
 	FollowerUserId	 int
-	// ToDo:
 	FollowerAvatar	 string
 }
 
@@ -142,6 +152,13 @@ type NotificationsListData struct {
 	CatId			int
 	CategoryTitle	string
 	Type			string
+}
+
+type EventsData struct {
+	Id			int
+	Title		string
+	Description	string
+	Date		string
 }
 // type ErrorString struct {
 // 	s string

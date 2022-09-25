@@ -55,7 +55,7 @@ export function Feed({selectedCat, dispatch, state, forwardRef, scrollValue}) {
       setPostCopy(posts?.slice())
     }
   }, [posts, selectedCat])
-  if (state.public) {
+  if (postCopy?.length > 0) {
     return (
       <div className={styles.feed} ref={forwardRef}>
         <CreatePost dispatch={dispatch} state={state}/>

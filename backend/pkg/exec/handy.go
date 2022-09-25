@@ -2,6 +2,7 @@ package exec
 
 import (
 	"fmt"
+	// "net/url"
 	"strings"
 	"errors"
 )
@@ -77,3 +78,20 @@ func FilterUserData(slice interface{}, f func(interface{}) bool) []UserData {
 	}
 	return returnSlice
 }
+
+// ToDo: less hardcode
+// func QueryData(r *http.Request) (_, error) {
+// 	requestUrl := r.URL.RawQuery
+
+// 		m, err := url.ParseQuery(requestUrl)
+// 		if err != nil {
+// 			HandleErr(err)
+// 			w.WriteHeader(419)
+// 			return
+// 		}
+// 		if len(m["userId"]) == 0 {
+// 			w.WriteHeader(419)
+// 			return
+// 		}
+// 		userId := m["userId"][0]
+// }
