@@ -56,9 +56,10 @@ export function Feed({selectedCat, dispatch, state, forwardRef, scrollValue}) {
     }
   }, [posts, selectedCat])
   if (postCopy?.length > 0) {
+    console.log(selectedCat)
     return (
       <div className={styles.feed} ref={forwardRef}>
-        <CreatePost dispatch={dispatch} state={state}/>
+        {selectedCat?.postCat && <CreatePost dispatch={dispatch} state={state}/>}
         <div className={styles.posts} >
           {postCopy?.map(i => <PostComponent key={i?.Post?.PostId} postInfo={i} dispatch={dispatch}/>)}
         </div>

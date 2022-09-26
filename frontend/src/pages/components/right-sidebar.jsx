@@ -160,18 +160,7 @@ export function RightSideBar({dispatch}) {
             </div>
           )
         })}
-        {
-          () => {
-            
-            getData("http://localhost:8000/api/v1/categories/")
-            .then(categoryResponse => {
-              console.log(categoryResponse)
-            }) 
-          }
-        }
         {messageboxOpen && <MessageBox dispatch={dispatch} user={messageUser} closeHandler={closeMessageBox} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}}/>}
-        <div>Hello!!!!!!</div>
-
       </div>
     )
   }
@@ -180,3 +169,13 @@ export function RightSideBar({dispatch}) {
     </div>
   )
 }
+
+//        {
+//          () => {
+//            
+//            getData("http://localhost:8000/api/v1/categories/")
+//            .then(categoryResponse => {
+//              console.log(categoryResponse)
+//            }) 
+//          }
+//        }

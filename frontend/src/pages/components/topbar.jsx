@@ -166,7 +166,7 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
           switch (item.Type) {
             case "follow": {
               return (
-                <div className={styles.notification} onSubmit={handleFollow}>
+                <div key={item.Nickname} className={styles.notification} onSubmit={handleFollow}>
                   <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
                   <span><strong>{item.Nickname}</strong><br/> has requested to follow you</span>
                   <button onClick={() => handleFollow(true, item.Id, notifications, setNotifications, item.UserId)} className={styles.notificationAcceptBtn}>Accept</button>
@@ -177,7 +177,7 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
             }
             case "event": {
               return (
-                <div className={styles.notification}>
+                <div key={item.Nickname} className={styles.notification}>
                   <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
                   <span><strong>{item.Nickname}</strong><br/> has created a new event in {item.CategoryTitle}</span>
                   <button className={styles.notificationAcceptBtn}>Join</button>

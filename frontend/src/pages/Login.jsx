@@ -336,8 +336,8 @@ export default function Login() {
         setError(null)
       }
         }>
-        <h5 style={{"text-align": "center", "cursor": "pointer"}} >or create a new user</h5>
-        <h3 style={{"text-align": "center", "cursor": "pointer"}} onClick={() => handleSubmit(godLogin)}>God</h3>
+        <h5 style={{"textAlign": "center", "cursor": "pointer"}} >or create a new user</h5>
+        <h3 style={{"textAlign": "center", "cursor": "pointer"}} onClick={() => handleSubmit(godLogin)}>God</h3>
       </div>
     </div>
   );

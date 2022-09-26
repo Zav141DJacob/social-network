@@ -145,3 +145,32 @@
   width: 20px;
   left: 30px;
 }
+
+.posts {
+  position: relative;
+  left: 50%;
+  top: 60px;
+  transform: translate(-50%);
+  width: inherit;
+  max-width: 980px;
+  min-width: 820px;
+  cursor:default;
+}
+
+.postContainer {
+  width: inherit;
+  min-width: 500px;
+  top: 71px;
+  background: rgb(48, 52, 54);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  margin: 0 auto;
+}
+
+.postGroup {
+  position: relative;
+  left: 207px;
+  top: 22px;
+  font-size: 14px;
+  color: gray;
+}

@@ -6,7 +6,7 @@ import {useAuth} from './../../App'
 import { postData as postComment}  from '../Login'
 
 
-export function PostComponent({post, postInfo, dispatch}) {
+export function PostComponent({post, postInfo, dispatch, group}) {
   const [postData, setPostData] = useState()
   const [commentData, setCommentData] = useState()
   const [currentComment, setCurrentComment] = useState({
@@ -100,10 +100,9 @@ export function PostComponent({post, postInfo, dispatch}) {
     });
   }
 
-    // console.log(postData)
   return (
     <div className={styles.postC}>
-      <div className={styles.postContainer} onClick={() => dispatch({type: 'select', postId: postData?.Post?.PostId})}>
+      <div className={styles.postContainer} key={postData?.Post?.PostId} onClick={() => dispatch({type: 'select', postId: postData?.Post?.PostId})}>
         {!postInfo &&
         <div className={styles.close} onClick={closePostHandler}>
           <svg  viewBox="0 0 24 24">
@@ -111,8 +110,9 @@ export function PostComponent({post, postInfo, dispatch}) {
           </svg>
         </div>
         }
-        <span className={styles.author} onClick={(e) => {e.stopPropagation();dispatch({type: "profile", Id: `${postData?.User}` })}}>{postData?.User}</span>
+        <span className={styles.author} onClick={(e) => {e.stopPropagation();dispatch({type: "profile", Id: `${postData?.User}` })}}>{postData?.User ?? timeago.format(postData?.Post?.Date)}</span>
         <div className={styles.title} >{postData?.Post?.Title}</div>
+        {(postData?.User && <p className={styles.date}>{timeago.format(postData?.Post?.Date)}</p>) || <div className={styles.bottomPad}>{group}</div>}
         {!postInfo && 
         <>
           <p className={styles.desc}>

@@ -21,7 +21,7 @@ export function LeftSideBar({dispatch, postPage}) {
     fetch('http://localhost:8000/api/v1/categories/',
       {method: "GET", mode:'cors', cache:'no-cache', credentials: 'include',  headers: {Authentication: output.session}})
       .then(item => {
-        item.json().then(item => {console.log(item);setGroups(item)})
+        item.json().then(item => setGroups(item))
       })
   }, [])
 
