@@ -86,6 +86,14 @@
   color: rgb(232, 230, 227);
 }
 
+.following  {
+  cursor: pointer;
+}
+
+.followers  {
+  cursor: pointer;
+}
+
 .nickname {
   position: absolute;
   display: flex;
@@ -163,6 +171,7 @@
   color: rgb(232, 230, 227);
 }
 .settingsBtn {
+  cursor: pointer;
   position: relative;
   width: 20px;
   left: 30px;
@@ -199,7 +208,7 @@
 
 .followModule {
   position: absolute;
-  left: 50%;
+  left: 51%;
   top: 230px;
   transform: translate(-50%);
   background-color: #404040;
@@ -213,15 +222,26 @@
 
 .privacyModule {
   position: absolute;
-  left: 50%;
+  left: 49%;
   transform: translate(-50%);
-  top: 300px;
+  top: 143px;
   border-radius: 12px;
   background-color: #404040;
   height: 100px;
   width: 250px;
   overflow-y: scroll;
   box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.35);
+}
+.arrowUp {
+  z-index: 2;
+  position: absolute;
+  width: 0px; 
+  right: calc(1% + 834px);
+  top: 135px;
+  height: 0px; 
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid #404040;
 }
 
 .moduleLabel {
@@ -236,13 +256,16 @@
 }
 
 .follower {
+  position: relative;
   display: flex;
+  left: 10px;
   padding: 2px;
+
 }
 
 .followerAvatarImg {
   position: relative;
-  top: 10px;
+  top: 2px;
   left: 20px;
   width: 40px;
   border-radius: 50%;
@@ -251,7 +274,7 @@
 .followerNickname {
   cursor: pointer;
   position: relative;
-  top: 17px;
+  top: 12px;
   left: 30px;
   color: rgb(232, 230, 227);
   font-family: 'Helvetica';

@@ -118,8 +118,8 @@ export function Profile({userId, state, dispatch}) {
           </h2>
           <div className={styles.stats}>
             <span>{(profile?.Posts?.length || profile?.Posts ) ?? 0} posts</span>
-            <span>{profile?.Followers?.length ?? 0} followers</span>
-            <span>{profile?.Following?.length ?? 0} following</span>
+            <span className={styles.followers}>{profile?.Followers?.length ?? 0} followers</span>
+            <span className={styles.following}>{profile?.Following?.length ?? 0} following</span>
           </div>
           {profile.User.Nickname && <span className={styles.nickname}>{profile.User.Nickname}</span>}
           <span className={styles.age}>{profile.User.Age}</span>
@@ -136,6 +136,7 @@ export function Profile({userId, state, dispatch}) {
           </div>
         </div>}
         {module === "privacy" && <div className={styles.followModule}>
+          <div className={styles.arrowUp}></div>
           <div className={styles.closeModal} onClick={() => setModule()}>
             <svg  viewBox="0 0 24 24">
               <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
@@ -157,7 +158,7 @@ export function Profile({userId, state, dispatch}) {
           <img className={styles.avatar} alt="avatar" src={`http://localhost:8000/static/${profile.User.Avatar}`} />
           <h2 className={styles.name}>{profile.User.FirstName} {profile.User.LastName}
             {profile.User.Nickname !== nickname && <button className={styles.unfollowBtn} onClick={() => unfollow(profile.User.UserId)}>Unfollow</button>}
-            {profile.User.Nickname === nickname && <span onClick={() => {setModule("privacy")}}>
+            {profile.User.Nickname === nickname && <span onClick={() => {module === "privacy" ? setModule() : setModule("privacy")}}>
               <svg viewBox="0 0 24 24"className={styles.settingsBtn}>
                 <path fill="white" d="M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4m0 2a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0-2-2m-2 12-1-3-2-1-2 1H4l-2-4 3-2v-2L2 9l2-4h1l2 1 2-1 1-3h5v3l2 1 2-1h1l2 4-3 2 1 1-1 1 3 2-2 4h-1l-2-1-2 1v3h-5m1-18v3L8 8 5 7v2l2 1v4l-2 1v2l3-1 3 1v3h2v-3l3-1 3 1v-2l-2-1v-4l2-1V7l-3 1-3-1V4h-2Z"/>
               </svg>
@@ -165,8 +166,8 @@ export function Profile({userId, state, dispatch}) {
           </h2>
           <div className={styles.stats}>
             <span>{(profile?.Posts?.length || profile?.Posts ) ?? 0} posts</span>
-            <span onClick={() => setModule("followers")}>{profile?.Followers?.length ?? 0} followers</span>
-            <span onClick={() => setModule("following")}>{profile?.Following?.length ?? 0} following</span>
+            <span className={styles.followers} onClick={() => setModule("followers")}>{profile?.Followers?.length ?? 0} followers</span>
+            <span className={styles.following} onClick={() => setModule("following")}>{profile?.Following?.length ?? 0} following</span>
           </div>
           {profile.User.Nickname && <span className={styles.nickname}>{profile.User.Nickname}</span>}
           <span className={styles.age}>{profile.User.Age}</span>
@@ -184,6 +185,7 @@ export function Profile({userId, state, dispatch}) {
           })}
         </div>
         {module === "following" && <div className={styles.followModule}>
+          <div className={styles.arrowUp}></div>
           <div className={styles.closeModal} onClick={() => setModule()}>
             <svg  viewBox="0 0 24 24">
               <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
@@ -199,19 +201,20 @@ export function Profile({userId, state, dispatch}) {
             )
           })}
         </div>}
-        {module === "privacy" && <div className={styles.privacyModule}>
-          <div className={styles.closeModal} onClick={() => setModule()}>
-            <svg  viewBox="0 0 24 24">
-              <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
-            </svg>
-          </div>
-          <span className={styles.moduleLabel}>Set profile privacy</span>
-          <span className={styles.switchText}>Private profile</span>
-          <div className={styles.switch}>
-            <input id="switch-1" checked={profilePrivate} onChange={changePrivacy} type="checkbox" className={styles.switchInput} />
-            <label htmlFor="switch-1" className={styles.switchLabel}>Switch</label>
-          </div>
-        </div>}
+        {module === "privacy" && <><div className={styles.arrowUp}></div>
+          <div className={styles.privacyModule}>
+            <div className={styles.closeModal} onClick={() => setModule()}>
+              <svg  viewBox="0 0 24 24">
+                <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+              </svg>
+            </div>
+            <span className={styles.moduleLabel}>Set profile privacy</span>
+            <span className={styles.switchText}>Private profile</span>
+            <div className={styles.switch}>
+              <input id="switch-1" checked={profilePrivate} onChange={changePrivacy} type="checkbox" className={styles.switchInput} />
+              <label htmlFor="switch-1" className={styles.switchLabel}>Switch</label>
+            </div>
+          </div></>}
         {module === "followers" && <div className={styles.followModule}>
           <div className={styles.closeModal} onClick={() => setModule()}>
             <svg  viewBox="0 0 24 24">
