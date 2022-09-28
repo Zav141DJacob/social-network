@@ -1159,129 +1159,166 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 			}
 
 			fmt.Fprintf(w, string(jsonProfile))
+		case "PUT":
+
+			var v map[string]interface{}
+			err := json.NewDecoder(r.Body).Decode(&v)
+			if err != nil {
+				HandleErr(err)
+			}
+
+			
+			// https://stackoverflow.com/questions/27595480/does-golang-request-parseform-work-with-application-json-content-type
+			// var postType = v["postType"]
+			
+			
+			var userId = v["userId"]
+			
+			if auth.UserId != int(userId.(float64)) {
+				// if auth.Role != "ADMIN" {
+				w.WriteHeader(401)
+				return
+				// }
+			}
+			
+			if userId == nil {
+				w.WriteHeader(419)
+				return
+			}
+
+			err = ToggleProfilePrivacy(userId)
+			if err != nil {
+				w.WriteHeader(419)
+				return
+			}
+
+			w.WriteHeader(204)
+			// w.Write([]byte(jsonProfile))
 		}
 	}
 }
 
 // http://localhost:8000/api/v1/followers/
 func FollowerAPI(w http.ResponseWriter, r *http.Request) {
-  switch r.Method {
-  case "GET":
+	switch r.Method {
+	case "GET":
 
-    requestUrl := r.URL.RawQuery
+		requestUrl := r.URL.RawQuery
 
-    m, err := url.ParseQuery(requestUrl)
-    if err != nil {
-      HandleErr(err)
-      w.WriteHeader(419)
-      return
-    }
-    if len(m["userId"]) == 0 {
-      w.WriteHeader(419)
-      return
-    }
-    userId := m["userId"][0]
+		m, err := url.ParseQuery(requestUrl)
+		if err != nil {
+			HandleErr(err)
+			w.WriteHeader(419)
+			return
+		}
+		if len(m["userId"]) == 0 {
+			w.WriteHeader(419)
+			return
+		}
+		userId := m["userId"][0]
 
-    followers, err := FromFollowers("userId", userId)
-    if err != nil {
-      w.WriteHeader(419)
-      return
-    }
-    jsonFollowers, err := json.Marshal(followers)
-    if err != nil {
-      w.WriteHeader(419)
-      return
-    }
-    fmt.Fprintf(w, string(jsonFollowers))
-  case "POST":
-    auth := AuthenticateSession(r.Header["Authentication"])
+		followers, err := FromFollowers("userId", userId)
+		if err != nil {
+			w.WriteHeader(419)
+			return
+		}
+		jsonFollowers, err := json.Marshal(followers)
+		if err != nil {
+			w.WriteHeader(419)
+			return
+		}
+		fmt.Fprintf(w, string(jsonFollowers))
+	case "POST":
+		auth := AuthenticateSession(r.Header["Authentication"])
 
-    if (auth == SessionData{}) {
-      w.WriteHeader(401)
-      return
-    }
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
+			return
+		}
 
-    var v map[string]interface{}
-    err := json.NewDecoder(r.Body).Decode(&v)
-    if err != nil {
-      HandleErr(err)
-      w.WriteHeader(500)
-      return
-    }
-    var userId = v["userId"]
+		var v map[string]interface{}
+		err := json.NewDecoder(r.Body).Decode(&v)
+		if err != nil {
+			HandleErr(err)
+			w.WriteHeader(500)
+			return
+		}
+		var userId = v["userId"]
 
-    followers, err := FromFollowers("userId", auth.UserId)
-    if err != nil {
-      HandleErr(err)
-      w.WriteHeader(500)
-      return
-    }
+		followers, err := FromFollowers("userId", auth.UserId)
+		if err != nil {
+			HandleErr(err)
+			w.WriteHeader(500)
+			return
+		}
 
-    for _, follower := range followers {
-      fmt.Println(follower.FollowerUserId, userId)
-      if follower.FollowerUserId == int(userId.(float64)) {
-        w.WriteHeader(419)
-        return
-      }
-    }
+		fmt.Println(followers)
 
-    err = Follow(userId, auth.UserId)
+		for _, follower := range followers {
+			fmt.Println(follower.FollowerUserId, userId)
+			if follower.FollowerUserId == int(userId.(float64)) {
+				w.WriteHeader(419)
+				return
+			}
+		}
 
-    if err != nil {
-      HandleErr(err)
-      w.WriteHeader(500)
-      return
-    }
-    w.WriteHeader(http.StatusCreated)
-  case "DELETE":
-    auth := AuthenticateSession(r.Header["Authentication"])
+		err = Follow(userId, auth.UserId)
 
-    if (auth == SessionData{}) {
-      w.WriteHeader(401)
-      return
-    }
-    var v map[string]interface{}
-    err := json.NewDecoder(r.Body).Decode(&v)
-    if err != nil {
-      HandleErr(err)
-      w.WriteHeader(419)
-      return
-    }
+		if err != nil {
+			HandleErr(err)
+			w.WriteHeader(500)
+			return
+		}
+		w.WriteHeader(http.StatusCreated)
+	case "DELETE":
+		auth := AuthenticateSession(r.Header["Authentication"])
 
-    var userId = v["userId"]
-    // requestUrl := r.URL.RawQuery
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
+			return
+		}
+		var v map[string]interface{}
+		err := json.NewDecoder(r.Body).Decode(&v)
+		if err != nil {
+			HandleErr(err)
+			w.WriteHeader(419)
+			return
+		}
 
-    // m, err := url.ParseQuery(requestUrl)
-    // if err != nil {
-    // 	HandleErr(err)
-    // 	w.WriteHeader(419)
-    // 	return
-    // }
-    // if len(m["userId"]) == 0 {
-    // 	w.WriteHeader(419)
-    // 	return
-    // }
-    // userId := m["userId"][0]
-    err = UnFollow(userId, auth.UserId)
-    if err != nil {
-      HandleErr(err)
-      w.WriteHeader(419)
-      return
-    }
-    // followers, err := FromFollowers("userId", userId)
-    // if err != nil {
-    // 	w.WriteHeader(419)
-    // 	return
-    // }
-    // jsonFollowers, err := json.Marshal(followers)
-    // if err != nil {
-    // 	w.WriteHeader(419)
-    // 	return
-    // }
-    // fmt.Fprintf(w, string(jsonFollowers))
-    w.WriteHeader(204)
+		var userId = v["userId"]
+		// requestUrl := r.URL.RawQuery
 
-  }
+		// m, err := url.ParseQuery(requestUrl)
+		// if err != nil {
+		// 	HandleErr(err)
+		// 	w.WriteHeader(419)
+		// 	return
+		// }
+		// if len(m["userId"]) == 0 {
+		// 	w.WriteHeader(419)
+		// 	return
+		// }
+		// userId := m["userId"][0]
+		err = UnFollow(userId, auth.UserId)
+		if err != nil {
+			HandleErr(err)
+			w.WriteHeader(419)
+			return
+		}
+		// followers, err := FromFollowers("userId", userId)
+		// if err != nil {
+		// 	w.WriteHeader(419)
+		// 	return
+		// }
+		// jsonFollowers, err := json.Marshal(followers)
+		// if err != nil {
+		// 	w.WriteHeader(419)
+		// 	return
+		// }
+		// fmt.Fprintf(w, string(jsonFollowers))
+		w.WriteHeader(204)
+
+	}
 }
 
 func NotificationsListAPI(w http.ResponseWriter, r *http.Request) {

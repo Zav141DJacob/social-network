@@ -79,6 +79,32 @@ func FilterUserData(slice interface{}, f func(interface{}) bool) []UserData {
 	return returnSlice
 }
 
+
+// ToDo: change function location
+func ToggleProfilePrivacy(userId interface{}) error {
+	// var stmt *sql.Stmt
+	// var err error
+
+	user, err := FromUsers("userId", userId)
+	if err != nil {
+		return err
+	} 
+	stmt, err := Db.Prepare("UPDATE users SET isPrivate = ? WHERE userId = ?")
+	
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+	if user[0].IsPrivate {
+		stmt.Exec(false, userId)
+	} else {
+		stmt.Exec(true, userId)
+	}
+
+	return nil
+}
+
 // ToDo: less hardcode
 // func QueryData(r *http.Request) (_, error) {
 // 	requestUrl := r.URL.RawQuery
