@@ -100,7 +100,22 @@ export function Profile({userId, state, dispatch}) {
   }
   
   function changePrivacy() {
+    console.log(profile)
     setProfilePrivate(!profilePrivate)
+    const postObj = {userId: profile.User.UserId} // mida me ENDPOINTI saadame?
+    // console.log(postObj)
+    fetch("http://localhost:8000/api/v1/profile/",
+      {
+        method: 'PUT',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authentication': output.session,
+        },
+        body: JSON.stringify(postObj)
+      })
   }
 
   if (profile?.User && !access) {
