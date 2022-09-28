@@ -178,7 +178,7 @@ hr {
   width: 240px;
   min-height: 125px;
   max-height: 500px;
-  right: calc(1% + 57px);
+  right: calc(1% + 47px);
   top: 55px;
   background: #222222;
   box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.35);
@@ -189,7 +189,7 @@ hr {
   z-index: 2;
   position: absolute;
   width: 0px; 
-  right: calc(1% + 56px);
+  right: calc(1% + 46px);
   top: 45px;
   height: 0px; 
   border-left: 15px solid transparent;

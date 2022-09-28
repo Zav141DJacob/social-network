@@ -92,9 +92,7 @@ Profile
   If profile is public dont send follow notification with Accept/Decline buttons
   Settings button
     Open modal
-      Display "Make profile public/private"
-  Show followers modal
-  Show following modal
+      Make button functional (public/private)
 
 Events
   Create event form

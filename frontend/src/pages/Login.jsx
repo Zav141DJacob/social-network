@@ -229,7 +229,6 @@ export default function Login() {
             }
           })
         })
-      console.log(godLogin)
       return
     }
     e.stopPropagation()
@@ -272,8 +271,16 @@ export default function Login() {
     setError(null)
     setErrorFields(['Password', ...errorFields])
   }
-  const godLogin = {
+  const jacobLogin = {
     "Nickname": "Jacob",
+    "Password": "q1w2e3r4t5y6"
+  }
+  const alexLogin = {
+    "Nickname": "Alexxx",
+    "Password": "aaaaaaaa"
+  }
+  const kertuLogin = {
+    "Nickname": "Kertu",
     "Password": "q1w2e3r4t5y6"
   }
 
@@ -336,7 +343,9 @@ export default function Login() {
       }
         }>
         <h5 style={{"textAlign": "center", "cursor": "pointer"}} >or create a new user</h5>
-        <h3 style={{"textAlign": "center", "cursor": "pointer"}} onClick={() => handleSubmit(godLogin)}>God</h3>
+        <h3 style={{"textAlign": "center", "cursor": "pointer"}} onClick={() => handleSubmit(jacobLogin)}>Jacob</h3>
+        <h3 style={{"textAlign": "center", "cursor": "pointer"}} onClick={() => handleSubmit(alexLogin)}>Alex</h3>
+        <h3 style={{"textAlign": "center", "cursor": "pointer"}} onClick={() => handleSubmit(kertuLogin)}>Kertu</h3>
       </div>
     </div>
   );
