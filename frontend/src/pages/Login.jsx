@@ -217,7 +217,6 @@ export default function Login() {
   }
 
   function handleSubmit(e) {
-    console.log(typeof e)
     if (typeof e === "object") {
       console.log(e)
         postData('http://localhost:8000/api/v1/sessions/', e).then(item => {

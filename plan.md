@@ -93,8 +93,6 @@ Profile
   Settings button
     Open modal
       Display "Make profile public/private"
-  Unfollow button
-  Show posts
   Show followers modal
   Show following modal
 

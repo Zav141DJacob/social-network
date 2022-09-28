@@ -469,6 +469,7 @@ func FromFollowers(condition string, value interface{}) ([]FollowerData, error) 
 			&follower.Id,
 			&follower.Nickname,
 			&follower.UserId,
+      &follower.Avatar,
 			&follower.FollowerNickname,
 			&follower.FollowerUserId,
 			&follower.FollowerAvatar)

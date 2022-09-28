@@ -329,22 +329,20 @@
   }
   
   #newUser {
-   position: absolute;
+    position: absolute;
     top: 95px;
     bottom: 0;
     left: 10px;
     right: 0;
     height: 0px;
     width: 135px;
-    
     margin: auto;
-  
-  font-family: 'Helvetica';
-  font-style: normal;
-  font-weight: 10;
-  color: rgb(94, 168, 237);
+    font-family: 'Helvetica';
+    font-style: normal;
+    font-weight: 10;
+    color: rgb(94, 168, 237);
   }
-  
+
   #oldUser {
     position: absolute;
      top:95px;

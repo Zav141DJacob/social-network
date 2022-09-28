@@ -27,7 +27,7 @@
 
 .privatetext {
   position: absolute;
-  color: whitesmoke;
+  color: rgb(232, 230, 227);
   left: 50%;
   top: 70%;
   font-weight: 100;
@@ -43,7 +43,7 @@
   width: 50px;
   padding: 5px;
   fill:none;
-  stroke: white;
+  stroke: rgb(232, 230, 227);
 }
 
 .profile {
@@ -71,7 +71,7 @@
   position: absolute;
   top: 20px;
   left: 150px;
-  color: whitesmoke;
+  color: rgb(232, 230, 227);
 }
 
 .stats {
@@ -83,7 +83,7 @@
   font-weight: 400;
   max-width: 400px;
   min-width: 300px;
-  color: whitesmoke;
+  color: rgb(232, 230, 227);
 }
 
 .nickname {
@@ -95,7 +95,7 @@
   font-weight: 800;
   max-width: 400px;
   min-width: 300px;
-  color: whitesmoke;
+  color: rgb(232, 230, 227);
 }
 
 .bio {
@@ -107,7 +107,7 @@
   font-weight: 400;
   max-width: 400px;
   min-width: 300px;
-  color: whitesmoke;
+  color: rgb(232, 230, 227);
 }
 
 .email {
@@ -119,7 +119,7 @@
   font-weight: 400;
   max-width: 400px;
   min-width: 300px;
-  color: whitesmoke;
+  color: rgb(232, 230, 227);
 }
 
 .age {
@@ -131,15 +131,30 @@
   font-weight: 400;
   max-width: 400px;
   min-width: 300px;
-  color: whitesmoke;
+  color: rgb(232, 230, 227);
 }
 
 .followBtn {
+  cursor: pointer;
   position: relative;
   left: 30px;
-  top: -5px;
+  top: -3px;
+  background-color: transparent;
+  border: 2px solid rgb(14, 57, 122);
+  border-radius: 3px;
+  color: rgb(232, 230, 227);
 }
 
+.unfollowBtn {
+  cursor: pointer;
+  position: relative;
+  left: 30px;
+  top: -3px;
+  background-color: transparent;
+  border: 2px solid #404040;
+  border-radius: 3px;
+  color: rgb(232, 230, 227);
+}
 .settingsBtn {
   position: relative;
   width: 20px;
@@ -172,12 +187,61 @@
   left: 207px;
   top: 22px;
   font-size: 14px;
-  color: gray;
+  color: #404040;
 }
 
 .followModule {
   position: relative;
-  background-color: red;
+  left: 50%;
+  transform: translate(-50%);
+  background-color: #404040;
   height: 300px;
   width: 400px;
+  overflow-y: scroll;
+}
+
+.moduleLabel {
+  position: relative;
+  top: -7px;
+  left: 30px;
+  color: rgb(232, 230, 227);
+  font-family: 'Helvetica';
+  font-style: bold;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.follower {
+  display: flex;
+  padding: 2px;
+}
+
+.followerAvatarImg {
+  position: relative;
+  top: 10px;
+  left: 20px;
+  width: 40px;
+  border-radius: 50%;
+}
+
+.followerNickname {
+  cursor: pointer;
+  position: relative;
+  top: 17px;
+  left: 30px;
+  color: rgb(232, 230, 227);
+  font-family: 'Helvetica';
+  font-style: normal;
+  font-size: 20px;
+  font-weight: 10;
+}
+
+.closeModal {
+  position: relative;
+  left: 90%;
+  top: 12px;
+  width: 20px;
+  height: 20px;
+  color: rgb(232, 230, 227);
+  cursor: pointer;
 }

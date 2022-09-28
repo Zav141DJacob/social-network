@@ -246,8 +246,8 @@ func Message(senderId, targetId, message interface{}) error {
 //	(or idk its very confusing for me) -Jacob
 func Follow(followerUserId, userId interface{}) error{
 	stmt, err := Db.Prepare(`INSERT INTO followers 
-	(nickname, userId, followerNickname, followerUserId, followerAvatar) 
-	VALUES (?, ?, ?, ?, ?);`)
+	(nickname, userId, avatar, followerNickname, followerUserId, followerAvatar) 
+	VALUES (?, ?, ?, ?, ?, ?);`)
 
 	if err != nil {
 		return err
@@ -264,7 +264,7 @@ func Follow(followerUserId, userId interface{}) error{
 	}
 
 	defer stmt.Close()
-	_, err = stmt.Exec(user[0].Nickname, userId, follower[0].Nickname, followerUserId, follower[0].Avatar)
+	_, err = stmt.Exec(user[0].Nickname, userId, user[0].Avatar, follower[0].Nickname, followerUserId, follower[0].Avatar)
 	if err != nil {
 		return err
 	}

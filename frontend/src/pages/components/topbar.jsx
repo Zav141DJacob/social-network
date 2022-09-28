@@ -96,10 +96,24 @@ export let mockNotifications = []
 function handleFollow(doFollow, id, notifications, setNotifications, userId) {
   // event.preventDefault()
   // console.log(option, id)
+  
+  console.log(doFollow, userId, id)
   if (doFollow) {
-    postData("http://localhost:8000/api/v1/followers/", {userId: userId})
+    postData("http://localhost:8000/api/v1/followers/", {userId: userId}).then(i => console.log(333, i))
   }
-  deleteData("http://localhost:8000/api/v1/notifications-list/", {id: id}, false)
+  deleteData("http://localhost:8000/api/v1/notifications-list/", {id: id}, false).then(i => {
+    getData("http://localhost:8000/api/v1/notifications-list/")
+      .then(data => {
+        console.log(111, data)
+        // d = data
+        // console.log(data)
+        if (data) {
+          setNotifications(data)
+        } else {
+          setNotifications([])
+        }
+      })
+  })
   let newNotif = []
   for (const i of notifications) {
     console.log(i.Id, id)
@@ -109,17 +123,6 @@ function handleFollow(doFollow, id, notifications, setNotifications, userId) {
   }
   // mockNotifications = newNotif
 
-  // setNotifications(newNotif)
-  getData("http://localhost:8000/api/v1/notifications-list/")
-    .then(data => {
-      // d = data
-      // console.log(data)
-      if (data) {
-        setNotifications(data)
-      } else {
-        setNotifications([])
-      }
-    })
   // ws2OnMessage(setNotifications)
 
 }

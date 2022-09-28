@@ -136,6 +136,7 @@ type FollowerData struct {
 	Id				 int
 	Nickname		 string
 	UserId			 int
+  Avatar  string
 
 	FollowerNickname string
 	FollowerUserId	 int
