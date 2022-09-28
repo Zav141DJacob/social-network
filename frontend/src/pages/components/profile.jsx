@@ -9,6 +9,7 @@ export function Profile({userId, state, dispatch}) {
   const [access, setAccess] = useState(false)
   const [profile, setProfile] = useState()
   const [groups, setGroups] = useState()
+  const [module, setModule] = useState()
   let cookies = document.cookie
 
   let output = {};
@@ -62,7 +63,8 @@ export function Profile({userId, state, dispatch}) {
         window.history.pushState("y2", "x3", `/users/${nickname}`)
       }
     }
-  }, [nickname, output.session, state?.profile, state.profileId, userId])
+    setModule()
+  }, [state.profileId])
 
   let isPrivate = true
 
@@ -73,9 +75,20 @@ export function Profile({userId, state, dispatch}) {
   }
 
   function unfollow(user) {
-    const postObj = {targetId: user}
+    const postObj = {userId: user}
     // console.log(postObj)
-    ws.send(JSON.stringify({...postObj, mode: "unfollow"}))
+    fetch("http://localhost:8000/api/v1/followers/",
+      {
+        method: 'DELETE',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authentication': output.session,
+        },
+        body: JSON.stringify(postObj)
+      }).then(i => window.location.reload()) 
   }
 
   if (profile?.User && !access) {
@@ -127,8 +140,8 @@ export function Profile({userId, state, dispatch}) {
           </h2>
           <div className={styles.stats}>
             <span>{(profile?.Posts?.length || profile?.Posts ) ?? 0} posts</span>
-            <span>{profile?.Followers?.length ?? 0} followers</span>
-            <span>{profile?.Following?.length ?? 0} following</span>
+            <span onClick={() => setModule("followers")}>{profile?.Followers?.length ?? 0} followers</span>
+            <span onClick={() => setModule("following")}>{profile?.Following?.length ?? 0} following</span>
           </div>
           {profile.User.Nickname && <span className={styles.nickname}>{profile.User.Nickname}</span>}
           <span className={styles.age}>{profile.User.Age}</span>
@@ -137,12 +150,24 @@ export function Profile({userId, state, dispatch}) {
         </div>
         <div className={styles.posts} >
           {profile.Posts?.map(i => {
-            let cat = groups.filter(x => x.CatId === i.CatId)
-            return (
-                <PostComponent  postInfo={{"Post": i}} dispatch={dispatch} group={cat[0].Title}/>
-            )
+            let cat = groups?.filter(x => x.CatId === i.CatId)
+            if (cat) {
+              return (
+                <PostComponent key={i.PostId} postInfo={{"Post": i}} dispatch={dispatch} group={cat[0].Title}/>
+              )
+            }
           })}
         </div>
+        {module && <div onClick={() => setModule()} className={styles.followModule}>
+          {profile.Followers && profile?.Followers.map(follower => {
+            return (
+              <div className={styles.follower}>
+                <div className={styles.followerAvatar}>X</div>
+                <div className={styles.followerNickname}>A</div>
+              </div>
+            )
+          })}
+        </div>}
       </div>
     )
   }

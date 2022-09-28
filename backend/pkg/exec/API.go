@@ -1251,6 +1251,7 @@ func FollowerAPI(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var userId = v["userId"]
+    fmt.Println(12, userId, auth.UserId)
 		// requestUrl := r.URL.RawQuery
 
 		// m, err := url.ParseQuery(requestUrl)

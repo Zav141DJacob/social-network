@@ -20,6 +20,8 @@ function postReducer(state, action) {
     profileId: undefined,
     postCat: undefined,
     public: undefined,
+    following: false,
+    followers: false
   }
 
   switch (action.type) {
@@ -29,9 +31,9 @@ function postReducer(state, action) {
      window.history.pushState("Home.jsx:31", "Home.jsx:31", `/`)
       return {...state, postSelected: false, postId: null, profile: false, profileDrop: false} 
     case 'create':
-      return {postSelected: true, postId: action.postId, profile: false, profileDrop: false}
+      return {...defaultFalse, postSelected: true, postId: action.postId, profile: false, profileDrop: false}
     case 'category':
-      return {postSelected: false, profile: false, profileDrop: false, postCat: action.category, public: action.public}
+      return {...defaultFalse, postSelected: false, profile: false, profileDrop: false, postCat: action.category, public: action.public}
     case 'group':
       return {...defaultFalse, createGroup: true}
     case 'profile':
@@ -42,6 +44,10 @@ function postReducer(state, action) {
       return {...state, notificationDrop: !state.notificationDrop, profileDrop: false}
     case 'createEvent':
       return {...state, notificationDrop: false, profileDrop: false, event: true}
+    case 'followers':
+      return {...defaultFalse, followers: true}
+    case 'following':
+      return {...defaultFalse, following: true}
     case 'home':
      window.history.pushState("Home.jsx:31", "Home.jsx:31", `/`)
       return defaultFalse

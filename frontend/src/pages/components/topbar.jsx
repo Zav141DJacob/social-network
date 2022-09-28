@@ -200,15 +200,15 @@ export function TopBar({dispatch, state}) {
 
   useEffect(() => {
     getData("http://localhost:8000/api/v1/notifications-list/")
-    .then(data => {
-      // d = data
-      // console.log(data)
-      if (data) {
-        setNotifications(data)
-      } else {
-        setNotifications([])
-      }
-    })
+      .then(data => {
+        // d = data
+        // console.log(data)
+        if (data) {
+          setNotifications(data)
+        } else {
+          setNotifications([])
+        }
+      })
   }, [])
   ws2OnMessage(setNotifications, notifications)
   // const [count, setCount] = useState(0);
@@ -231,14 +231,17 @@ export function TopBar({dispatch, state}) {
 
   let {nickname} = useAuth()
   let [avatar, setAvatar] = useState()
-  
-  fetch("http://localhost:8000/api/v1/users/nickname/" + nickname + "/")
-    .then((item) => item.json().then(res =>  setAvatar(res[0].Avatar)))
+
+  if (!avatar) {
+    fetch("http://localhost:8000/api/v1/users/nickname/" + nickname + "/")
+      .then((item) => item.json().then(res =>  setAvatar(res[0].Avatar)))
+  }
+
   return (
     <div className={styles.topbar}>
       <div className={styles.logo} onClick={() => {dispatch({type: "home"})}}>Meetup</div>
       <div className={styles.actions}>
-      <div>{notifications.length}</div>
+        <div>{notifications.length}</div>
 
         <div className={styles.notifications} onClick={() => dispatch({type: "notificationDrop"})}>
           <svg className={styles.bell} viewBox="0 0 24 24">
