@@ -175,7 +175,6 @@
   position: relative;
   width: 20px;
   left: 30px;
-  top: 2px;
 }
 
 .posts {
@@ -225,24 +224,13 @@
   position: absolute;
   left: 49%;
   transform: translate(-50%);
-  top: 143px;
+  top: 140px;
   border-radius: 12px;
   background-color: #404040;
   height: 100px;
   width: 250px;
   overflow-y: scroll;
   box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.35);
-}
-.arrowUp {
-  z-index: 2;
-  position: absolute;
-  width: 0px; 
-  right: calc(1% + 834px);
-  top: 135px;
-  height: 0px; 
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 15px solid #404040;
 }
 
 .moduleLabel {

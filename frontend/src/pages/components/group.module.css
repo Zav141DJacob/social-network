@@ -231,14 +231,6 @@
   display: flex;
 }
 
-
-.postVisibility > * > span {
-  position: relative;
-  top: 7px;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
 .postVisibility > .visBtn {
   -webkit-appearance: none;
   appearance: none;
@@ -291,19 +283,29 @@
 }
 
 .publicIcon {
-  position: absolute;
-  scale: 0.02;
-  top: -564px;
-  left: -560px;
+  position:relative;
+  scale: 0.5;
+  top: -6px;
+  left: -40px;
   fill: #D0D0D0;
 }
 
+.publicLabel {
+  position:relative;
+  top: -38px;
+}
+
 .privateIcon {
-  position: absolute;
-  scale: 0.028;
-  top: -460px;
-  left: -350px;
+  position:relative;
+  scale: 0.5;
+  top: -9px;
+  left: -40px;
   fill: #D0D0D0;
+}
+
+.privateLabel {
+  position:relative;
+  top: -44px;
 }
 
 .almostPrivateIcon {

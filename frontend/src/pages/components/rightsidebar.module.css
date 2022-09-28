@@ -2,9 +2,9 @@
   position: relative;
   cursor: default;
   height: 94vh;
-  width: 14%;
+  width: 12%;
   top: 50px;
-  min-width: 180px;
+  min-width: 100px;
 }
 
 .user {
