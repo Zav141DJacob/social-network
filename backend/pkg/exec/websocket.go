@@ -293,13 +293,22 @@ func (c *Client) reader(conn *websocket.Conn) {
 				break
 			}
 
-			target, err := FromUsers("userId", targetId)
-			if err != nil {
-				
-				HandleErr(err)
-				break
-			}
-      fmt.Println(222, target)
+      target, err := FromUsers("userId", targetId)
+      if err != nil {
+        HandleErr(err)
+        break
+      }
+
+      fmt.Printf("%+v\n", target)
+
+      if !target[0].IsPrivate {
+        err = Follow(c.id, targetId)
+        if err != nil {
+          HandleErr(err)
+          break
+        }
+        return
+      }
 
 			err = Notify(user, target, 0, mode)
 			if err != nil {

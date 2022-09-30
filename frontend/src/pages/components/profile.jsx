@@ -105,6 +105,8 @@ export function Profile({userId, state, dispatch}) {
       }).then(i => {
         if (profile?.User?.IsPrivate) {
           setAccess(false)
+        } else {
+          setFollowStatus(false)
         }
       }) 
   }
