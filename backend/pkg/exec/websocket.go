@@ -299,6 +299,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 				HandleErr(err)
 				break
 			}
+      fmt.Println(222, target)
 
 			err = Notify(user, target, 0, mode)
 			if err != nil {
