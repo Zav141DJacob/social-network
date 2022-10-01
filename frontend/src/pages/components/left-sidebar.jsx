@@ -1,10 +1,11 @@
 import React from 'react' 
+import {wsOnMessage} from './right-sidebar'
 import styles from './leftsidebar.module.css'
 import {useAuth} from './../../App'
 import { useNavigate } from 'react-router-dom'
 import {useState, useEffect} from 'react'
 
-export function LeftSideBar({dispatch, postPage}) {
+export function LeftSideBar({dispatch, state}) {
   const {onLogout, nickname} = useAuth()
   const [groups, setGroups] = useState()
   const nav = useNavigate()
@@ -23,7 +24,7 @@ export function LeftSideBar({dispatch, postPage}) {
       .then(item => {
         item.json().then(item => setGroups(item))
       })
-  }, [])
+  }, [state])
 
   const categoryHandler = (e) => {
     let select = groups.filter(i => i.CatId == e.target.id);

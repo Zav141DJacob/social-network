@@ -104,8 +104,6 @@ function App() {
   const [previousState, setPreviousState] = useState([{...post, fat: 12, profileDrop: false, notificationDrop: false}])
   useEffect(() => {
     if (JSON.stringify(post) !== JSON.stringify(previousState.at(-1))) {
-      console.log(post)
-      console.log(previousState.slice())
       let prevCopy = previousState.slice()
       prevCopy.push({...post, fat: 12, profileDrop: false, notificationDrop: false})
       setPreviousState(prevCopy)

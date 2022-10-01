@@ -50,15 +50,21 @@ const getNotifications = async (notification, setNotification) => {
         })
     }).catch(() => console.log("BAD THING in right-sidebar 49"))
 }
-const wsOnMessage = (notification, setNotification, setUsers) => {
+export const wsOnMessage = (notification, setNotification, setUsers, dispatch) => {
   ws.onmessage = function(event) {
     let jsonData = JSON.parse(event.data)
     console.log(jsonData)
+    if (jsonData.CategoryId) {
+      console.log(2312)
+      dispatch({type: "category", category: jsonData.CategoryId}) 
+      window.history.pushState("y2", "x3", `/group/${jsonData.CategoryId}`)
+    }
     switch (jsonData.Type) {
       case "follow":
         FollowCase(jsonData)  
+        break
       case "groupMessage":
-        
+        break
       default:
         getOnlineUsers(notification, setNotification, setUsers)
         postData("http://localhost:8000/api/v1/notifications/", {FromUserId: JSON.parse(event.data).SenderId}, false)
@@ -68,8 +74,6 @@ const wsOnMessage = (notification, setNotification, setUsers) => {
           .catch(err => {
             console.log("found error in wsOnMessage!: ", err)
           })
-        break
-            
     }
   }
 }
@@ -129,7 +133,7 @@ export function RightSideBar({dispatch}) {
     0: 0,
   })
   const closeMessageBox = () => {
-    wsOnMessage(notification, setNotification, setUsers)
+    wsOnMessage(notification, setNotification, setUsers, dispatch)
     setMessageboxOpen(false)
   }
 
@@ -137,7 +141,7 @@ export function RightSideBar({dispatch}) {
   //   wsSetup()
   // }, [])
   useEffect(() => {
-    wsOnMessage(notification, setNotification, setUsers)
+    wsOnMessage(notification, setNotification, setUsers, dispatch)
     getOnlineUsers(notification, setNotification, setUsers)
   }, [])
 
