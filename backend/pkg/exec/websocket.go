@@ -259,9 +259,9 @@ func (c *Client) reader(conn *websocket.Conn) {
           to.ErrCode = 500
           break
         }
-  
+
         err = conn.WriteMessage(messageType,[]byte(jsonTo))
-  
+
         if err != nil {
           HandleErr(err)
         }
@@ -348,6 +348,73 @@ func (c *Client) reader(conn *websocket.Conn) {
           HandleErr(err)
         }
       }
+    case "join":
+      fmt.Println("BABY")
+      type toClient struct {
+        CategoryId	int
+        ErrCode		int
+      }
+
+      to := toClient{}
+
+      catId  		:= v["catId"]
+      user := v["nickname"]
+
+
+      category, err := FromCategories("catId", catId)
+      fmt.Println(category)
+
+      target, err := FromUsers("userId", category[0].UserId)
+      if err != nil {
+        HandleErr(err)
+        break
+      }
+      userN, err := FromUsers("nickname", user)
+      if err != nil {
+        HandleErr(err)
+        break
+      }
+      err = Notify(userN, target, catId, mode)
+      if err != nil {
+        HandleErr(err)
+        break
+      }
+
+
+      if len(category) == 0 {
+        jsonTo, err := json.Marshal(to)
+
+        if err != nil {
+          HandleErr(err)
+          to.ErrCode = 500
+          break
+        }
+
+        err = conn.WriteMessage(messageType,[]byte(jsonTo))
+
+        if err != nil {
+          HandleErr(err)
+        }
+        Manager.registerGroup <- c
+
+      } else {
+        to.ErrCode = 409
+      }
+
+      jsonTo, err := json.Marshal(to)
+
+      if err != nil {
+        HandleErr(err)
+        to.ErrCode = 500
+        break
+      }
+
+      err = conn.WriteMessage(messageType,[]byte(jsonTo))
+
+      if err != nil {
+        HandleErr(err)
+      }
+
     case "unfollow":
       targetId := v["targetId"]
       UnFollow(c.id, targetId)
@@ -405,7 +472,7 @@ func (c *Client) reader(conn *websocket.Conn) {
       if err != nil {
         HandleErr(err)
       }
-    }
+  }
 	}
 }
 

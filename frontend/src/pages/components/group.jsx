@@ -62,6 +62,7 @@ function Description({nickname, title, value, visibility, setDesc, dispatch}) {
   function submitPost() {
     let isPublic = visibility === "public"
     const postObj = {title: title, description: value, isPublic: isPublic}
+    console.log(postObj)
     ws.send(JSON.stringify({...postObj, mode: "registerGroup"}))
   }
   if (title && value) {

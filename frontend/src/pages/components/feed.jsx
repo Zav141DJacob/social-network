@@ -5,6 +5,7 @@ import { PostComponent } from './post'
 import {throttle} from 'lodash'
 import { postData } from '../Login'
 import {findCookies} from './right-sidebar'
+import { ws } from './right-sidebar'
 
 // async function postData(url = '', data = {}) {
 //   // Default options are marked with *
@@ -24,6 +25,7 @@ import {findCookies} from './right-sidebar'
 // }
 
 export function Feed({selectedCat, dispatch, state, forwardRef, scrollValue}) {
+  const {nickname} = useAuth()
   const [posts, setPosts] = useState()
   const throttler = useRef(throttle((newVal, ref) => ref?.current?.scroll({top: newVal}), 40))
   const [postCopy, setPostCopy] = useState()
@@ -33,6 +35,13 @@ export function Feed({selectedCat, dispatch, state, forwardRef, scrollValue}) {
     pair = pair.split(/\s*=\s*/);
     output[pair[0]] = pair.slice(1).join('=');
   });
+
+  function join() {
+    const postObj = {catId: selectedCat.postCat, nickname: nickname}
+    console.log(postObj)
+    ws.send(JSON.stringify({...postObj, mode: "join"}))
+  }
+
   useEffect(() => {
     if (!posts) {
       fetch(`http://localhost:8000/api/v1/posts/`, {
@@ -78,7 +87,7 @@ export function Feed({selectedCat, dispatch, state, forwardRef, scrollValue}) {
         <div className={styles.posts} >
           <div className={styles.private}>
             <div className={styles.joinBtn}>
-              <button>Join</button>
+              <button onClick={join}>Join</button>
             </div>
             <div className={styles.privatebox}>
               <svg className={styles.lock} viewBox="0 0 24 24">

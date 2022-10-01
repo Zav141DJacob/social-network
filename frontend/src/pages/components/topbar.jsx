@@ -166,6 +166,7 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
 
       <div className={styles.notificationDrop}>
         {notifications.map(item => {
+          console.log(item.Type)
           switch (item.Type) {
             case "follow": {
               return (
@@ -184,6 +185,17 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
                   <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
                   <span><strong>{item.Nickname}</strong><br/> has created a new event in {item.CategoryTitle}</span>
                   <button className={styles.notificationAcceptBtn}>Join</button>
+                  <button className={styles.notificationDeclineBtn}>Refuse</button>
+                </div>
+              )
+            }
+            case "join": {
+              console.table(item)
+              return (
+                <div key={item.Nickname} className={styles.notification}>
+                  <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
+                  <span><strong>{item.Nickname}</strong><br/> has requested to join your group <strong>{item.CategoryTitle}</strong></span>
+                  <button className={styles.notificationAcceptBtn}>Accept</button>
                   <button className={styles.notificationDeclineBtn}>Refuse</button>
                 </div>
               )
