@@ -97,7 +97,6 @@ Events
     Event name, desc, date
 
 Left sidebar 
-  Update groups
   Show more opens discover groups page
 
 Groups
@@ -108,7 +107,6 @@ Groups
     Send notification to target
   Join button
     Send notification to owner
-  After create it redirects to group page
   Group chat
 
 Posts
