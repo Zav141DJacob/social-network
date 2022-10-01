@@ -84,15 +84,10 @@ body {
 //    500: "Internal Server Error"
 
 TODO: if on a group page the post will be in that group only
+
 Registration
   If nickname and avatar is not provided
     Generate nickname and avatar
-
-Profile
-  If profile is public dont send follow notification with Accept/Decline buttons
-  Settings button
-    Open modal
-      Make button functional (public/private)
 
 Events
   Create event form

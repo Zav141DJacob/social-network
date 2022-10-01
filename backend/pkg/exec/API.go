@@ -291,11 +291,18 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 				posts, err = FromPosts("", "")
 			}
 
-			// jsonProfile, err := json.Marshal(profile)
-			if err != nil {
-				w.WriteHeader(500)
-				return
-			}
+      cats, err := FromCategories("", "");
+      for _, cat := range cats {
+        if cat.IsPublic {
+          cat := GroupMembersData {CatId: cat.CatId}
+          memberTo = append(memberTo, cat)
+        }
+      }
+      // jsonProfile, err := json.Marshal(profile)
+      if err != nil {
+        w.WriteHeader(500)
+        return
+      }
 
 			// // fmt.Fprintf(w, string(jsonProfile))
 			// w.WriteHeader(401)
@@ -304,14 +311,14 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			for _, post := range posts {
 				found := false
 
-				for _, v := range memberTo {
-					if v.CatId == post.CatId {
-						found = true
-						break
-					}
-				}
+        for _, v := range memberTo {
+          if v.CatId == post.CatId {
+            found = true
+            break
+          }
+        }
 
-				if found == false {
+				if !found {
 
 					if checkForCategory {
 						w.WriteHeader(401)
