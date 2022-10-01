@@ -41,7 +41,7 @@ export function Feed({selectedCat, dispatch, state, forwardRef, scrollValue}) {
         cache:"no-cache", 
         credentials:"include", 
         headers: {Authentication: output.session}})
-        .then(res => res.json().then(i => {console.log(i);setPosts(i)}))
+        .then(res => res.json().then(i => setPosts(i)))
     }
     if (forwardRef.current) {
       throttler.current(scrollValue, forwardRef)

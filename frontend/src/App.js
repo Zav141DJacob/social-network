@@ -3,7 +3,7 @@ import {PrivateRoute} from './utils/PrivateRoute'
 import Login from './pages/Login'
 import Home from './pages/Home'
 import { Routes, Route,  useNavigate } from 'react-router-dom';
-import { useReducer, useState, createContext, useContext} from 'react'
+import { useReducer, useState, createContext, useContext, useEffect} from 'react'
 
 
 export const AuthContext = createContext(null);
@@ -22,6 +22,9 @@ function postReducer(state, action) {
     public: undefined,
     following: false,
     followers: false
+  }
+  if (action.fat == 12) {
+      return {...action, profileDrop: false, notificationDrop: false}
   }
 
   switch (action.type) {
@@ -98,6 +101,33 @@ export const useAuth = () => {
 
 function App() {
   const [post, dispatch] = useReducer(postReducer, {postSelected: false, createGroup: false, profile: false})
+  const [previousState, setPreviousState] = useState([{...post, fat: 12, profileDrop: false, notificationDrop: false}])
+  useEffect(() => {
+    if (JSON.stringify(post) !== JSON.stringify(previousState.at(-1))) {
+      console.log(post)
+      console.log(previousState.slice())
+      let prevCopy = previousState.slice()
+      prevCopy.push({...post, fat: 12, profileDrop: false, notificationDrop: false})
+      setPreviousState(prevCopy)
+    }
+  }, [post])
+  useEffect(() => {
+    const handleClick = () => {
+      let copyState = {...previousState.at(-2)}
+      let prevCopy = previousState.slice()
+      prevCopy.pop()
+      setPreviousState(prevCopy)
+      dispatch(copyState)
+      window.history.pushState("Home.jsx:31", "Home.jsx:31", `/`)
+    }
+
+    window.addEventListener('popstate', handleClick);
+
+    return () => {
+      window.removeEventListener('popstate', handleClick);
+    };
+  });
+
   return (
     <div className="App">
       <AuthProvider>

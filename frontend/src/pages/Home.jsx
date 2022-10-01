@@ -46,7 +46,7 @@ export default function Home({post, dispatch}) {
     }
   }, [feedScroll, scrollValue]);
 
-  let posty = x?.postId ? x.postId : post.postId
+  let posty = post?.postId ? post.postId : x.postId
 
   let postLayout = <div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", minwidth: "100px"}}><PostComponent post={posty} dispatch={dispatch}/></div>
 
