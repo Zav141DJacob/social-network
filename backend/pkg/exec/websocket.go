@@ -2,7 +2,6 @@ package exec
 
 import (
 	"log"
-	"strconv"
 	"net/http"
 	"encoding/json"
 	"github.com/gorilla/websocket"
@@ -73,36 +72,36 @@ func WsSetup() error {
 }
 
 func (Manager *ClientManager) start() {
-    for {
-        select {
-        case conn := <-Manager.register:
+  for {
+    select {
+    case conn := <-Manager.register:
 
-			members, err := FromGroupMembers("userId", conn.id)
+      members, err := FromGroupMembers("userId", conn.id)
 
-			if err == nil && len(members) != 0 {
-				for _, member := range members {
-					Manager.groupChats[IdType(member.CatId)][conn.id] = conn.socket
-				}
-				log.Println(Manager.groupChats)
-			}
-
-            Manager.clients[conn.id] = conn.socket
-
-        case conn := <-Manager.unregister:
-            if _, ok := Manager.clients[conn.id]; ok {
-                delete(Manager.clients, conn.id)
-            }
-
-		case conn := <-Manager.registerGroup:
-			all, err := FromCategories("", "")
-
-			if err != nil {
-				// errCode = 500
-				// ToDo: idk what to add here
-			}
-			Manager.groupChats[IdType(len(all))][conn.id] = conn.socket
+      if err == nil && len(members) != 0 {
+        for _, member := range members {
+          Manager.groupChats[IdType(member.CatId)][conn.id] = conn.socket
         }
+        log.Println(Manager.groupChats)
+      }
+
+      Manager.clients[conn.id] = conn.socket
+
+    case conn := <-Manager.unregister:
+      if _, ok := Manager.clients[conn.id]; ok {
+          delete(Manager.clients, conn.id)
+      }
+
+    case conn := <-Manager.registerGroup:
+      all, err := FromCategories("", "")
+
+      if err != nil {
+        // errCode = 500
+        // ToDo: idk what to add here
+      }
+      Manager.groupChats[IdType(len(all))][conn.id] = conn.socket
     }
+  }
 }
 
 // ToDo:
@@ -210,11 +209,11 @@ func (c *Client) reader(conn *websocket.Conn) {
         HandleErr(err)
       }
     case "registerGroup":
-
       type toClient struct {
         CategoryId	int
         ErrCode		int
       }
+
       to := toClient{}
 
       title  		:= v["title"]
@@ -231,10 +230,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 
       errCode = 409
 
-      // ToDo:
-      //	return id
       if len(category) == 0 {
-
 
         err = InsertCategory(title, description, int(c.id), isPublic)
         if err != nil {
@@ -255,12 +251,25 @@ func (c *Client) reader(conn *websocket.Conn) {
         if err != nil {
           HandleErr(err)
         }
+
+        jsonTo, err := json.Marshal(to)
+
+        if err != nil {
+          HandleErr(err)
+          to.ErrCode = 500
+          break
+        }
+  
+        err = conn.WriteMessage(messageType,[]byte(jsonTo))
+  
+        if err != nil {
+          HandleErr(err)
+        }
         Manager.registerGroup <- c
 
       } else {
-        HandleErr(CreateErr("ERROR " + strconv.Itoa(errCode)))
+        to.ErrCode = 409
       }
-
 
       jsonTo, err := json.Marshal(to)
 
@@ -269,8 +278,6 @@ func (c *Client) reader(conn *websocket.Conn) {
         to.ErrCode = 500
         break
       }
-
-
 
       err = conn.WriteMessage(messageType,[]byte(jsonTo))
 
