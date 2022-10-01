@@ -291,18 +291,18 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 				posts, err = FromPosts("", "")
 			}
 
-      cats, err := FromCategories("", "");
-      for _, cat := range cats {
-        if cat.IsPublic {
-          cat := GroupMembersData {CatId: cat.CatId}
-          memberTo = append(memberTo, cat)
-        }
-      }
-      // jsonProfile, err := json.Marshal(profile)
-      if err != nil {
-        w.WriteHeader(500)
-        return
-      }
+			cats, err := FromCategories("", "");
+			for _, cat := range cats {
+				if cat.IsPublic {
+				cat := GroupMembersData {CatId: cat.CatId}
+				memberTo = append(memberTo, cat)
+				}
+			}
+			// jsonProfile, err := json.Marshal(profile)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
 
 			// // fmt.Fprintf(w, string(jsonProfile))
 			// w.WriteHeader(401)
@@ -311,20 +311,20 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			for _, post := range posts {
 				found := false
 
-        for _, v := range memberTo {
-          if v.CatId == post.CatId {
-            found = true
-            break
-          }
-        }
+				for _, v := range memberTo {
+				if v.CatId == post.CatId {
+					found = true
+					break
+				}
+				}
 
 				if !found {
-
 					if checkForCategory {
 						w.WriteHeader(401)
 					}
 					continue
 				}
+
 				user, err := FromUsers("userId", post.UserId)
 
 				if err != nil {
@@ -1115,6 +1115,14 @@ func ProfileAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
+			userGroups, err := FromGroupMembers("userId", auth.UserId)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+
+			posts = SortPosts(posts, userGroups)
+			
 			if user[0].IsPrivate {
 				found := false
 				for _, follower := range followers {
@@ -1293,36 +1301,14 @@ func FollowerAPI(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var userId = v["userId"]
-		// requestUrl := r.URL.RawQuery
 
-		// m, err := url.ParseQuery(requestUrl)
-		// if err != nil {
-		// 	HandleErr(err)
-		// 	w.WriteHeader(419)
-		// 	return
-		// }
-		// if len(m["userId"]) == 0 {
-		// 	w.WriteHeader(419)
-		// 	return
-		// }
-		// userId := m["userId"][0]
 		err = UnFollow(userId, auth.UserId)
 		if err != nil {
 			HandleErr(err)
 			w.WriteHeader(419)
 			return
 		}
-		// followers, err := FromFollowers("userId", userId)
-		// if err != nil {
-		// 	w.WriteHeader(419)
-		// 	return
-		// }
-		// jsonFollowers, err := json.Marshal(followers)
-		// if err != nil {
-		// 	w.WriteHeader(419)
-		// 	return
-		// }
-		// fmt.Fprintf(w, string(jsonFollowers))
+
 		w.WriteHeader(204)
 
 	}

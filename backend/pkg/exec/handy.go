@@ -105,6 +105,27 @@ func ToggleProfilePrivacy(userId interface{}) error {
 	return nil
 }
 
+func SortPosts(posts []PostData, userGroups []GroupMembersData) []PostData {
+	var returnPosts []PostData
+
+	for _, post := range posts {
+		found := false
+
+		for _, v := range userGroups {
+			if v.CatId == post.CatId {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			continue
+		}
+		returnPosts = append(returnPosts, post)
+	}
+	return returnPosts
+}
+
 // ToDo: less hardcode
 // func QueryData(r *http.Request) (_, error) {
 // 	requestUrl := r.URL.RawQuery
