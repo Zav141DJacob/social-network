@@ -1,11 +1,13 @@
 package exec
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
-	"encoding/json"
+	"strconv"
+
 	"github.com/gorilla/websocket"
-  	"fmt"
 )
 
 // This article helped me a lot with this project:
@@ -158,6 +160,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 
       message  := v["message"]
       targetId := v["targetId"]
+      fmt.Println(1212, message, targetId)
 
       var to toClient
       to.Message = message.(string)
@@ -170,15 +173,21 @@ func (c *Client) reader(conn *websocket.Conn) {
       if err != nil {
         break
       }
-
+      s, err := strconv.ParseFloat(fmt.Sprintf("%v",targetId), 64)
+      if err == nil {
+        fmt.Println(s) // 3.14159265
+      }
       // senderId, senderName, message, targetId
 
       GroupMessage(to.SenderId, to.SenderName, to.Message, targetId)
 
+        fmt.Println(1248134, "ERROROROROROR")
       //look through global variable clientArray
       //find targetId and write message to the senders and the targets connection
 
-      target := IdType(targetId.(float64))
+      target := IdType(s)
+      
+        fmt.Println(9999, "ERROROROROROR")
 
       value, isValid := Manager.groupChats[target]
 
@@ -191,6 +200,8 @@ func (c *Client) reader(conn *websocket.Conn) {
             HandleErr(err)
           }
         }
+      } else {
+        fmt.Println("ERROROROROROR")
       }
 
       to.Sent = true
