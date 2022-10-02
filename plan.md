@@ -100,13 +100,9 @@ Left sidebar
   Show more opens discover groups page
 
 Groups
-  Private group
-    Show Join button and no posts
   Invite button
     Open users modal
     Send notification to target
-  Join button
-    Send notification to owner
   Group chat
 
 Posts
