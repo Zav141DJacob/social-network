@@ -349,7 +349,6 @@ func (c *Client) reader(conn *websocket.Conn) {
         }
       }
     case "join":
-      fmt.Println("BABY")
       type toClient struct {
         CategoryId	int
         ErrCode		int
@@ -362,7 +361,6 @@ func (c *Client) reader(conn *websocket.Conn) {
 
 
       category, err := FromCategories("catId", catId)
-      fmt.Println(category)
 
       target, err := FromUsers("userId", category[0].UserId)
       if err != nil {

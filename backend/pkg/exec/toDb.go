@@ -189,12 +189,13 @@ func Notify(user, target []UserData, catId, mode interface{}) error {
 		return err
 	}
 
-	for _, l := range list {
-		if l.TargetId == target[0].UserId && l.Type == mode && l.CatId == catId {
-			return CreateErr("409")
-		} 
-	}
-	
+  for _, l := range list {
+    str := fmt.Sprintf("%v", catId)
+    if l.TargetId == target[0].UserId && l.Type == mode && fmt.Sprintf("%v", l.CatId) == str {
+      return CreateErr("409")
+    } 
+  }
+
 	stmt, err = Db.Prepare(`INSERT INTO notificationsList 
 	(userId, nickname, userAvatar, targetId, targetName, catId, categoryTitle, type) 
 	VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
