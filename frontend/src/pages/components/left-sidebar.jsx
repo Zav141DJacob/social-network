@@ -28,7 +28,7 @@ export function LeftSideBar({dispatch, state}) {
 
   const categoryHandler = (e) => {
     let select = groups.filter(i => i.CatId == e.target.id);
-    dispatch({type: "category", category: e.target.id, public: select[0].IsPublic}) 
+    dispatch({type: "category", catName: e.target.textContent, category: e.target.id, public: select[0].IsPublic}) 
     window.history.pushState("y2", "x3", `/group/${e.target.id}`)
   }
   return (

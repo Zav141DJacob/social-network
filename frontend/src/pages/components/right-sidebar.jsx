@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import styles from './rightsidebar.module.css'
 import { MessageBox } from './messagebox.jsx'
+import { GroupMessageBox } from './groupMessage.jsx'
 import { postData } from '../Login'
 import { FollowCase } from '../../utils/WsCases'
 import { getData } from './topbar'
@@ -125,7 +126,7 @@ const getOnlineUsers = (notification, setNotification, setUsers) => {
   })
 }
 
-export function RightSideBar({dispatch}) {
+export function RightSideBar({dispatch, state}) {
   const [users, setUsers] = useState(null)
   const [messageboxOpen, setMessageboxOpen] = useState(false)
   const [messageUser, setmessageUser] = useState(null)
@@ -156,6 +157,7 @@ export function RightSideBar({dispatch}) {
                 {notification[item.UserId] && <div className={styles.notificationCount}>{notification[item.UserId] > 9 ? "9+" : notification[item.UserId]}</div>}
               </div>
               <h1 className={styles.nickname} onClick={() => {
+                dispatch({type: "groupChatClose"})
                 setmessageUser(item)
                 setMessageboxOpen(true)
                 deleteNotification(item.UserId, notification, setNotification)
@@ -165,6 +167,7 @@ export function RightSideBar({dispatch}) {
           )
         })}
         {messageboxOpen && <MessageBox dispatch={dispatch} user={messageUser} closeHandler={closeMessageBox} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}}/>}
+        {state?.groupChat && <GroupMessageBox dispatch={dispatch} user={state} closeHandler={closeMessageBox} mode={"groupMessage"} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}}/>}
       </div>
     )
   }

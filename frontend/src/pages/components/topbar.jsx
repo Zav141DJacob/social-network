@@ -9,6 +9,28 @@ export { ws2 }
 let ws2 = {}
 
 
+export async function putData(url = '', data = {}, wantObject = true) {
+  // Default options are marked with *
+  let cookieStruct = findCookies()
+  const response = await fetch(url, {
+    method: 'PUT',
+    mode: 'cors',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authentication': cookieStruct.session,
+    },
+    redirect: 'follow', 
+    referrerPolicy: 'no-referrer', 
+    body: JSON.stringify(data) 
+  });
+  if (wantObject) {
+    return response.json(); // parses JSON response into native JavaScript objects
+  }
+  return response
+}
+
 export async function getData(url = '', wantObject = true) {
   // Default options are marked with *
   let cookieStruct = findCookies()
@@ -126,6 +148,29 @@ function handleFollow(doFollow, id, notifications, setNotifications, userId) {
   // ws2OnMessage(setNotifications)
 
 }
+function handleJoin(doJoin, id, notifications, setNotifications, userId, catId) {
+  if (doJoin) {
+    putData("http://localhost:8000/api/v1/categories/", {userId: userId, catId: catId}).then(i => console.log(333, i))
+  }
+  deleteData("http://localhost:8000/api/v1/notifications-list/", {id: id}, false).then(i => {
+    getData("http://localhost:8000/api/v1/notifications-list/")
+      .then(data => {
+        console.log(111, data)
+        if (data) {
+          setNotifications(data)
+        } else {
+          setNotifications([])
+        }
+      })
+  })
+  let newNotif = []
+  for (const i of notifications) {
+    console.log(i.Id, id)
+    if (i.Id != id) {
+      newNotif.push(i)
+    }
+  }
+}
 
 
 function ws2OnMessage(setNotifications, notifications) {
@@ -195,8 +240,8 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
                 <div key={item.Nickname} className={styles.notification}>
                   <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
                   <span><strong>{item.Nickname}</strong><br/> has requested to join your group <strong>{item.CategoryTitle}</strong></span>
-                  <button className={styles.notificationAcceptBtn}>Accept</button>
-                  <button className={styles.notificationDeclineBtn}>Refuse</button>
+                  <button onClick={() => handleJoin(true, item.Id, notifications, setNotifications, item.UserId, item.CatId)} className={styles.notificationAcceptBtn}>Accept</button>
+                  <button onClick={() => handleJoin(false, item.Id, notifications, setNotifications)} className={styles.notificationDeclineBtn}>Decline</button>
                 </div>
               )
             }

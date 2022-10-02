@@ -21,7 +21,10 @@ function postReducer(state, action) {
     postCat: undefined,
     public: undefined,
     following: false,
-    followers: false
+    followers: false,
+    groupChat: false,
+    groupChatCat: state.groupChatCat,
+    groupChatId: state.groupChatId
   }
   if (action.fat == 12) {
       return {...action, profileDrop: false, notificationDrop: false}
@@ -32,15 +35,19 @@ function postReducer(state, action) {
        return {...state, postSelected: true, postId: action.postId, profile: false, profileDrop: false}
     case 'unselect':
      window.history.pushState("Home.jsx:31", "Home.jsx:31", `/`)
-      return {...state, postSelected: false, postId: null, profile: false, profileDrop: false} 
+      return {...state, postSelected: false, postId: null, profile: false, profileDrop: false, groupChat: state.groupChat, groupChatCat: state.groupChatCat} 
     case 'create':
-      return {...defaultFalse, postSelected: true, postId: action.postId, profile: false, profileDrop: false}
+      return {...defaultFalse, postSelected: true, postId: action.postId, profile: false, profileDrop: false, groupChat: state.groupChat, groupChatCat: state.groupChatCat}
     case 'category':
-      return {...defaultFalse, postSelected: false, profile: false, profileDrop: false, postCat: action.category, public: action.public}
+      return {...defaultFalse, postSelected: false, profile: false, profileDrop: false, catName: action.catName, postCat: action.category, public: action.public, groupChat: state.groupChat, groupChatCat: state.groupChatCat}
     case 'group':
-      return {...defaultFalse, createGroup: true}
+      return {...defaultFalse, createGroup: true, groupChat: state.groupChat, groupChatCat: state.groupChatCat}
+    case 'groupChat':
+      return {...state, groupChat: true, groupChatCat: action.groupChatCat, groupChatId: action.groupChatId}
+    case 'groupChatClose':
+      return {...state, groupChat: false}
     case 'profile':
-      return {...defaultFalse, profile: true, profileId: action.Id}
+      return {...defaultFalse, profile: true, profileId: action.Id, groupChat: state.groupChat, groupChatCat: state.groupChatCat}
     case 'profileDrop':
       return {...state, profileDrop: !state.profileDrop, notificationDrop: false}
     case 'notificationDrop':
@@ -48,9 +55,9 @@ function postReducer(state, action) {
     case 'createEvent':
       return {...state, notificationDrop: false, profileDrop: false, event: true}
     case 'followers':
-      return {...defaultFalse, followers: true}
+      return {...defaultFalse, followers: true, groupChat: state.groupChat, groupChatCat: action.groupChatCat}
     case 'following':
-      return {...defaultFalse, following: true}
+      return {...defaultFalse, following: true, groupChat: state.groupChat, groupChatCat: action.groupChatCat}
     case 'home':
      window.history.pushState("Home.jsx:31", "Home.jsx:31", `/`)
       return defaultFalse

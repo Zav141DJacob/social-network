@@ -5,8 +5,8 @@ import { PostComponent } from './post'
 import {throttle} from 'lodash'
 import { postData } from '../Login'
 import {findCookies} from './right-sidebar'
-import { ws } from './right-sidebar'
 
+let ws = {}
 // async function postData(url = '', data = {}) {
 //   // Default options are marked with *
 //   const response = await fetch(url, {
@@ -23,6 +23,18 @@ import { ws } from './right-sidebar'
 //   });
 //   return response.json(); // parses JSON response into native JavaScript objects
 // }
+
+export const wsSetup = (targetId) => {
+  console.log(targetId)
+  if (ws.readyState != 0) {
+    ws = new WebSocket("ws://localhost:8000/ws/")
+  } 
+  let cookieStruct = findCookies()
+  let nickname = cookieStruct.uID
+  ws.onopen = function() {
+    ws.send(JSON.stringify({targetId: targetId, mode: "groupChat"}))
+  }
+}
 
 export function Feed({selectedCat, dispatch, state, forwardRef, scrollValue}) {
   const {nickname} = useAuth()
@@ -60,6 +72,7 @@ export function Feed({selectedCat, dispatch, state, forwardRef, scrollValue}) {
   useEffect(() => {
     if (selectedCat.postCat) {
       setPostCopy(posts?.filter(post => post.Post.CatId == selectedCat.postCat))
+    wsSetup(selectedCat.postCat)
     } else {
       setPostCopy(posts?.slice())
     }
@@ -68,6 +81,7 @@ export function Feed({selectedCat, dispatch, state, forwardRef, scrollValue}) {
     return (
       <div className={styles.feed} ref={forwardRef}>
         {selectedCat?.postCat && <CreatePost dispatch={dispatch} state={state}/>}
+        <button onClick={() => dispatch({type: "groupChat", groupChatCat: state.catName, groupChatId: state.postCat})}>Open chat</button>
         <div className={styles.posts} >
           {postCopy?.map(i => <PostComponent key={i?.Post?.PostId} postInfo={i} dispatch={dispatch}/>)}
         </div>
