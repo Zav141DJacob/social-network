@@ -53,9 +53,8 @@
 .description {
   position: relative;
   width: 94%;
-  top: 60px;
+  top: 10px;
   height: 72px;
-  margin: 0 auto 80px;
   padding-left: 10px;
   padding-right: 10px;
   background: rgb(89, 96, 100);
@@ -174,8 +173,9 @@
   position: relative;
   background: rgb(89, 96, 100);
   width: 97%;
+  top: -8px;
   text-align: center;
-  top: -7px;
+  margin-top: 30px;
   padding-top: 2px;
   padding-bottom: 2px;
   border-radius: 7px;
@@ -194,7 +194,8 @@
   background: rgb(89, 96, 100);
   width: 97%;
   text-align: center;
-  top: -7px;
+  top: -8px;
+  margin-top: 30px;
   padding-top: 2px;
   padding-bottom: 2px;
   border-radius: 7px;
@@ -217,4 +218,100 @@
   max-width: 980px;
   min-width: 820px;
   cursor:default;
+}
+
+.dropdownVisibility {
+  position: relative;
+  top: 20px;
+  color: white;
+}
+.postVisibility {
+  position: relative;
+  top: 20px;
+  display: flex;
+}
+
+.postVisibility > .visBtn {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 10px;
+  outline: none;
+  border: 1px rgb(88, 88, 88) solid;
+  left: 90px;
+  padding-left: 40px;
+  padding-right: 10px;
+  margin: 0px 10px 20px 0px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  color: #D0D0D0;
+  background: rgb(47, 47, 47);
+  height: 30px;
+}
+
+.postVisibility > .visBtn:hover {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: gray;
+  outline: none;
+  border-radius: 10px;
+  background: rgb(89, 96, 100);
+  border-radius: 10px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  cursor: pointer;
+}
+
+.activePostVisibility {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 10px;
+  outline: none;
+  border: 1px rgb(89, 96, 100) solid;
+  left: 90px;
+  padding-left: 40px;
+  padding-right: 10px;
+  margin: 0px 10px 20px 0px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  color: #D0D0D0;
+  background: rgb(89, 96, 100);
+  height: 30px;
+}
+
+.publicIcon {
+  position:relative;
+  scale: 0.5;
+  top: -6px;
+  left: -40px;
+  fill: #D0D0D0;
+}
+
+.publicLabel {
+  position:relative;
+  top: -38px;
+}
+
+.privateIcon {
+  position:relative;
+  scale: 0.5;
+  top: -9px;
+  left: -40px;
+  fill: #D0D0D0;
+}
+
+.privateLabel {
+  position:relative;
+  top: -44px;
+}
+
+.almostPrivateIcon {
+  position: absolute;
+  scale: 0.037;
+  top: -347px;
+  left: -129px;
+  fill: #D0D0D0;
 }

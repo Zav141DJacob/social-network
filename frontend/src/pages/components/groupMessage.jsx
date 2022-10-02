@@ -1,79 +1,66 @@
+
 import { useRef, useState, useEffect, Fragment, createRef } from 'react';
-import styles from './messagebox.module.css'
+import styles from './groupMessage.module.css'
+import {useAuth} from './../../App'
 import { ws } from './right-sidebar'
 import TimeAgo from 'timeago-react';
 import InputEmoji from 'react-input-emoji'
-import { getData } from './topbar';
-// ws.onopen = function() {
-//   ws.send(JSON.stringify({message: "Initializing Websocket Connection", senderId: 1, targetId: 0, init: true}))
-// }
+import { useParams } from 'react-router-dom';
 
 
 let MESSAGES = []
 
-const getMessages = (setMessages, messages, targetUser, mode = "default") => {
+const getMessages = (setMessages, messages, targetUser, mode = "default", nickname) => {
   let cookieStruct = {}
-
 
   for (const i of document.cookie.split("; ")) {
     let split = i.split("=")
     cookieStruct[split[0]] = split[1]
   }
 
-  if (mode == "groupMessage") {
-    getData("http://localhost:8000/api/v1/group-messages/")
-    .then(response => {
-      console.log(response)
-    })
-    return
-  }
-
-  fetch("http://localhost:8000/api/v1/messages/", {
+  fetch(`http://localhost:8000/api/v1/group-messages/?targetId=${targetUser.groupChatId}`, {
     method: "GET",
-    // mode: 'cors',
-    // cache: 'no-cache',
+    mode: 'cors',
+    cache: 'no-cache',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       'Authentication': cookieStruct.session
     },
-  })
-    .then((response) => {
-      response.json()
-        .then ((xd) => {
-          fetch("http://localhost:8000/api/v1/users/nickname/" + cookieStruct.uID + "/")
-            .then(userResponse => {
-              userResponse.json()
-                .then((user) => {
-                  let messagesCopy = []
-                  xd.forEach((elem) => {
-                    if (elem.SenderId == targetUser.UserId){
-                      if (elem.TargetId == user[0].UserId) {
-                        messagesCopy.push({
-                          sent: false,
-                          message: elem.Message,
-                          date: elem.Date
-                        }) 
-                      }
-                    } else if (elem.TargetId == targetUser.UserId) {
-                      // messagesCopy.push({sent: jsonData.Sent, message: jsonData.Message, date: date.toString().split("GMT")[0]}) 
-                      if (elem.SenderId == user[0].UserId ) {
-                        messagesCopy.push({
-                          sent: true,
-                          message: elem.Message,
-                          date: elem.Date
-                        }) 
-                      }
-
-                    }
-                  })
-                  setMessages(messagesCopy)
+  }).then((response) => {
+    response.json()
+      .then ((xd) => {
+        fetch("http://localhost:8000/api/v1/users/nickname/" + cookieStruct.uID + "/")
+          .then(userResponse => {
+            userResponse.json()
+              .then((user) => {
+                let messagesCopy = []
+                xd?.forEach((elem) => {
+                  if (elem.SenderName !== nickname) {
+                    messagesCopy.push({
+                      sent: false,
+                      message: elem.Message,
+                      date: elem.Date
+                    }) 
+                  } else {
+                    messagesCopy.push({
+                      sent: true,
+                      message: elem.Message,
+                      date: elem.Date
+                    }) 
+                  }
                 })
-            })
-        })})
+                setMessages(messagesCopy)
+              })
+          })
+      })})
+  return
 }
 
 
-export function MessageBox({user, closeHandler, getOnlineUsers, dispatch, mode = "default"}) {
+
+
+export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, mode = "default"}) {
   // console.log("user", user)
   let lastmsg = useRef()
   const [messages, setMessages] = useState(MESSAGES)
@@ -82,24 +69,26 @@ export function MessageBox({user, closeHandler, getOnlineUsers, dispatch, mode =
   const [prevTop, setPrevTop] = useState()
   const [loading, setLoading] = useState(false)
   const [ text, setText ] = useState('')
+  const {nickname} = useAuth()
 
   useEffect(() => {
-    getMessages(setMessages, messages, user)
+    getMessages(setMessages, messages, user, mode, nickname)
     setPrevTop(null)
     setMessageCount(10)
   }, [user])
 
   ws.onmessage = function(event) {
     let jsonData = JSON.parse(event.data)
-    console.log(jsonData)
     switch (jsonData.Type) {
       case "default":
         getOnlineUsers()
         handleSubmit(jsonData);
         break
       case "groupMessage":
-        handleSubmit(jsonData, mode);
-        break
+        if (jsonData.TargetId == user.groupChatId) {
+          handleSubmit(jsonData, mode);
+          break
+        }
     }
   }
 
@@ -150,12 +139,11 @@ export function MessageBox({user, closeHandler, getOnlineUsers, dispatch, mode =
   return (
     <div className={styles.messagebox}>
       <div className={styles.topbar}>
-        <img className={styles.profilePicture} src={`http://localhost:8000/static/${user.Avatar}`}  /> 
-        <div className={user.Online ? styles.onlineIndicator : styles.offlineIndicator}></div>
-        <span className={styles.nickname} onClick={() => dispatch({type: "profile", Id: `${user.Nickname}` })}>{user.Nickname}</span>
+        <img className={styles.profilePicture} src={`http://localhost:8000/static/alex.png`}  /> 
+        <span className={styles.nickname} onClick={() => dispatch({type: "category", category: `${user.groupChatId}` })}>{user.groupChatCat}</span>
         <div className={styles.close} onClick={(e) => {
           setMessageCount(0)
-          closeHandler(e)
+          dispatch({type: "groupChatClose"})
         }}>
           <svg  viewBox="0 0 24 24">
             <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
@@ -191,8 +179,11 @@ export function MessageBox({user, closeHandler, getOnlineUsers, dispatch, mode =
 function Textbox({scrollRef, handleSubmit, messages, setMessages, currentMessage, setCurrentMessage, target, mode = "default"}) {
   function handleOnEnter (text) {
     console.log('enter', text)
+    // const { id } = useParams();
+    // console.log("Id here: ", id);
     if (text !== '') {
-      ws.send(JSON.stringify({message: text, targetId: target.UserId, mode: mode}))
+      let x = JSON.stringify({message: text, targetId: parseInt(target.groupChatId), mode: mode})
+      ws.send(x)
     }
   }
   return (

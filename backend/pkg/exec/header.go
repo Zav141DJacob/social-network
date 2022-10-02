@@ -2,18 +2,8 @@ package exec
 
 import ()
 
-
-type PageTemplate struct {
-	Nickname   		string
-	RoleID     		int
-	Categories 		[]CategoryData
-	Posts      		[]PostData
-	PostLikes  		[]PLikeData
-	Comments   		[]CommentData
-	Post       		PostData
-	InvalidLogin	string
-	Page	   		string
-}
+//Optional ToDo:
+//	use JOIN and only use the ID values of tables
 
 // The date in the structs is the time when the table element was created
 
@@ -26,7 +16,7 @@ type UserData struct {
 	LastName  string
 	Age		  string
 	Bio		  string
-	Avatar		  string
+	Avatar	  string
 	RoleId	  int
 	Date	  string
 	IsPrivate bool
@@ -37,22 +27,17 @@ type PostData struct {
 	UserId int
 	Title  string
 	Body   string
+	CatId  int
 	Date   string
 }
 
-
-//ToDo
-// make this dynamic somehow (with maps maybe?)
-// I'm a bit too lazy at the moment to do that -Jacob
-// map[string]bool
 type PostCategoryData struct {
+	Id			  int
 	PostId		  int
-
-	Categories	map[string]bool
-	HasGolang 	  bool
-	HasJavascript bool
-	HasRust		  bool
+	CatId		  int
+	CategoryTitle string
 }
+
 type CommentData struct {
 	CommentId int
 	Body	  string
@@ -62,10 +47,11 @@ type CommentData struct {
 }
 
 type CategoryData struct {
-	CatId	int
-	Title 	string
-	UserId	int
-	IsMain	bool
+	CatId		int
+	Title 		string
+	Description string
+	UserId		int
+	IsPublic	bool
 }
 
 // Post like struct
@@ -85,6 +71,8 @@ type CLikeData struct {
 // Session struct
 type SessionData struct {
 	SessionId string
+
+	// ToDo: implement First name
 	Nickname  string
 	Avatar	  string
 	UserId	  int
@@ -100,15 +88,27 @@ type NotificationData struct {
 
 // Message struct
 type MessageData struct {
-	MessageId int
-	SenderId  int
-	Message   string
-	TargetId  int
-	Date	  string
+	MessageId	int
+	SenderId	int
+	SenderName	string
+	Message		string
+	TargetId	int
+	Date		string
+}
+
+type GroupMessageData struct {
+	MessageId	int
+	SenderId	int
+	SenderName	string
+	Message		string
+	TargetId	int
+	Date		string
 }
 
 type ResponseRegisterUser struct {
 	Email           string
+
+	// ToDo: make Nickname optional; Talk with Alex
 	Nickname        string
 	Password        string
 	ConfirmPassword string
@@ -120,14 +120,46 @@ type ResponseRegisterUser struct {
 type OnlineUserData struct {
 	UserId	 int
 	Online	 bool
+
+	// ToDo: implement First name
 	Nickname string
-	Avatar  string
+	Avatar	 string
 }
 
 type GroupMembersData struct {
-	Id	int
+	Id		int
 	UserId	int
 	CatId	int
+}
+
+type FollowerData struct {
+	Id				 int
+	Nickname		 string
+	UserId			 int
+  Avatar  string
+
+	FollowerNickname string
+	FollowerUserId	 int
+	FollowerAvatar	 string
+}
+
+type NotificationsListData struct {
+	Id				int
+	UserId			int
+	Nickname		string
+	UserAvatar		string
+	TargetId		int
+	TargetName		string
+	CatId			int
+	CategoryTitle	string
+	Type			string
+}
+
+type EventsData struct {
+	Id			int
+	Title		string
+	Description	string
+	Date		string
 }
 // type ErrorString struct {
 // 	s string

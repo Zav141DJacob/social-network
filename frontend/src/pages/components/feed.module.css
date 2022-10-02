@@ -8,9 +8,10 @@
   left: 50%;
   transform: translate(-50%);
   max-width: 600px;
-  min-width: 450px;
+  min-width: 250px;
   padding-left:20px;
-  min-height: 87px;
+  padding-right:20px;
+  min-height: 57px;
   top: 71px;
   background: rgb(48, 52, 54);
   border-radius: 12px;
@@ -51,9 +52,9 @@
 .description {
   position: relative;
   width: 94%;
-  top: 60px;
+  top: 10px;
   height: 72px;
-  margin: 0 auto 80px;
+  margin: 0 auto 20px;
   padding-left: 10px;
   padding-right: 10px;
   background: rgb(89, 96, 100);
@@ -67,6 +68,201 @@
   font-size: 14px;
   line-height: 24px;
   resize: none;
+}
+.postVisibility {
+  position: relative;
+  top: 20px;
+  display: flex;
+}
+
+
+.publicText {
+  position: relative;
+  top: -38px;
+}
+
+.privateText {
+  position: relative;
+  top: -44px;
+}
+
+.almostPrivateText {
+  position: relative;
+  top: -95px;
+}
+
+.postVisibility > .visBtn {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 10px;
+  outline: none;
+  border: 1px rgb(88, 88, 88) solid;
+  left: 90px;
+  padding-left: 40px;
+  padding-right: 10px;
+  margin: 0px 10px 20px 0px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  color: #D0D0D0;
+  background: rgb(47, 47, 47);
+  height: 30px;
+}
+
+.postVisibility > .visBtn:hover {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: gray;
+  outline: none;
+  border-radius: 10px;
+  background: rgb(89, 96, 100);
+  border-radius: 10px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  cursor: pointer;
+}
+
+.activePostVisibility {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 10px;
+  outline: none;
+  border: 1px rgb(89, 96, 100) solid;
+  left: 90px;
+  padding-left: 40px;
+  padding-right: 10px;
+  margin: 0px 10px 20px 0px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  color: #D0D0D0;
+  background: rgb(89, 96, 100);
+  height: 30px;
+}
+
+.publicIcon {
+  position:relative;
+  scale: 0.5;
+  top: -6px;
+  left: -40px;
+  fill: #D0D0D0;
+}
+
+.privateIcon {
+  position:relative;
+  scale: 0.5;
+  top: -8px;
+  left: -40px;
+  fill: #D0D0D0;
+}
+
+.almostPrivateIcon {
+  position:relative;
+  scale: 0.22;
+  top: -33px;
+  left: -64px;
+  fill: #D0D0D0;
+}
+
+.addImageBtn {
+  display: block;
+  border-radius: 10px;
+  outline: none;
+  border: 1px rgb(88, 88, 88) solid;
+  left: 90px;
+  padding-left: 40px;
+  padding-right: 12px;
+  margin-right:10px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 800;
+  font-size: 14px;
+  color: #D0D0D0;
+  background: rgb(47, 47, 47);
+  height: 30px;
+  width: 99px;
+  cursor: pointer;
+}
+
+.addImageBtn:hover {
+  display: block;
+  border-radius: 10px;
+  outline: none;
+  border: 1px rgb(88, 88, 88) solid;
+  left: 90px;
+  padding-left: 40px;
+  padding-right: 12px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  color: #D0D0D0;
+  background: rgb(87, 87, 87);
+  height: 30px;
+  width: 99px;
+}
+
+.addImageText {
+  position: relative;
+  top: -96px;
+  left: 4px;
+}
+
+
+.addImageIcon{
+  position:relative;
+  scale: 0.22;
+  top: -34px;
+  left: -60px;
+  fill: #D0D0D0;
+}
+
+.eventBtn {
+  display: block;
+  border-radius: 10px;
+  outline: none;
+  border: 1px rgb(88, 88, 88) solid;
+  left: 90px;
+  padding-left: 40px;
+  padding-right: 10px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 800;
+  font-size: 14px;
+  color: #D0D0D0;
+  background: rgb(47, 47, 47);
+  height: 30px;
+  width: 99px;
+  cursor: pointer;
+}
+
+.eventBtn:hover {
+  background: rgb(87, 87, 87);
+}
+
+.eventIcon {
+  position:relative;
+  scale: 0.22;
+  top: -34px;
+  left: -60px;
+}
+
+.eventBtnText {
+  position:relative;
+  color: white;
+  top: -96px;
+  left: 10px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 800;
+  font-size: 14px;
+  color: #D0D0D0;
+}
+
+.bottomBtns {
+  display: flex;
 }
 
 .description::placeholder {
@@ -132,49 +328,12 @@
 }
 
 
-.rustlogo {
-  position: relative;
-  top: 17px;
-  left: -28px;
-  width: 100%;
-  background-image: url(./../../Rust_programming_language_black_logo.svg);
-  background-size: cover;
-  height: 0;
-  padding: 0; /* reset */
-  padding-bottom: calc(100%);
-}
-
-.jslogo {
-  position: relative;
-  top: 16px;
-  left: -23px;
-  width: 100%;
-  background-image: url(./../../JS_logo.svg);
-  background-size: cover;
-  height: 0;
-  padding: 0; /* reset */
-  padding-bottom: calc(100%);
-}
-
-.gologo {
-  position: relative;
-  top: 6px;
-  left: -44px;
-  width: 100%;
-  background-image: url(./../../Go-Logo_Aqua.svg);
-  background-size: cover;
-  height: 0;
-  padding: 0; /* reset */
-  padding-bottom: calc(100%);
-}
-
-
 .submitready {
   position: relative;
-  background: rgb(89, 96, 100);
   width: 97%;
   text-align: center;
   top: -7px;
+  margin-top: 17px;
   padding-top: 2px;
   padding-bottom: 2px;
   border-radius: 7px;
@@ -194,6 +353,7 @@
   width: 97%;
   text-align: center;
   top: -7px;
+  margin-top: 17px;
   padding-top: 2px;
   padding-bottom: 2px;
   border-radius: 7px;
@@ -214,6 +374,48 @@
   transform: translate(-50%);
   width: inherit;
   max-width: 980px;
-  min-width: 820px;
+  min-width: 320px;
   cursor:default;
+}
+
+.private {
+  position: relative;
+  width: 100%;
+  top: 20px;
+  overflow-x: hidden;
+  height: 250px;
+}
+
+.privatebox {
+  position: relative;
+  left: 50%;
+  transform: translate(-50%);
+  max-width: 600px;
+  min-width: 450px;
+  padding-left:20px;
+  min-height: 157px;
+  top: 71px;
+  background: rgb(48, 52, 54);
+  border-radius: 12px;
+}
+
+.privatetext {
+  position: absolute;
+  color: whitesmoke;
+  left: 50%;
+  top: 70%;
+  font-weight: 100;
+  font-family: Helvetica;
+  font-size: 24px;
+  transform: translate(-50%);
+}
+
+.lock {
+  position: absolute;
+  scale: 0.12;
+  left: -7px;
+  top: -250px;
+  padding: 5px;
+  fill:none;
+  stroke: white;
 }

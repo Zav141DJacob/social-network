@@ -1,8 +1,8 @@
 -- +migrate Up
 CREATE TABLE "users" (
 		"userId"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-		"nickname"	TEXT NOT NULL,
-		"email"		TEXT NOT NULL,
+		"nickname"	TEXT NOT NULL UNIQUE,
+		"email"		TEXT NOT NULL UNIQUE,
 		"password"	TEXT NOT NULL,
 		"firstName"	TEXT NOT NULL,
 		"lastName"	TEXT NOT NULL,

@@ -31,6 +31,10 @@ func All() error {
 	if err != nil {
 		return err
 	}
+	err = follows()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -38,24 +42,24 @@ func All() error {
 // 
 func posts() error{
 	// interfaceArr := make([]interface{}, 1)
-	err := Post(1, []interface{}{float64(1)}, "this is a test1 post", "this is the body of the test1")
+	err := Post(1, 1, "this is a test1 post", "this is the body of the test1")
 	if err != nil {
 		return errors.New("ERROR in post: " + err.Error())
 	}
-	Post(2, []interface{}{float64(1)}, "this is a test2 post from Kertu", "this is the body of the test2 from Kertu")
-	Post(1, []interface{}{float64(2)}, "I am posting into Javascript", "Javascript is a great language!")
-	Post(2, []interface{}{float64(1), float64(2), float64(3)}, "Kertu is posting into everything", "I dont like Javascript :(")
+	Post(2, 1, "this is a test2 post from Kertu", "this is the body of the test2 from Kertu")
+	Post(1, 2, "I am posting into Javascript", "Javascript is a great language!")
+	Post(2, 3, "Kertu is posting into RuS!", "I dont like Rust :(")
 	return nil
 }
 
 // nickname, email, password, firstName, lastName, age 
 func users() error {
-  err := Register("Jacob", "jaagup.tomingas@gmail.com", "q1w2e3r4t5y6", "Jaagup", "Tomingas", "20", "Backend guy", "jacob.png")
+  	err := Register("Jacob", "jaagup.tomingas@gmail.com", "q1w2e3r4t5y6", "Jaagup", "Tomingas", "20", "Backend guy", "jacob.png")
 	if err != nil {
 		return errors.New("ERROR in users: " + err.Error())
 	}
 	Register("Kertu", "kertu.saul@gmail.com", "q1w2e3r4t5y6", "Kertu", "Saul", "22", "CTRL+F", "kertu.png")
-  Register("Alexxx", "alex.viik@gmail.com", "aaaaaaaa", "Alex", "Viik", "28", "Wowwww123123", "alex.png")
+  	Register("Alexxx", "alex.viik@gmail.com", "aaaaaaaa", "Alex", "Viik", "28", "Wowwww123123", "alex.png")
 	return nil
 }
 
@@ -70,29 +74,14 @@ func comments() error {
 	return nil
 }
 
-func postLikes() error {
-	err := LikePost(1, 1, 1)
-	if err != nil {
-		return errors.New("ERROR in postLikes: " + err.Error())
-	}
-	return nil
-}
-
-func commentLikes() error {
-	err := LikeComment(1, 1, 1)
-	if err != nil {
-		return errors.New("ERROR in commentLikes: " + err.Error())
-	}
-	return nil 
-}
 
 func Categories() error {
-	err := InsertCategory("Golang", 0, true)
+	err := InsertCategory("Golang", "For all of your Golang needs!", 0, true)
 	if err != nil {
 		return errors.New("ERROR in categories: " + err.Error())
 	}
-	InsertCategory("Javascript", 0, true)
-	InsertCategory("Rust", 0, true)
+	InsertCategory("Javascript", "For all of your Javascript wants!", 0, true)
+	InsertCategory("Rust", "For all of your Rust requirements!", 0, true)
 	return nil
 }
 
@@ -104,6 +93,22 @@ func messages() error {
 	Message(3, 1, "Message to jacob! from Alex.")
 
 	Message(2, 1, "Message to jacob!")
+
+	return nil
+}
+
+func follows() error {
+	err := Follow(3, 2)
+	if err != nil {
+		return errors.New("ERROR in follow: " + err.Error())
+	}
+	// Follow(1, 3)
+
+	// Follow(2, 1)
+
+	// Follow(3, 1)
+
+	// Follow(3, 2)
 
 	return nil
 }

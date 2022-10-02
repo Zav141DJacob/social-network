@@ -6,6 +6,9 @@ import(
 	"database/sql"
 )
 
+// SPECIAL ToDo:
+//	add a length check to all "From..()" functions
+
 func FromUsers(condition string, value interface{}) ([]UserData, error){
 
 	rows, err := doRows("users", condition, value)
@@ -65,6 +68,7 @@ func FromPosts(condition string, value interface{}) ([]PostData, error){
 			&post.UserId,
 			&post.Title, 
 			&post.Body, 
+			&post.CatId,
 			&post.Date)
 
 		if err != nil {
@@ -94,18 +98,11 @@ func FromPostCategory(condition string, value interface{}) ([]PostCategoryData, 
 	for rows.Next() {
 		var postCategory PostCategoryData
 
-		// postCategory.Categories[catNames[0]] = false
-		// postCategory.Categories[catNames[1]] = false
-		// postCategory.Categories[catNames[2]] = false
-
 		err = rows.Scan(
+			&postCategory.Id,
 			&postCategory.PostId,
-			// &postCategory.Categories[catNames[0]],
-			// &postCategory.Categories[catNames[1]],
-			// &postCategory.Categories[catNames[2]],
-			&postCategory.HasGolang,
-			&postCategory.HasJavascript,
-			&postCategory.HasRust,
+			&postCategory.CatId,
+			&postCategory.CategoryTitle,
 			)
 
 		if err != nil {
@@ -166,8 +163,9 @@ func FromCategories(condition string, value interface{}) ([]CategoryData, error)
 		err = rows.Scan(
 			&category.CatId, 
 			&category.Title,
+			&category.Description,
 			&category.UserId,
-			&category.IsMain)
+			&category.IsPublic)
 
 		if err != nil {
 			return nil, err
@@ -337,6 +335,42 @@ func FromNotifications(condition string, value interface{}) ([]NotificationData,
 	return returnNotification, nil
 }
 
+func FromNotificationsList(condition string, value interface{}) ([]NotificationsListData, error){
+
+	rows, err := doRows("notificationsList", condition, value)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var returnNotification []NotificationsListData
+	for rows.Next() {
+		var notification NotificationsListData
+
+		err = rows.Scan(
+			&notification.Id,
+			&notification.UserId,
+			&notification.Nickname,
+			&notification.UserAvatar,
+			&notification.TargetId,
+			&notification.TargetName,
+			&notification.CatId,
+			&notification.CategoryTitle,
+			&notification.Type)
+
+		if err != nil {
+			return nil, err
+		}
+
+		returnNotification = append(returnNotification, notification)
+	}
+
+	return returnNotification, nil
+}
+
+
 func FromMessages(senderValue, targetValue interface{}) ([]MessageData, error){
 
 	var rows *sql.Rows
@@ -403,6 +437,7 @@ func FromMessages(senderValue, targetValue interface{}) ([]MessageData, error){
 		err = rows.Scan(
 			&message.MessageId,
 			&message.SenderId,
+			&message.SenderName,
 			&message.Message,
 			&message.TargetId,
 			&message.Date)
@@ -416,6 +451,102 @@ func FromMessages(senderValue, targetValue interface{}) ([]MessageData, error){
 
 	return returnMessage, nil
 }
+
+func FromFollowers(condition string, value interface{}) ([]FollowerData, error) {
+	rows, err := doRows("followers", condition, value)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var returnFollowers []FollowerData
+	for rows.Next() {
+		var follower FollowerData
+
+		err = rows.Scan(
+			&follower.Id,
+			&follower.Nickname,
+			&follower.UserId,
+      &follower.Avatar,
+			&follower.FollowerNickname,
+			&follower.FollowerUserId,
+			&follower.FollowerAvatar)
+
+		if err != nil {
+			return nil, err
+		}
+
+		returnFollowers = append(returnFollowers, follower)
+	}
+
+	return returnFollowers, nil
+}
+
+
+func FromGroupMessages(condition string, value interface{}) ([]GroupMessageData, error){
+
+	rows, err := doRows("groupMessages", condition, value)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var returnMessage []GroupMessageData
+	for rows.Next() {
+		var message GroupMessageData
+
+		err = rows.Scan(
+			&message.MessageId,
+			&message.SenderId,
+			&message.SenderName,
+			&message.Message,
+			&message.TargetId,
+			&message.Date)
+
+		if err != nil {
+			return nil, err
+		}
+
+		returnMessage = append(returnMessage, message)
+	}
+
+	return returnMessage, nil
+}
+
+
+func FromEvents(condition string, value interface{}) ([]EventsData, error) {
+	rows, err := doRows("events", condition, value)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var returnEvents []EventsData
+	for rows.Next() {
+		var event EventsData
+
+		err = rows.Scan(
+			&event.Id,
+			&event.Title,
+			&event.Description,
+			&event.Date)
+
+		if err != nil {
+			return nil, err
+		}
+
+		returnEvents = append(returnEvents, event)
+	}
+
+	return returnEvents, nil
+}
+
 
 // Pulls data from the database
 // SELECT - how many arguments (* for all)

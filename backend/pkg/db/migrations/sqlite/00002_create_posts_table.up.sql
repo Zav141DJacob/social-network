@@ -4,6 +4,7 @@ CREATE TABLE "posts" (
 		"userId"	INTEGER NOT NULL,
 		"title"		TEXT NOT NULL,
 		"body"		TEXT NOT NULL,
+		"catId"		INTEGER NOT NULL,
 		"date"		DATETIME NOT NULL,
 		FOREIGN KEY (userId) REFERENCES "users"("userId")
 );

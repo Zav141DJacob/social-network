@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"sort"
 	"strings"
-	// "net/url"
+	"net/url"
 
 	// "time"
 	"encoding/json"
@@ -18,6 +18,15 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+// ERROR codes:
+//	201: "Created"
+//	204: "No Content"
+
+//	401: "Unauthorized"
+//	409: "Conflict"
+//	419: i forgot xd; Probably a general error 
+
+//	500: "Internal Server Error"
 
 type LoginUser struct {
    Nickname string
@@ -26,62 +35,74 @@ type LoginUser struct {
 
 func UploadFile(w http.ResponseWriter, r *http.Request) {
 
-	//Path for storing image in server
-	path := "./static/"
+	if r.Method != "OPTIONS" {
+		//Path for storing image in server
+		path := "./static/"
 
-	mr, err := r.MultipartReader()
-	if err != nil {
-		fmt.Println("err", err)
-		return
-	}
-	fileName := ""
-
-	for {
-		part, err := mr.NextPart()
-
-		//Break, if no more file
-		if err == io.EOF {
-			break
-		}
-        	//Get File Name attribute
-		fileName = part.FileName()
-    absPath, _ := filepath.Abs(path)
-
-	  sessionToken := uuid.NewV4().String()
-    c, _ := regexp.Compile(`\.\w*`)
-    match := c.FindString(fileName)
-    fileName = sessionToken + match
-		//Open the file, Create file if it's not existing
-		dst, err := os.OpenFile(absPath+"/"+fileName, os.O_WRONLY|os.O_CREATE, 0644)
+		mr, err := r.MultipartReader()
 		if err != nil {
-      fmt.Println(dst, err)
+			HandleErr(err)
 			return
 		}
+		fileName := ""
 
 		for {
-			//Create and read the file into temparory byte array
-			buffer := make([]byte, 100000)
-			cBytes, err := part.Read(buffer)
+			part, err := mr.NextPart()
 
-			//break when the reading process is finished
+			//Break, if no more file
 			if err == io.EOF {
-      fmt.Println(err)
+				HandleErr(err)
 				break
 			}
 
-			//Write into the file from byte array
-      _, err = dst.Write(buffer[0:cBytes])
-      if err != nil {
-        fmt.Println(err)
-      }
-      
-		}
-		defer dst.Close()
-	}
+			//Get File Name attribute
+			fileName = part.FileName()
+			absPath, _ := filepath.Abs(path)
 
-	// w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(fileName)
+			sessionToken := uuid.NewV4().String()
+
+
+			c, _ := regexp.Compile(`\.\w*`)
+
+			match := c.FindString(fileName)
+			fileName = sessionToken + match
+
+			//Open the file, Create file if it's not existing
+			dst, err := os.OpenFile(
+				absPath+"/"+fileName, 
+				os.O_WRONLY|os.O_CREATE, 
+				0644)
+			if err != nil {
+				HandleErr(err)
+				fmt.Println(dst)
+				return
+			}
+
+			for {
+				//Create and read the file into temparory byte array
+				buffer := make([]byte, 100000)
+				cBytes, err := part.Read(buffer)
+
+				//break when the reading process is finished
+				if err == io.EOF {
+					HandleErr(err)
+					break
+				}
+
+				//Write into the file from byte array
+				_, err = dst.Write(buffer[0:cBytes])
+				if err != nil {
+					HandleErr(err)
+				}
+		
+			}
+			defer dst.Close()
+		}
+
+		// w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(fileName)
+	}
 }
 
 func UserAPI(w http.ResponseWriter, r *http.Request) {
@@ -203,149 +224,197 @@ func UserAPI(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func PostApi(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		type toPosts struct {
-			Post	 PostData
-			// PostLike []PLikeData
-
-			// Likes	 int
-			// Dislikes int
-
-			User     string
-			Category PostCategoryData
-		}
-
-		path := strings.Split(r.URL.Path, "/")
-
-		var posts []PostData
-		var err error
+// api/v1/posts?categoryId=Id
+// api/v1/posts/
+func PostAPI(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "OPTIONS" {
+		auth := AuthenticateSession(r.Header["Authentication"])
 
 
-		if len(path) == 7 {
-			if path[4] != "category" {
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-			posts, err = FromPosts("CatId", path[5])
-		} else if len(path) == 6 {
-			posts, err = FromPosts("PostId", path[4])
-		} else {
-			posts, err = FromPosts("", "")
-		}
-		
-		if err != nil {
-			HandleErr(err)
-			// https://golangbyexample.com/500-status-http-response-golang/
-			w.WriteHeader(http.StatusInternalServerError)
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
 			return
 		}
 
 
+		// fmt.Println(auth)
+		// auth.UserId = 1
+		switch r.Method {
+		case "GET":
 
-		var toAPI []toPosts
-		for i := len(posts) - 1; i >= 0; i-- {
-			c := posts[i]
-			user, err := FromUsers("UserId", c.UserId)
+			type toPosts struct {
+				Post	PostData
+				User    string
+				Auth	bool
+				// Category CategoryData
+			}
+			var toAPI []toPosts
 
+			requestUrl := r.URL.RawQuery
+	
+			m, err := url.ParseQuery(requestUrl)
+	
+			// ?userId=0
+	
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(419)
+				return
+			}
+			
+			memberTo, err := FromGroupMembers("userId", auth.UserId)
+
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(500)
+				return
+			}
+
+			// postCategory, err := FromPostCategory("catId", group.CatId)
+			// if err != nil {
+			// 	HandleErr(err)
+			// 	w.WriteHeader(500)
+			// 	return
+			// }
+			var posts []PostData
+			// var err error
+			// fmt.Println(len(m["postId"]))
+
+			checkForCategory := false
+			if len(m["postId"]) > 0{
+				// fmt.Println(m["postId"][0])
+				posts, err = FromPosts("postId", m["postId"][0])
+			} else if len(m["categoryId"]) > 0{
+				checkForCategory = true
+				posts, err = FromPosts("catId", m["categoryId"][0])
+			} else {
+				posts, err = FromPosts("", "")
+			}
+
+			cats, err := FromCategories("", "");
+			for _, cat := range cats {
+				if cat.IsPublic {
+				cat := GroupMembersData {CatId: cat.CatId}
+				memberTo = append(memberTo, cat)
+				}
+			}
+			// jsonProfile, err := json.Marshal(profile)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+
+			// // fmt.Fprintf(w, string(jsonProfile))
+			// w.WriteHeader(401)
+			// w.Write([]byte(jsonProfile))
+
+			for _, post := range posts {
+				found := false
+
+				for _, v := range memberTo {
+				if v.CatId == post.CatId {
+					found = true
+					break
+				}
+				}
+
+				if !found {
+					if checkForCategory {
+						w.WriteHeader(401)
+					}
+					continue
+				}
+
+				user, err := FromUsers("userId", post.UserId)
+
+				if err != nil {
+					w.WriteHeader(500)
+					return
+				}
+				// fmt.Println(post)
+				toAPI = append(toAPI, toPosts{Post: post, User: user[0].Nickname, Auth: found})
+			}
+			jsonPosts, err := json.Marshal(toAPI)
 			if err != nil {
 				HandleErr(err)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
 
-			// postLikes, err := FromPLikes("PostId", c.PostId)
+			fmt.Fprintln(w, string(jsonPosts))
+		case "POST":
+			var v map[string]interface{}
+	
+			err := json.NewDecoder(r.Body).Decode(&v)
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			
+	
+			// userToken	:= v["userToken"]
+			categoryId  := v["categoryId"]
+			title  		:= v["title"]
+			body   		:= v["body"]
+			// ToDo:
+			// image		:= v["image"]
+			found := false
 
+			memberTo, err := FromGroupMembers("userId", auth.UserId)
+
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			
+			for _, v := range memberTo {
+
+				if v.CatId == int(categoryId.(float64)) {
+					fmt.Println(v.CatId, categoryId)
+
+					found = true
+					break
+				}
+			}
+
+			if found == false {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+	
+			// user, err := FromSessions("sessionId", auth.)
+			
 			// if err != nil {
 			// 	HandleErr(err)
 			// 	w.WriteHeader(http.StatusInternalServerError)
 			// 	return
 			// }
-
-			category, err := FromPostCategory("postId", c.PostId)
-
+	
+			// if len(user) == 0 {
+			// 	w.WriteHeader(http.StatusInternalServerError)
+			// 	HandleErr(err)
+			// 	return
+			// }
+	
+			err = Post(auth.UserId, categoryId, title, body)
 			if err != nil {
 				HandleErr(err)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
-			var getStruct toPosts
-
-			getStruct.Post = c
-			// getStruct.PostLike = postLikes
-
-
-			// for _, c2 := range postLikes {
-			// 	if c2.Value == 1 {
-			// 		getStruct.Likes++
-			// 	} else if c2.Value == -1 {
-			// 		getStruct.Dislikes++
-			// 	}
-			// }
-
-
-			getStruct.User = user[0].Nickname
-			getStruct.Category = category[0]
-
-			// getStruct.Category = category[0].Title
-			
-			toAPI = append(toAPI, getStruct)
+	
+			posts, err := FromPosts("", "")
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			postId := strconv.Itoa(len(posts))
+			w.Write([]byte(postId))
+			// w.WriteHeader(http.StatusCreated)
 		}
-		jsonPosts, err := json.Marshal(toAPI)
-		if err != nil {
-			HandleErr(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		fmt.Fprintln(w, string(jsonPosts))
-	case "POST":
-		var v map[string]interface{}
-
-		err := json.NewDecoder(r.Body).Decode(&v)
-		if err != nil {
-			HandleErr(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		userToken	:= v["userToken"]
-		categoryIds := v["categories"]
-		title  		:= v["title"]
-		body   		:= v["body"]
-		// ToDo:
-		// image		:= v["image"]
-
-		user, err := FromSessions("sessionId", userToken)
-		
-		if err != nil {
-			HandleErr(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		if len(user) == 0 {
-			w.WriteHeader(http.StatusInternalServerError)
-			HandleErr(err)
-			return
-		}
-
-		err = Post(user[0].UserId, categoryIds, title, body)
-		if err != nil {
-			HandleErr(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-	  posts, err := FromPosts("", "")
-	  if err != nil {
-	  	HandleErr(err)
-	  	w.WriteHeader(http.StatusInternalServerError)
-	  	return
-	  }
-	  postId := strconv.Itoa(len(posts))
-	  w.Write([]byte(postId))
-		w.WriteHeader(http.StatusCreated)
 	}
 }
 
@@ -470,136 +539,122 @@ func CommentAPI(w http.ResponseWriter, r *http.Request) {
 func CategoryAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "OPTIONS" {
 		auth := AuthenticateSession(r.Header["Authentication"])
-		if (auth == SessionData{}) {
-			fmt.Println("CategoryAPI, Custom Error: auth == sessiondata{}")
-
-			w.WriteHeader(500)
-			return
-		}
-		switch r.Method {
-		case "GET":
-			
-			categories, err := FromCategories("", "")
-			if err != nil {
-				// https://golangbyexample.com/500-status-http-response-golang/
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-			var returnCategories []CategoryData
-			for _, c := range categories {
-				//if index < 3 {
-					returnCategories = append(returnCategories, c)
-					// break
-				//}
-				
-				
-			}
-			jsonCategories, err := json.Marshal(returnCategories)
-			if err != nil {
-				HandleErr(err)
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-			fmt.Fprintln(w, string(jsonCategories))
-		case "POST":
-			auth := AuthenticateSession(r.Header["Authentication"])
-			if (auth == SessionData{}) {
-				fmt.Println("CategoryAPI, Custom Error: auth == sessiondata{}")
-
-				w.WriteHeader(500)
-				return
-			}
-
-			// https://stackoverflow.com/questions/27595480/does-golang-request-parseform-work-with-application-json-content-type
-			var v map[string]interface{}
-			err := json.NewDecoder(r.Body).Decode(&v)
-			if err != nil {
-				HandleErr(err)
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-
-			categories, err := FromCategories("", "")
-			if err != nil {
-				HandleErr(err)
-				// https://golangbyexample.com/500-status-http-response-golang/
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-
-			var title = v["title"]
-			// var userToken = v["userToken"]
-
-
-
-			// var mainCategory = v["main"]
-
-			for _, c := range categories {
-				
-				if c.Title == title.(string) {
-					w.WriteHeader(409)
-					return
-				}
-			}
-
-			fmt.Println(categories)
-
-			// if !success {
-			// 	w.WriteHeader(419)
-			// 	w.Write([]byte(errMsg))
-			// } else {
-			InsertCategory(title, auth.UserId, false)
-			w.WriteHeader(http.StatusCreated)
-			// }
 		
-		}
-	}
-}
+    switch r.Method {
+    case "GET":
 
-func PostLikeAPI(w http.ResponseWriter, r *http.Request) {
-	
-	switch r.Method {
-	case "GET":
-	case "POST":
-		var v map[string]interface{}
-		
-		err := json.NewDecoder(r.Body).Decode(&v)
-		
-		if err != nil {
-			HandleErr(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+      categories, err := FromCategories("", "")
+      if err != nil {
+        // https://golangbyexample.com/500-status-http-response-golang/
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+      }
+      var returnCategories []CategoryData
+      for _, c := range categories {
+        //if index < 3 {
+        returnCategories = append(returnCategories, c)
+        // break
+        //}
 
-		var postId = v["postId"]
-		var userToken = v["userToken"]
-		var value = v["value"]
 
-		user, err := FromSessions("sessionId", userToken)
+      }
+      // fmt.Println(returnCategories)
+      jsonCategories, err := json.Marshal(returnCategories)
+      if err != nil {
+        HandleErr(err)
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+      }
+      fmt.Fprintln(w, string(jsonCategories))
+    case "POST":
+      // auth := AuthenticateSession(r.Header["Authentication"])
+      if (auth == SessionData{}) {
+        w.WriteHeader(401)
+        return
+      }
 
-		if err != nil {
-			HandleErr(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
 
-		if len(user) == 0 {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+      // https://stackoverflow.com/questions/27595480/does-golang-request-parseform-work-with-application-json-content-type
+      var v map[string]interface{}
+      err := json.NewDecoder(r.Body).Decode(&v)
+      if err != nil {
+        HandleErr(err)
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+      }
 
-		userId := user[0].UserId
+      categories, err := FromCategories("", "")
+      if err != nil {
+        HandleErr(err)
+        // https://golangbyexample.com/500-status-http-response-golang/
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+      }
 
-		err = LikePost(userId, postId, value)
+      var title = v["title"]
+      var description = v["description"]
+      // var userToken = v["userToken"]
 
-		if err != nil {
-			HandleErr(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
 
-		w.WriteHeader(http.StatusCreated)
 
+      // var mainCategory = v["main"]
+
+      for _, c := range categories {
+
+        if c.Title == title.(string) {
+          w.WriteHeader(409)
+          return
+        }
+      }
+
+      // fmt.Println(categories)
+
+      // if !success {
+      // 	w.WriteHeader(419)
+      // 	w.Write([]byte(errMsg))
+      // } else {
+      InsertCategory(title, description, auth.UserId, false)
+      err = Post(auth.UserId, len(categories)+1, "First post in " + title.(string), "Welcome to \"" + title.(string) + "\"")
+
+      if err != nil {
+        HandleErr(err)
+      }
+      w.WriteHeader(http.StatusCreated)
+    // }
+    case "PUT":
+      // auth := AuthenticateSession(r.Header["Authentication"])
+      if (auth == SessionData{}) {
+        w.WriteHeader(401)
+        return
+      }
+
+
+      // https://stackoverflow.com/questions/27595480/does-golang-request-parseform-work-with-application-json-content-type
+      var v map[string]interface{}
+      err := json.NewDecoder(r.Body).Decode(&v)
+      if err != nil {
+        HandleErr(err)
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+      }
+
+      var userId = v["userId"]
+      var catId = v["catId"]
+      // var userToken = v["userToken"]
+
+      fmt.Println(userId, catId)
+      stmt, err := Db.Prepare("INSERT INTO groupMembers (userId, catId) VALUES (?, ?)")
+
+      if err != nil {
+        HandleErr(err)
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+      }
+
+      stmt.Exec(userId, catId)
+
+
+    }
 	}
 }
 
@@ -609,9 +664,7 @@ func SessionAPI(w http.ResponseWriter, r *http.Request) {
 		// fmt.Fprintln(w, r.Header["Authentication"])
 		auth := AuthenticateSession(r.Header["Authentication"])
 		if (auth == SessionData{}) {
-			fmt.Println("526, Custom Error: auth == sessiondata{}")
-
-			w.WriteHeader(500)
+			w.WriteHeader(401)
 			return
 		}
 
@@ -736,12 +789,11 @@ func SessionAPI(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(419)
 			w.Write([]byte("Uh oh! something went wrong"))
 		} else {
-			w.WriteHeader(200)
+			w.WriteHeader(204)
 		}
 
 	}
 }
-
 
 func OnlineUsersAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "OPTIONS" {
@@ -749,13 +801,14 @@ func OnlineUsersAPI(w http.ResponseWriter, r *http.Request) {
 		auth := AuthenticateSession(r.Header["Authentication"])
 
 		if (auth == SessionData{}) {
-			fmt.Println("642, Custom Error: auth == sessiondata{}")
-			w.WriteHeader(419)
+			w.WriteHeader(401)
 			return
 		}
 
 		switch r.Method {
 		case "GET":
+
+			// Pfft I dont remember what I did here -Jacob
 			sessions, err := FromSessions("", "")
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
@@ -803,18 +856,18 @@ func OnlineUsersAPI(w http.ResponseWriter, r *http.Request) {
 	
 				var found bool
 	
-        for _, session := range onOffUsers.Online {
-          if session.UserId == user.UserId {
-            found = true
-            break
-          }
-        }
-        if !found {
-          var offlineUser OnlineUserData
-          offlineUser.UserId = user.UserId
-          offlineUser.Online = false
-          offlineUser.Nickname = user.Nickname
-          offlineUser.Avatar = user.Avatar
+				for _, session := range onOffUsers.Online {
+					if session.UserId == user.UserId {
+						found = true
+						break
+					}
+				}
+				if !found {
+					var offlineUser OnlineUserData
+					offlineUser.UserId = user.UserId
+					offlineUser.Online = false
+					offlineUser.Nickname = user.Nickname
+					offlineUser.Avatar = user.Avatar
 
 					onOffUsers.Offline = append(onOffUsers.Offline, offlineUser)
 				}
@@ -823,8 +876,10 @@ func OnlineUsersAPI(w http.ResponseWriter, r *http.Request) {
 			for _, user := range onOffUsers.Offline {
 				onOffUsers.Online = append(onOffUsers.Online, user)
 			}
+
 			var allUsers []OnlineUserData
 			allUsers = onOffUsers.Online
+
 			var forSorting []string
 
 			for _, user := range allUsers {
@@ -904,16 +959,14 @@ func OnlineUsersAPI(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
-func NotificationsApi(w http.ResponseWriter, r *http.Request) {
+func PingAPI(w http.ResponseWriter, r *http.Request) {
 	
 	if r.Method != "OPTIONS" {
 
 		auth := AuthenticateSession(r.Header["Authentication"])
 
 		if (auth == SessionData{}) {
-			fmt.Println("803, Custom Error: auth == sessiondata{}")
-			w.WriteHeader(419)
+			w.WriteHeader(401)
 			return
 		}
 		sessionId, err := FromSessions("sessionId", r.Header["Authentication"][0])
@@ -936,6 +989,10 @@ func NotificationsApi(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			notificationJson, err := json.Marshal(notification)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
 			w.Write(notificationJson)
 		case "POST":
 			var v map[string]interface{}
@@ -947,7 +1004,7 @@ func NotificationsApi(w http.ResponseWriter, r *http.Request) {
 			// var postType = v["postType"]
 			var fromUserId = v["FromUserId"]
 
-			err = Notify(userId, fromUserId)
+			err = PingUser(userId, fromUserId)
 			if err != nil {
 				HandleErr(err)
 				w.WriteHeader(http.StatusInternalServerError)
@@ -969,13 +1026,11 @@ func NotificationsApi(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(419)
 				w.Write([]byte("Uh oh! something went wrong"))
 			} else {
-				w.WriteHeader(200)
+				w.WriteHeader(204)
 			}
 		}
 	}
 }
-
-
 
 func MessagesAPI(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
@@ -984,9 +1039,7 @@ func MessagesAPI(w http.ResponseWriter, r *http.Request) {
 		auth := AuthenticateSession(r.Header["Authentication"])
 
 		if (auth == SessionData{}) {
-			fmt.Println("875, Custom Error: auth == sessiondata{}")
-
-			w.WriteHeader(419)
+			w.WriteHeader(401)
 			return
 		}
 
@@ -1009,6 +1062,416 @@ func MessagesAPI(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// http://localhost:8000/api/v1/profile/?nicknage=Jacob
+func ProfileAPI(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "OPTIONS" {
+		auth := AuthenticateSession(r.Header["Authentication"])
+		// auth.UserId = 0
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
+			return
+		}
+		switch r.Method {
+		case "GET":
+			type profileStruct struct {
+				User		 UserData
+				Following	 []FollowerData
+				
+				Followers    []FollowerData
+				NonFollowers []UserData
+
+				Posts	  	 []PostData
+
+			}
+
+			profile := profileStruct{} 
+
+			requestUrl := r.URL.RawQuery
+
+			m, err := url.ParseQuery(requestUrl)
+
+			// ?userId=0
+
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(419)
+				return
+			}
+
+			if len(m["nickname"]) == 0 {
+				w.WriteHeader(419)
+				return
+			}
+
+			nickname := m["nickname"][0]
+
+			user, err := FromUsers("nickname", nickname)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+
+			followers, err := FromFollowers("userId", user[0].UserId)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+
+
+			users, err := FromUsers("", "")
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+
+			following, err := FromFollowers("followerUserId", user[0].UserId)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+
+			// https://zetcode.com/golang/filter-slice/
+			nonFollowers := FilterUserData(users, func(user interface{}) bool {
+				userId := user.(UserData).UserId
+				for _, follower := range followers {
+					if userId == follower.FollowerUserId {
+						return false
+					}
+				}
+				return true
+			})
+
+			posts, err := FromPosts("userId", user[0].UserId)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+
+			userGroups, err := FromGroupMembers("userId", auth.UserId)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+
+			posts = SortPosts(posts, userGroups)
+			
+			if user[0].IsPrivate {
+				found := false
+				for _, follower := range followers {
+					if follower.FollowerUserId == auth.UserId {
+						found = true
+						break
+					}
+				}
+
+				if !found {
+					// w.WriteHeader(401)
+					profile.User = user[0]
+					profile.Following = following
+
+					profile.Followers = followers
+					profile.NonFollowers = nonFollowers
+
+					profile.Posts = posts
+
+					jsonProfile, err := json.Marshal(profile)
+					if err != nil {
+						w.WriteHeader(500)
+						return
+					}
+
+					// fmt.Fprintf(w, string(jsonProfile))
+					w.WriteHeader(401)
+					w.Write([]byte(jsonProfile))
+
+					return
+				}
+			}
+			
+			
+
+
+			profile.User = user[0]
+			profile.Following = following
+
+			profile.Followers = followers
+			profile.NonFollowers = nonFollowers
+
+			profile.Posts = posts
+
+			jsonProfile, err := json.Marshal(profile)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+
+			fmt.Fprintf(w, string(jsonProfile))
+		case "PUT":
+
+			var v map[string]interface{}
+			err := json.NewDecoder(r.Body).Decode(&v)
+			if err != nil {
+				HandleErr(err)
+			}
+
+			
+			// https://stackoverflow.com/questions/27595480/does-golang-request-parseform-work-with-application-json-content-type
+			// var postType = v["postType"]
+			
+			
+			var userId = v["userId"]
+			
+			if auth.UserId != int(userId.(float64)) {
+				// if auth.Role != "ADMIN" {
+				w.WriteHeader(401)
+				return
+				// }
+			}
+			
+			if userId == nil {
+				w.WriteHeader(419)
+				return
+			}
+
+			err = ToggleProfilePrivacy(userId)
+			if err != nil {
+				w.WriteHeader(419)
+				return
+			}
+
+			w.WriteHeader(204)
+			// w.Write([]byte(jsonProfile))
+		}
+	}
+}
+
+// http://localhost:8000/api/v1/followers/
+func FollowerAPI(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+
+		requestUrl := r.URL.RawQuery
+
+		m, err := url.ParseQuery(requestUrl)
+		if err != nil {
+			HandleErr(err)
+			w.WriteHeader(419)
+			return
+		}
+		if len(m["userId"]) == 0 {
+			w.WriteHeader(419)
+			return
+		}
+		userId := m["userId"][0]
+
+		followers, err := FromFollowers("userId", userId)
+		if err != nil {
+			w.WriteHeader(419)
+			return
+		}
+		jsonFollowers, err := json.Marshal(followers)
+		if err != nil {
+			w.WriteHeader(419)
+			return
+		}
+		fmt.Fprintf(w, string(jsonFollowers))
+	case "POST":
+		auth := AuthenticateSession(r.Header["Authentication"])
+
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
+			return
+		}
+
+		var v map[string]interface{}
+		err := json.NewDecoder(r.Body).Decode(&v)
+		if err != nil {
+			HandleErr(err)
+			w.WriteHeader(500)
+			return
+		}
+		var userId = v["userId"]
+
+		followers, err := FromFollowers("userId", auth.UserId)
+		if err != nil {
+			HandleErr(err)
+			w.WriteHeader(500)
+			return
+		}
+
+		fmt.Println(followers)
+
+		for _, follower := range followers {
+			fmt.Println(follower.FollowerUserId, userId)
+			if follower.FollowerUserId == int(userId.(float64)) {
+				w.WriteHeader(419)
+				return
+			}
+		}
+
+		err = Follow(userId, auth.UserId)
+
+		if err != nil {
+			HandleErr(err)
+			w.WriteHeader(500)
+			return
+		}
+		w.WriteHeader(http.StatusCreated)
+	case "DELETE":
+		auth := AuthenticateSession(r.Header["Authentication"])
+
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
+			return
+		}
+		var v map[string]interface{}
+		err := json.NewDecoder(r.Body).Decode(&v)
+		if err != nil {
+			HandleErr(err)
+			w.WriteHeader(419)
+			return
+		}
+
+		var userId = v["userId"]
+
+		err = UnFollow(userId, auth.UserId)
+		if err != nil {
+			HandleErr(err)
+			w.WriteHeader(419)
+			return
+		}
+
+		w.WriteHeader(204)
+
+	}
+}
+
+func NotificationsListAPI(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "OPTIONS" {
+		auth := AuthenticateSession(r.Header["Authentication"])
+
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
+			return
+		}
+		switch r.Method {
+		case "GET":
+
+			// requestUrl := r.URL.RawQuery
+
+			// m, err := url.ParseQuery(requestUrl)
+			// if err != nil {
+			// 	HandleErr(err)
+			// 	w.WriteHeader(419)
+			// 	return
+			// }
+			// if len(m["userId"]) == 0 {
+			// 	w.WriteHeader(419)
+			// 	return
+			// }
+			// userId := m["userId"][0]
+
+			notifications, err := FromNotificationsList("targetId", auth.UserId)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+			jsonNotif, err := json.Marshal(notifications)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+			fmt.Fprintf(w, string(jsonNotif))
+		case "DELETE":
+			var v map[string]interface{}
+			err := json.NewDecoder(r.Body).Decode(&v)
+			if err != nil {
+				HandleErr(err)
+			}
+
+			var id = v["id"]
+
+			err = DeleteNotificationsList(id)
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(419)
+				w.Write([]byte("Uh oh! something went wrong"))
+			} else {
+				w.WriteHeader(204)
+			}
+		}
+	}
+}
+
+func GroupMessagesAPI(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "OPTIONS" {
+
+		auth := AuthenticateSession(r.Header["Authentication"])
+
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
+			return
+		}
+		switch r.Method {
+		case "GET":
+
+			requestUrl := r.URL.RawQuery
+
+			m, err := url.ParseQuery(requestUrl)
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(419)
+				return
+			}
+			if len(m["targetId"]) == 0 {
+				w.WriteHeader(419)
+				return
+			}
+			targetId := m["targetId"][0]
+
+			messages, err := FromGroupMessages("targetId", targetId)
+
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(500)
+				return
+			}
+
+			returnJson, err := json.Marshal(messages)
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(500)
+				return
+			}
+
+			fmt.Fprintf(w, string(returnJson))
+		}
+	}
+}
+
+func EventsAPI(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "OPTIONS" {
+		auth := AuthenticateSession(r.Header["Authentication"])
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
+			return
+		}
+		switch r.Method {
+		case "GET":
+			events, err := FromEvents("", "")
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+			returnJson, err := json.Marshal(events)
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+			fmt.Fprintf(w, string(returnJson))
+		}
+	}
+}
 
 // func PostLikeAPI(w http.ResponseWriter, r *http.Request) {
 // 	switch r.Method {
@@ -1071,7 +1534,6 @@ func MessagesAPI(w http.ResponseWriter, r *http.Request) {
 // 			w.WriteHeader(http.StatusInternalServerError)
 // 			return
 // 		}
-// 		fmt.Fprintln(w, string(jsonPosts))
 // 	case "POST":
 // 		var v map[string]interface{}
 
@@ -1106,5 +1568,53 @@ func MessagesAPI(w http.ResponseWriter, r *http.Request) {
 // 			return
 // 		}
 // 		w.WriteHeader(http.StatusCreated)
+// 	}
+// }
+
+
+// func PostLikeAPI(w http.ResponseWriter, r *http.Request) {
+	
+// 	switch r.Method {
+// 	case "GET":
+// 	case "POST":
+// 		var v map[string]interface{}
+		
+// 		err := json.NewDecoder(r.Body).Decode(&v)
+		
+// 		if err != nil {
+// 			HandleErr(err)
+// 			w.WriteHeader(http.StatusInternalServerError)
+// 			return
+// 		}
+
+// 		var postId = v["postId"]
+// 		var userToken = v["userToken"]
+// 		var value = v["value"]
+
+// 		user, err := FromSessions("sessionId", userToken)
+
+// 		if err != nil {
+// 			HandleErr(err)
+// 			w.WriteHeader(http.StatusInternalServerError)
+// 			return
+// 		}
+
+// 		if len(user) == 0 {
+// 			w.WriteHeader(http.StatusInternalServerError)
+// 			return
+// 		}
+
+// 		userId := user[0].UserId
+
+// 		err = LikePost(userId, postId, value)
+
+// 		if err != nil {
+// 			HandleErr(err)
+// 			w.WriteHeader(http.StatusInternalServerError)
+// 			return
+// 		}
+
+// 		w.WriteHeader(http.StatusCreated)
+
 // 	}
 // }

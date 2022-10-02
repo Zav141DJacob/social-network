@@ -2,6 +2,7 @@ package exec
 
 import (
 	"fmt"
+	// "net/url"
 	"strings"
 	"errors"
 )
@@ -9,22 +10,6 @@ import (
 //Handles the error when called
 func HandleErr(err error) {
 	fmt.Printf("Found error: \n%v\n", err.Error())
-}
-
-func GetCategoryNames() ([]string, error){
-
-	categoryList, err := FromCategories("", "")
-
-	if err != nil {
-		return nil, err
-	}
-
-	var returnStringArr []string
-	for _, category := range categoryList {
-		returnStringArr = append(returnStringArr, "has" + category.Title) 
-	}
-
-	return returnStringArr, nil
 }
 
 //ToDo:
@@ -80,7 +65,80 @@ func SortAlpha(argArr []string, allUsers []OnlineUserData) []OnlineUserData {
 
 func CreateErr(s string) error {
 	// https://www.digitalocean.com/community/tutorials/creating-custom-errors-in-go
-	
-
 	return errors.New(s)
 }
+
+func FilterUserData(slice interface{}, f func(interface{}) bool) []UserData {
+	returnSlice := make([]UserData, 0)
+
+	for _, v := range slice.([]UserData) {
+		if f(v) {
+			returnSlice = append(returnSlice, v)
+		}
+	}
+	return returnSlice
+}
+
+
+// ToDo: change function location
+func ToggleProfilePrivacy(userId interface{}) error {
+	// var stmt *sql.Stmt
+	// var err error
+
+	user, err := FromUsers("userId", userId)
+	if err != nil {
+		return err
+	} 
+	stmt, err := Db.Prepare("UPDATE users SET isPrivate = ? WHERE userId = ?")
+	
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+	if user[0].IsPrivate {
+		stmt.Exec(false, userId)
+	} else {
+		stmt.Exec(true, userId)
+	}
+
+	return nil
+}
+
+func SortPosts(posts []PostData, userGroups []GroupMembersData) []PostData {
+	var returnPosts []PostData
+
+	for _, post := range posts {
+		found := false
+
+		for _, v := range userGroups {
+			if v.CatId == post.CatId {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			continue
+		}
+		returnPosts = append(returnPosts, post)
+	}
+	return returnPosts
+}
+
+// ToDo: less hardcode
+// func QueryData(r *http.Request) (_, error) {
+// 	requestUrl := r.URL.RawQuery
+
+// 		m, err := url.ParseQuery(requestUrl)
+// 		if err != nil {
+// 			HandleErr(err)
+// 			w.WriteHeader(419)
+// 			return
+// 		}
+// 		if len(m["userId"]) == 0 {
+// 			w.WriteHeader(419)
+// 			return
+// 		}
+// 		userId := m["userId"][0]
+// }

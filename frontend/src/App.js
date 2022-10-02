@@ -2,10 +2,8 @@ import './App.css';
 import {PrivateRoute} from './utils/PrivateRoute'
 import Login from './pages/Login'
 import Home from './pages/Home'
-import Post from './pages/Post'
-import Profile from './pages/Profile'
 import { Routes, Route,  useNavigate } from 'react-router-dom';
-import { useReducer, useState, createContext, useContext} from 'react'
+import { useReducer, useState, createContext, useContext, useEffect} from 'react'
 
 
 export const AuthContext = createContext(null);
@@ -16,9 +14,20 @@ function postReducer(state, action) {
     postId: null,
     profile: false,
     profileDrop: false,
+    notificationDrop: false,
     createGroup: false,
+    event: false,
     profileId: undefined,
     postCat: undefined,
+    public: undefined,
+    following: false,
+    followers: false,
+    groupChat: false,
+    groupChatCat: state.groupChatCat,
+    groupChatId: state.groupChatId
+  }
+  if (action.fat == 12) {
+      return {...action, profileDrop: false, notificationDrop: false}
   }
 
   switch (action.type) {
@@ -26,17 +35,29 @@ function postReducer(state, action) {
        return {...state, postSelected: true, postId: action.postId, profile: false, profileDrop: false}
     case 'unselect':
      window.history.pushState("Home.jsx:31", "Home.jsx:31", `/`)
-      return {...state, postSelected: false, postId: null, profile: false, profileDrop: false} 
+      return {...state, postSelected: false, postId: null, profile: false, profileDrop: false, groupChat: state.groupChat, groupChatCat: state.groupChatCat} 
     case 'create':
-      return {postSelected: true, postId: action.postId, profile: false, profileDrop: false}
+      return {...defaultFalse, postSelected: true, postId: action.postId, profile: false, profileDrop: false, groupChat: state.groupChat, groupChatCat: state.groupChatCat}
     case 'category':
-      return {postSelected: false, profile: false, profileDrop: false, postCat: state.postCat === action.category ? 'all' : action.category}
+      return {...defaultFalse, postSelected: false, profile: false, profileDrop: false, catName: action.catName, postCat: action.category, public: action.public, groupChat: state.groupChat, groupChatCat: state.groupChatCat}
     case 'group':
-      return {...defaultFalse, createGroup: true}
+      return {...defaultFalse, createGroup: true, groupChat: state.groupChat, groupChatCat: state.groupChatCat}
+    case 'groupChat':
+      return {...state, groupChat: true, groupChatCat: action.groupChatCat, groupChatId: action.groupChatId}
+    case 'groupChatClose':
+      return {...state, groupChat: false}
     case 'profile':
-      return {...defaultFalse, profile: true, profileId: action.Id}
+      return {...defaultFalse, profile: true, profileId: action.Id, groupChat: state.groupChat, groupChatCat: state.groupChatCat}
     case 'profileDrop':
-      return {...state, profileDrop: !state.profileDrop}
+      return {...state, profileDrop: !state.profileDrop, notificationDrop: false}
+    case 'notificationDrop':
+      return {...state, notificationDrop: !state.notificationDrop, profileDrop: false}
+    case 'createEvent':
+      return {...state, notificationDrop: false, profileDrop: false, event: true}
+    case 'followers':
+      return {...defaultFalse, followers: true, groupChat: state.groupChat, groupChatCat: action.groupChatCat}
+    case 'following':
+      return {...defaultFalse, following: true, groupChat: state.groupChat, groupChatCat: action.groupChatCat}
     case 'home':
      window.history.pushState("Home.jsx:31", "Home.jsx:31", `/`)
       return defaultFalse
@@ -87,6 +108,31 @@ export const useAuth = () => {
 
 function App() {
   const [post, dispatch] = useReducer(postReducer, {postSelected: false, createGroup: false, profile: false})
+  const [previousState, setPreviousState] = useState([{...post, fat: 12, profileDrop: false, notificationDrop: false}])
+  useEffect(() => {
+    if (JSON.stringify(post) !== JSON.stringify(previousState.at(-1))) {
+      let prevCopy = previousState.slice()
+      prevCopy.push({...post, fat: 12, profileDrop: false, notificationDrop: false})
+      setPreviousState(prevCopy)
+    }
+  }, [post])
+  useEffect(() => {
+    const handleClick = () => {
+      let copyState = {...previousState.at(-2)}
+      let prevCopy = previousState.slice()
+      prevCopy.pop()
+      setPreviousState(prevCopy)
+      dispatch(copyState)
+      window.history.pushState("Home.jsx:31", "Home.jsx:31", `/`)
+    }
+
+    window.addEventListener('popstate', handleClick);
+
+    return () => {
+      window.removeEventListener('popstate', handleClick);
+    };
+  });
+
   return (
     <div className="App">
       <AuthProvider>
@@ -95,6 +141,7 @@ function App() {
           <Route element={<PrivateRoute dispatch={dispatch} state={post}/>}>
             <Route path='/post/:postId' element={<Home dispatch={dispatch} post={post} />} />
             <Route path='/users/:userId' element={<Home dispatch={dispatch} post={post} />} />
+            <Route path='/group/:groupId' element={<Home dispatch={dispatch} post={post} />} />
             <Route index element={<Home dispatch={dispatch} post={post} />} />
           </Route>
         </Routes>

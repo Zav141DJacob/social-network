@@ -2,7 +2,7 @@ package exec
 
 import (
   "net/mail"
-  // "fmt"
+  "fmt"
   "golang.org/x/crypto/bcrypt"
 )
 
@@ -78,7 +78,8 @@ func AuthRegister(nickname, email, password, firstName, lastName, age, bio, avat
   
 	// if nickname length is less than 4, return error string
 	if len(nickname.(string)) < 4 {
-    	respUser.Nickname = "nickname error"
+		fmt.Println(nickname)
+    	// respUser.Nickname = "nickname error"
     }
 
 	// if email address is not valid, return error string

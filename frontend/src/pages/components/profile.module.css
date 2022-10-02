@@ -27,7 +27,7 @@
 
 .privatetext {
   position: absolute;
-  color: whitesmoke;
+  color: rgb(232, 230, 227);
   left: 50%;
   top: 70%;
   font-weight: 100;
@@ -38,12 +38,12 @@
 
 .lock {
   position: absolute;
-  scale: 0.12;
-  left: -7px;
-  top: -250px;
+  left: 44%;
+  top: 23%;
+  width: 50px;
   padding: 5px;
   fill:none;
-  stroke: white;
+  stroke: rgb(232, 230, 227);
 }
 
 .profile {
@@ -71,7 +71,7 @@
   position: absolute;
   top: 20px;
   left: 150px;
-  color: whitesmoke;
+  color: rgb(232, 230, 227);
 }
 
 .stats {
@@ -83,7 +83,15 @@
   font-weight: 400;
   max-width: 400px;
   min-width: 300px;
-  color: whitesmoke;
+  color: rgb(232, 230, 227);
+}
+
+.following  {
+  cursor: pointer;
+}
+
+.followers  {
+  cursor: pointer;
 }
 
 .nickname {
@@ -95,7 +103,7 @@
   font-weight: 800;
   max-width: 400px;
   min-width: 300px;
-  color: whitesmoke;
+  color: rgb(232, 230, 227);
 }
 
 .bio {
@@ -107,7 +115,7 @@
   font-weight: 400;
   max-width: 400px;
   min-width: 300px;
-  color: whitesmoke;
+  color: rgb(232, 230, 227);
 }
 
 .email {
@@ -119,7 +127,7 @@
   font-weight: 400;
   max-width: 400px;
   min-width: 300px;
-  color: whitesmoke;
+  color: rgb(232, 230, 227);
 }
 
 .age {
@@ -131,11 +139,203 @@
   font-weight: 400;
   max-width: 400px;
   min-width: 300px;
-  color: whitesmoke;
+  color: rgb(232, 230, 227);
 }
 
 .followBtn {
+  cursor: pointer;
+  position: relative;
+  left: 20px;
+  height: 30px;
+  width: 80px;
+  font-size: 18px;
+  top: -2px;
+  background-color: transparent;
+  border: 0px solid rgb(14, 57, 122);
+  border-radius: 7px;
+  color: rgb(232, 230, 227);
+  background-color: rgb(14, 57, 122);
+}
+
+.unfollowBtn {
+  cursor: pointer;
+  position: relative;
+  left: 20px;
+  top: -2px;
+  height: 30px;
+  width: 80px;
+  font-size: 14px;
+  background-color: transparent;
+  border: 2px solid #404040;
+  border-radius: 7px;
+  color: rgb(232, 230, 227);
+}
+.settingsBtn {
+  cursor: pointer;
+  position: relative;
+  width: 20px;
+  left: 30px;
+}
+
+.posts {
+  position: relative;
+  left: 50%;
+  top: 60px;
+  transform: translate(-50%);
+  width: inherit;
+  max-width: 980px;
+  min-width: 820px;
+  cursor:default;
+}
+
+.postContainer {
+  width: inherit;
+  min-width: 500px;
+  top: 71px;
+  background: rgb(48, 52, 54);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  margin: 0 auto;
+}
+
+.postGroup {
+  position: relative;
+  left: 207px;
+  top: 22px;
+  font-size: 14px;
+  color: #404040;
+}
+
+.followModule {
   position: absolute;
-  top: 40px;
-  left: 300px;
+  left: 51%;
+  top: 230px;
+  transform: translate(-50%);
+  background-color: #404040;
+  border-radius: 12px;
+  height: 300px;
+  width: 400px;
+  overflow-y: scroll;
+  box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.35);
+  overflow: visible;
+}
+
+.privacyModule {
+  position: absolute;
+  left: 49%;
+  transform: translate(-50%);
+  top: 140px;
+  border-radius: 12px;
+  background-color: #404040;
+  height: 100px;
+  width: 250px;
+  overflow-y: scroll;
+  box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.moduleLabel {
+  position: relative;
+  top: -7px;
+  left: 30px;
+  color: rgb(232, 230, 227);
+  font-family: 'Helvetica';
+  font-style: bold;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.follower {
+  position: relative;
+  display: flex;
+  left: 10px;
+  padding: 2px;
+
+}
+
+.followerAvatarImg {
+  position: relative;
+  top: 2px;
+  left: 20px;
+  width: 40px;
+  border-radius: 50%;
+}
+
+.followerNickname {
+  cursor: pointer;
+  position: relative;
+  top: 12px;
+  left: 30px;
+  color: rgb(232, 230, 227);
+  font-family: 'Helvetica';
+  font-style: normal;
+  font-size: 20px;
+  font-weight: 10;
+}
+
+.closeModal {
+  position: relative;
+  left: 90%;
+  top: 12px;
+  width: 20px;
+  height: 20px;
+  color: rgb(232, 230, 227);
+  cursor: pointer;
+}
+
+.switch {
+  position: relative;
+  top: 8px;
+  left: 170px;
+  display: inline-block;
+}
+.switchInput {
+  display: none;
+}
+.switchLabel {
+  display: block;
+  width: 48px;
+  height: 24px;
+  text-indent: -150%;
+  clip: rect(0 0 0 0);
+  color: transparent;
+  user-select: none;
+}
+.switchLabel::before,
+.switchLabel::after {
+  content: "";
+  display: block;
+  position: absolute;
+  cursor: pointer;
+}
+.switchLabel::before {
+  width: 100%;
+  height: 100%;
+  background-color: #dedede;
+  border-radius: 9999em;
+  -webkit-transition: background-color 0.25s ease;
+  transition: background-color 0.25s ease;
+}
+.switchLabel::after {
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.45);
+  -webkit-transition: left 0.25s ease;
+  transition: left 0.25s ease;
+}
+.switchInput:checked + .switchLabel::before {
+  background-color: #89c12d;
+}
+.switchInput:checked + .switchLabel::after {
+  left: 24px;
+}
+
+.switchText {
+  position: relative;
+  top: 30px;
+  left: -100px;
+  color: rgb(232, 230, 227);
 }

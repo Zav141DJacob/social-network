@@ -7,12 +7,14 @@ import(
 )
 
 func main(){
+  port := ":8000"
 
   err := exec.Initialize()
   if err != nil {
     exec.HandleErr(err)
     return
   }
+
   fs := http.FileServer(http.Dir("./static"))
   http.Handle("/static/", http.StripPrefix("/static/", fs))
 
@@ -20,27 +22,40 @@ func main(){
     fmt.Println("HOI")
     http.ServeFile(w, r, "image.html")
   })
-  port := ":8000"
+
   fileServer := http.StripPrefix("/", http.FileServer( http.Dir("./")))
   http.Handle("/", fileServer)
+
   // ToDo: change Middleware function name
   http.HandleFunc("/api/v1/users/", Middleware(exec.UserAPI))
-  http.HandleFunc("/api/v1/posts/", Middleware(exec.PostApi))
+  http.HandleFunc("/api/v1/posts/", Middleware(exec.PostAPI))
   http.HandleFunc("/api/v1/categories/", Middleware(exec.CategoryAPI))
   http.HandleFunc("/api/v1/sessions/", Middleware(exec.SessionAPI))
   http.HandleFunc("/api/v1/comments/", Middleware(exec.CommentAPI))
-  http.HandleFunc("/api/v1/post-likes/", Middleware(exec.PostLikeAPI))
+
   http.HandleFunc("/api/v1/online-users/", Middleware(exec.OnlineUsersAPI))
+
   http.HandleFunc("/api/v1/messages/", Middleware(exec.MessagesAPI))
-  http.HandleFunc("/api/v1/notifications/", Middleware(exec.NotificationsApi))
+  http.HandleFunc("/api/v1/group-messages/", Middleware(exec.GroupMessagesAPI))
+
+  http.HandleFunc("/api/v1/notifications/", Middleware(exec.PingAPI))
+  http.HandleFunc("/api/v1/notifications-list/", Middleware(exec.NotificationsListAPI))
+
+  http.HandleFunc("/api/v1/followers/", Middleware(exec.FollowerAPI))
+  http.HandleFunc("/api/v1/profile/", Middleware(exec.ProfileAPI))
+
   http.HandleFunc("/api/v1/upload/", Middleware(exec.UploadFile))
 
-
 	// websocket stuff
-	// http.HandleFunc("/ws/", Middleware(exec.WsRootHandler))
-	// http.HandleFunc("/ws/longlat", Middleware(exec.wsLonglatHandler))
 	http.HandleFunc("/ws/", Middleware(exec.WsEndpoint))
+	http.HandleFunc("/empty-ws/", Middleware(exec.Empty))
 
+  err = exec.WsSetup()
+
+  if err != nil {
+    exec.HandleErr(err)
+    return
+  }
 
 	fmt.Println("listening on" + port)
 	fmt.Println("http://localhost" + port)
@@ -53,7 +68,7 @@ func Middleware(fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Middleware method: " + r.Method)
 
-	  	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authentication")
+    w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authentication")
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
     w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")

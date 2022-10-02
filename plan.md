@@ -35,3 +35,82 @@ Kommentaaride lisamine
 PLAN:
 Homepage - facebook clone, keskel on postitused ja paremal ääres on DM kasutajad
 
+NEWS
+catergories - JSON (catId, title, userId, isPublic) - all the info about category
+
+GET post - send session token to 'api/v1/posts/x' 
+
+GET all posts from category - api/v1/posts/?categoryId=categoryId
+
+GET profile info - api/v1/profile/nickname
+frontend - localhost:3000/users/Jacob
+JSON {
+    user Userdata,
+    followers []FollowerData (see below the structure)
+    NonFollowers []UserData <--- user data array of non followers
+  }
+
+FollowerData {
+    nickname    <
+    id         <---- these are the current profile data
+    userid      <
+
+    FollowerNickname <--- these are the follower data
+    FollowerUserId    <
+    FollowerAvatar //TODO
+
+  }
+
+get all followers - api/v1/followers/?userId={userId}
+start following (POST) - api/v1/followers/?userId={userId}
+body {
+    userId: {userId}
+  }
+
+stop following (DELETE) - api/v1/followers/?userId={userId}
+body {
+    userId: {userId}
+  }
+
+
+// ERROR codes:
+//    201: "Created"
+//    204: "No Content"
+
+//    401: "Unauthorized"
+//    409: "Conflict"
+//    419: i forgot xd; Probably a general error 
+
+//    500: "Internal Server Error"
+
+TODO: if on a group page the post will be in that group only
+
+Registration
+  If nickname and avatar is not provided
+    Generate nickname and avatar
+
+Events
+  Create event form
+  Event page
+    Invite users
+    Attending users
+    Event name, desc, date
+
+Left sidebar 
+  Show more opens discover groups page
+
+Groups
+  Invite button
+    Open users modal
+    Send notification to target
+  Group chat
+
+Posts
+  Specify post privacy
+    Almost private
+      Open a users modal to choose who sees it
+  Display images
+
+Comments
+  Display images
+

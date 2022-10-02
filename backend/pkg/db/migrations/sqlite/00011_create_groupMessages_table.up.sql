@@ -1,5 +1,5 @@
 -- +migrate Up
-CREATE TABLE "messages" (
+CREATE TABLE "groupMessages" (
 		"messageId"		INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 		"senderId"		INTEGER NOT NULL,
 		"senderName"	TEXT NOT NULL,
@@ -7,5 +7,5 @@ CREATE TABLE "messages" (
 		"targetId"		INTEGER NOT NULL,
 		"date"			DATETIME NOT NULL,
 		FOREIGN KEY ("senderId") REFERENCES "users"("userId")
-		FOREIGN KEY ("targetId") REFERENCES "users"("userId")
+		FOREIGN KEY ("targetId") REFERENCES "categories"("catId")
 );
