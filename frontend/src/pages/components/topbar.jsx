@@ -179,10 +179,12 @@ function ws2OnMessage(setNotifications, notifications) {
     getData("http://localhost:8000/api/v1/notifications-list/")
     .then(data => {
       // d = data
-      // console.log(data)
+       console.log(data)
       if (data) {
+        console.log(1)
         setNotifications(data)
       } else {
+        console.log(2)
         setNotifications([])
       }
     })

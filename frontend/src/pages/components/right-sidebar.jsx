@@ -3,7 +3,7 @@ import styles from './rightsidebar.module.css'
 import { MessageBox } from './messagebox.jsx'
 import { GroupMessageBox } from './groupMessage.jsx'
 import { postData } from '../Login'
-import { FollowCase } from '../../utils/WsCases'
+import { ForwardWS2 } from '../../utils/WsCases'
 import { getData } from './topbar'
 
 
@@ -62,7 +62,10 @@ export const wsOnMessage = (notification, setNotification, setUsers, dispatch) =
     }
     switch (jsonData.Type) {
       case "follow":
-        FollowCase(jsonData)  
+        ForwardWS2(jsonData)  
+        break
+      case "join":
+        ForwardWS2(jsonData)
         break
       case "groupMessage":
         break
