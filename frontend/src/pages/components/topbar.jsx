@@ -229,7 +229,6 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
               )
             }
             case "join": {
-              console.table(item)
               return (
                 <div key={item.Nickname} className={styles.notification}>
                   <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
