@@ -34,6 +34,24 @@
   cursor: pointer;
 }
 
+.notificationCount {
+  position: absolute;
+  background: rgb(204, 0, 0);
+  border-radius: 20px;
+  border: 2px solid rgb(22, 26, 28);
+  width: 16px;
+  height: 16px;
+  top: 22px;
+  left: -6px;
+  color: white;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 1px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  line-height: 20px;
+}
+
 .bell {
   position: relative;
   scale: 0.8;
@@ -178,7 +196,7 @@ hr {
   width: 240px;
   min-height: 125px;
   max-height: 500px;
-  right: calc(1% + 47px);
+  right: calc(1% + 57px);
   top: 55px;
   background: #222222;
   box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.35);
@@ -189,7 +207,7 @@ hr {
   z-index: 2;
   position: absolute;
   width: 0px; 
-  right: calc(1% + 46px);
+  right: calc(1% + 56px);
   top: 45px;
   height: 0px; 
   border-left: 15px solid transparent;

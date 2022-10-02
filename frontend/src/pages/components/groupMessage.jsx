@@ -32,21 +32,33 @@ const getMessages = (setMessages, messages, targetUser, mode = "default", nickna
       .then ((xd) => {
         fetch("http://localhost:8000/api/v1/users/nickname/" + cookieStruct.uID + "/")
           .then(userResponse => {
+            let prevSender = ""
             userResponse.json()
               .then((user) => {
                 let messagesCopy = []
                 xd?.forEach((elem) => {
                   if (elem.SenderName !== nickname) {
-                    messagesCopy.push({
-                      sent: false,
-                      message: elem.Message,
-                      date: elem.Date
-                    }) 
+                    if (prevSender !== elem.SenderName) {
+                      prevSender = elem.SenderName
+                      messagesCopy.push({
+                        sent: false,
+                        message: elem.Message,
+                        date: elem.Date,
+                        user: elem.SenderName
+                      }) 
+                    } else {
+                      messagesCopy.push({
+                        sent: false,
+                        message: elem.Message,
+                        date: elem.Date,
+                      }) 
+                    }
                   } else {
+                    prevSender = elem.SenderName
                     messagesCopy.push({
                       sent: true,
                       message: elem.Message,
-                      date: elem.Date
+                      date: elem.Date,
                     }) 
                   }
                 })
@@ -101,7 +113,10 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
     var date = new Date(time)
 
 
-    if (message.value !== '') {
+    if (message.value !== "" && message.SenderName !== nickname) {
+      messagesCopy.push({sent: message.Sent, message: message.Message, date: date.toString().split("GMT")[0], user: message.SenderName}) 
+      setMessages(messagesCopy)
+    } else if (message.value !== "") {
       messagesCopy.push({sent: message.Sent, message: message.Message, date: date.toString().split("GMT")[0]}) 
       setMessages(messagesCopy)
     }
@@ -153,6 +168,7 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
       <div className={styles.messages} ref={messageScroll}> {loading && messages.length-messageCount > 0 && <h1 className={styles.msgLoad}>Loading older messages</h1>}{messages.slice(messages.length-messageCount < 0 ? 0 : messages.length-messageCount).map((item, i) => {
         return (
           <Fragment key={i}>
+            {item.user && <span className={styles.groupChatNickname} onClick={() => dispatch({type: "profile", category: `${item.user}` })}>{item.user}</span>}
             <TimeAgo className={item.sent ? styles.datesent : styles.datereceive} datetime={item.date} opts={{ minInterval:60}}/>
             <div className={styles.message} ><div className={item.sent ? styles.sent : styles.received}>{item.message}</div></div>
           </Fragment>

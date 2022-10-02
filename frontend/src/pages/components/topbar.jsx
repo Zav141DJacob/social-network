@@ -295,12 +295,11 @@ export function TopBar({dispatch, state}) {
     <div className={styles.topbar}>
       <div className={styles.logo} onClick={() => {dispatch({type: "home"})}}>Meetup</div>
       <div className={styles.actions}>
-        <div>{notifications.length}</div>
-
         <div className={styles.notifications} onClick={() => dispatch({type: "notificationDrop"})}>
           <svg className={styles.bell} viewBox="0 0 24 24">
             <path fill="whitesmoke" d="M10 21h4l-2 2-2-2m11-2v1H3v-1l2-2v-6c0-3 2-6 5-7l2-2 2 2c3 1 5 4 5 7v6l2 2m-4-8c0-3-2-5-5-5s-5 2-5 5v7h10v-7Z"/>
           </svg>
+        {notifications.length > 0 && <div className={styles.notificationCount}>{notifications.length > 9 ? "9+" : notifications.length}</div>}
         </div>
         <img className={styles.profile} alt="avatar" onClick={() => dispatch({type: "profileDrop"})}src={`http://localhost:8000/static/${avatar}`} />
       </div>
