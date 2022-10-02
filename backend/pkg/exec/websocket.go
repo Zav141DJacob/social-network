@@ -153,6 +153,7 @@ func (c *Client) reader(conn *websocket.Conn) {
       type toClient struct {
         Message		string
         Sent		bool
+        TargetId string
         SenderId 	IdType
         SenderName	string
         Type		string
@@ -160,11 +161,11 @@ func (c *Client) reader(conn *websocket.Conn) {
 
       message  := v["message"]
       targetId := v["targetId"]
-      fmt.Println(1212, message, targetId)
 
       var to toClient
       to.Message = message.(string)
       to.Sent = false
+      to.TargetId = targetId.(string)
       to.SenderId = c.id
       to.SenderName = c.nickname
       to.Type = mode
@@ -174,21 +175,15 @@ func (c *Client) reader(conn *websocket.Conn) {
         break
       }
       s, err := strconv.ParseFloat(fmt.Sprintf("%v",targetId), 64)
-      if err == nil {
-        fmt.Println(s) // 3.14159265
-      }
       // senderId, senderName, message, targetId
 
       GroupMessage(to.SenderId, to.SenderName, to.Message, targetId)
 
-        fmt.Println(1248134, "ERROROROROROR")
       //look through global variable clientArray
       //find targetId and write message to the senders and the targets connection
 
       target := IdType(s)
       
-        fmt.Println(9999, "ERROROROROROR")
-
       value, isValid := Manager.groupChats[target]
 
       // If target's connection is valid then WriteMessage to their connection
@@ -200,8 +195,6 @@ func (c *Client) reader(conn *websocket.Conn) {
             HandleErr(err)
           }
         }
-      } else {
-        fmt.Println("ERROROROROROR")
       }
 
       to.Sent = true

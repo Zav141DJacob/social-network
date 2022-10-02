@@ -25,15 +25,11 @@ let ws = {}
 // }
 
 export const wsSetup = (targetId) => {
-  console.log(targetId)
   if (ws.readyState != 0) {
     ws = new WebSocket("ws://localhost:8000/ws/")
   } 
   let cookieStruct = findCookies()
   let nickname = cookieStruct.uID
-  ws.onopen = function() {
-    ws.send(JSON.stringify({targetId: targetId, mode: "groupChat"}))
-  }
 }
 
 export function Feed({selectedCat, dispatch, state, forwardRef, scrollValue}) {
@@ -50,7 +46,6 @@ export function Feed({selectedCat, dispatch, state, forwardRef, scrollValue}) {
 
   function join() {
     const postObj = {catId: selectedCat.postCat, nickname: nickname}
-    console.log(postObj)
     ws.send(JSON.stringify({...postObj, mode: "join"}))
   }
 

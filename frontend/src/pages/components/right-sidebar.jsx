@@ -65,6 +65,7 @@ export const wsOnMessage = (notification, setNotification, setUsers, dispatch) =
         FollowCase(jsonData)  
         break
       case "groupMessage":
+        console.log("FAGGY")
         break
       default:
         getOnlineUsers(notification, setNotification, setUsers)

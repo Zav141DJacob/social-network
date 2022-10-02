@@ -1414,6 +1414,7 @@ func GroupMessagesAPI(w http.ResponseWriter, r *http.Request) {
 		}
 		switch r.Method {
 		case "GET":
+
 			requestUrl := r.URL.RawQuery
 
 			m, err := url.ParseQuery(requestUrl)

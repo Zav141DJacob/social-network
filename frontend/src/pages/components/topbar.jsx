@@ -119,14 +119,12 @@ function handleFollow(doFollow, id, notifications, setNotifications, userId) {
   // event.preventDefault()
   // console.log(option, id)
   
-  console.log(doFollow, userId, id)
   if (doFollow) {
     postData("http://localhost:8000/api/v1/followers/", {userId: userId}).then(i => console.log(333, i))
   }
   deleteData("http://localhost:8000/api/v1/notifications-list/", {id: id}, false).then(i => {
     getData("http://localhost:8000/api/v1/notifications-list/")
       .then(data => {
-        console.log(111, data)
         // d = data
         // console.log(data)
         if (data) {
@@ -138,7 +136,6 @@ function handleFollow(doFollow, id, notifications, setNotifications, userId) {
   })
   let newNotif = []
   for (const i of notifications) {
-    console.log(i.Id, id)
     if (i.Id != id) {
       newNotif.push(i)
     }
@@ -155,7 +152,6 @@ function handleJoin(doJoin, id, notifications, setNotifications, userId, catId) 
   deleteData("http://localhost:8000/api/v1/notifications-list/", {id: id}, false).then(i => {
     getData("http://localhost:8000/api/v1/notifications-list/")
       .then(data => {
-        console.log(111, data)
         if (data) {
           setNotifications(data)
         } else {
@@ -165,7 +161,6 @@ function handleJoin(doJoin, id, notifications, setNotifications, userId, catId) 
   })
   let newNotif = []
   for (const i of notifications) {
-    console.log(i.Id, id)
     if (i.Id != id) {
       newNotif.push(i)
     }
@@ -211,7 +206,6 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
 
       <div className={styles.notificationDrop}>
         {notifications.map(item => {
-          console.log(item.Type)
           switch (item.Type) {
             case "follow": {
               return (

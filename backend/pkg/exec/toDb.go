@@ -279,9 +279,10 @@ func Follow(followerUserId, userId interface{}) error{
 // 		"targetId" INTEGER NOT NULL,
 // 		"date" DATETIME NOT NULL,
 func GroupMessage(senderId, senderName, message, targetId interface{}) error {
-	stmt, err := Db.Prepare("INSERT INTO groupMessages (senderId, senderName, message, targetId, date) VALUES (?, ?, ?, ?);")
+	stmt, err := Db.Prepare("INSERT INTO groupMessages (senderId, senderName, message, targetId, date) VALUES (?, ?, ?, ?, ?);")
 
 	if err != nil {
+    fmt.Println("toDb 285", err)
 		return err
 	}	
 

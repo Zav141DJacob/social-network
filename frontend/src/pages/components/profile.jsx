@@ -112,7 +112,6 @@ export function Profile({userId, state, dispatch}) {
   }
   
   function changePrivacy() {
-    console.log(profile)
     setProfilePrivate(!profilePrivate)
     const postObj = {userId: profile.User.UserId} // mida me ENDPOINTI saadame?
     // console.log(postObj)

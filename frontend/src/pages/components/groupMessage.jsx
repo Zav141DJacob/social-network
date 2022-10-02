@@ -1,77 +1,62 @@
 
 import { useRef, useState, useEffect, Fragment, createRef } from 'react';
 import styles from './groupMessage.module.css'
+import {useAuth} from './../../App'
 import { ws } from './right-sidebar'
 import TimeAgo from 'timeago-react';
 import InputEmoji from 'react-input-emoji'
-import { getData } from './topbar';
-// ws.onopen = function() {
-//   ws.send(JSON.stringify({message: "Initializing Websocket Connection", senderId: 1, targetId: 0, init: true}))
-// }
 
 
 let MESSAGES = []
 
-const getMessages = (setMessages, messages, targetUser, mode = "default") => {
+const getMessages = (setMessages, messages, targetUser, mode = "default", nickname) => {
   let cookieStruct = {}
-
 
   for (const i of document.cookie.split("; ")) {
     let split = i.split("=")
     cookieStruct[split[0]] = split[1]
   }
 
-  if (mode == "groupMessage") {
-    getData("http://localhost:8000/api/v1/group-messages/")
-    .then(response => {
-      console.log(response)
-    })
-    return
-  }
-
-  fetch("http://localhost:8000/api/v1/messages/", {
+  fetch(`http://localhost:8000/api/v1/group-messages/?targetId=${targetUser.groupChatId}`, {
     method: "GET",
-    // mode: 'cors',
-    // cache: 'no-cache',
+    mode: 'cors',
+    cache: 'no-cache',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       'Authentication': cookieStruct.session
     },
-  })
-    .then((response) => {
-      response.json()
-        .then ((xd) => {
-          fetch("http://localhost:8000/api/v1/users/nickname/" + cookieStruct.uID + "/")
-            .then(userResponse => {
-              userResponse.json()
-                .then((user) => {
-                  let messagesCopy = []
-                  xd.forEach((elem) => {
-                    if (elem.SenderId == targetUser.UserId){
-                      if (elem.TargetId == user[0].UserId) {
-                        messagesCopy.push({
-                          sent: false,
-                          message: elem.Message,
-                          date: elem.Date
-                        }) 
-                      }
-                    } else if (elem.TargetId == targetUser.UserId) {
-                      // messagesCopy.push({sent: jsonData.Sent, message: jsonData.Message, date: date.toString().split("GMT")[0]}) 
-                      if (elem.SenderId == user[0].UserId ) {
-                        messagesCopy.push({
-                          sent: true,
-                          message: elem.Message,
-                          date: elem.Date
-                        }) 
-                      }
-
-                    }
-                  })
-                  setMessages(messagesCopy)
+  }).then((response) => {
+    response.json()
+      .then ((xd) => {
+        fetch("http://localhost:8000/api/v1/users/nickname/" + cookieStruct.uID + "/")
+          .then(userResponse => {
+            userResponse.json()
+              .then((user) => {
+                let messagesCopy = []
+                xd?.forEach((elem) => {
+                  if (elem.SenderName !== nickname) {
+                    messagesCopy.push({
+                      sent: false,
+                      message: elem.Message,
+                      date: elem.Date
+                    }) 
+                  } else {
+                    messagesCopy.push({
+                      sent: true,
+                      message: elem.Message,
+                      date: elem.Date
+                    }) 
+                  }
                 })
-            })
-        })})
+                setMessages(messagesCopy)
+              })
+          })
+      })})
+  return
 }
+
+
 
 
 export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, mode = "default"}) {
@@ -83,32 +68,30 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
   const [prevTop, setPrevTop] = useState()
   const [loading, setLoading] = useState(false)
   const [ text, setText ] = useState('')
+  const {nickname} = useAuth()
 
   useEffect(() => {
-    getMessages(setMessages, messages, user)
+    getMessages(setMessages, messages, user, mode, nickname)
     setPrevTop(null)
     setMessageCount(10)
   }, [user])
 
   ws.onmessage = function(event) {
-    console.log("YAMMY")
     let jsonData = JSON.parse(event.data)
-    console.log(jsonData)
     switch (jsonData.Type) {
       case "default":
         getOnlineUsers()
         handleSubmit(jsonData);
-        console.log(1, "get")
         break
       case "groupMessage":
-        console.log("get")
-        handleSubmit(jsonData, mode);
-        break
+        if (jsonData.TargetId == user.groupChatId) {
+          handleSubmit(jsonData, mode);
+          break
+        }
     }
   }
 
   const handleSubmit = (message, mode = "default") => {
-    console.log("DAMN")
     let messagesCopy = [...messages]
     lastmsg.current?.scrollIntoView();
 
@@ -195,9 +178,9 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
 function Textbox({scrollRef, handleSubmit, messages, setMessages, currentMessage, setCurrentMessage, target, mode = "default"}) {
   function handleOnEnter (text) {
     console.log('enter', text)
-    console.log(target.groupChatId)
     if (text !== '') {
-      ws.send(JSON.stringify({message: text, targetId: target.groupChatId, mode: mode}))
+      let x = JSON.stringify({message: text, targetId: target.groupChatId, mode: mode})
+      ws.send(x)
     }
   }
   return (
