@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
+	// "strconv"
 
 	"github.com/gorilla/websocket"
 )
@@ -14,25 +14,25 @@ import (
 // 	https://www.thepolyglotdeveloper.com/2016/12/create-real-time-chat-app-golang-angular-2-websockets/
 
 type ClientManager struct {
-    clients    	  map[IdType]*websocket.Conn
-    register   	  chan *Client
-    unregister 	  chan *Client
-    registerGroup chan *Client
+  clients    	  map[IdType]*websocket.Conn
+  register   	  chan *Client
+  unregister 	  chan *Client
+  registerGroup chan *Client
 	groupChats 	  map[IdType](map[IdType]*websocket.Conn)
 }
 
 type Client struct {
 	id     	 IdType
 	nickname string
-    socket	 *websocket.Conn
+  socket	 *websocket.Conn
 }
 
 type IdType int
 
 var Manager = ClientManager{
-    register:   make(chan *Client),
-    unregister: make(chan *Client),
-    clients:    make(map[IdType]*websocket.Conn),
+  register:   make(chan *Client),
+  unregister: make(chan *Client),
+  clients:    make(map[IdType]*websocket.Conn),
 	groupChats: make(map[IdType](map[IdType]*websocket.Conn)),
 }
 
@@ -123,7 +123,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 		messageType, p, err := c.socket.ReadMessage()
 
 		if err != nil {
-      		fmt.Println(err)
+      HandleErr(err)
 			unregister()
 			return
 		}
@@ -151,12 +151,12 @@ func (c *Client) reader(conn *websocket.Conn) {
       Manager.register <- c
     case "groupMessage":
       type toClient struct {
-        Message		string
-        Sent		bool
-        TargetId string
-        SenderId 	IdType
-        SenderName	string
-        Type		string
+        Message		  string
+        Sent		    bool
+        TargetId    IdType
+        SenderId 	  IdType
+        SenderName  string
+        Type		    string
       }
 
       message  := v["message"]
@@ -165,7 +165,7 @@ func (c *Client) reader(conn *websocket.Conn) {
       var to toClient
       to.Message = message.(string)
       to.Sent = false
-      to.TargetId = targetId.(string)
+      to.TargetId = IdType(targetId.(float64))
       to.SenderId = c.id
       to.SenderName = c.nickname
       to.Type = mode
@@ -174,7 +174,7 @@ func (c *Client) reader(conn *websocket.Conn) {
       if err != nil {
         break
       }
-      s, err := strconv.ParseFloat(fmt.Sprintf("%v",targetId), 64)
+      // s, err := strconv.ParseFloat(fmt.Sprintf("%v",targetId), 64)
       // senderId, senderName, message, targetId
 
       GroupMessage(to.SenderId, to.SenderName, to.Message, targetId)
@@ -182,7 +182,7 @@ func (c *Client) reader(conn *websocket.Conn) {
       //look through global variable clientArray
       //find targetId and write message to the senders and the targets connection
 
-      target := IdType(s)
+      target := to.TargetId
       
       value, isValid := Manager.groupChats[target]
 
@@ -190,9 +190,11 @@ func (c *Client) reader(conn *websocket.Conn) {
       if isValid {
         for _, v := range value {
           // value2, isValid := v
-          err = v.WriteMessage(messageType, []byte(jsonTo))
-          if err != nil {
-            HandleErr(err)
+          if v != conn {
+            err = v.WriteMessage(messageType, []byte(jsonTo))
+            if err != nil {
+              HandleErr(err)
+            }
           }
         }
       }
@@ -361,22 +363,28 @@ func (c *Client) reader(conn *websocket.Conn) {
       to := toClient{}
 
       catId  		:= v["catId"]
-      user := v["nickname"]
+      nickname  := v["nickname"]
 
 
       category, err := FromCategories("catId", catId)
+      if err != nil {
+        HandleErr(err)
+        break
+      }
 
       target, err := FromUsers("userId", category[0].UserId)
       if err != nil {
         HandleErr(err)
         break
       }
-      userN, err := FromUsers("nickname", user)
+
+      user, err := FromUsers("nickname", nickname)
       if err != nil {
         HandleErr(err)
         break
       }
-      err = Notify(userN, target, catId, mode)
+      
+      err = Notify(user, target, catId, mode)
       if err != nil {
         HandleErr(err)
         break
@@ -424,10 +432,10 @@ func (c *Client) reader(conn *websocket.Conn) {
 
     default:
       type toClient struct {
-        Message  string
-        Sent	 bool
-        SenderId IdType
-        Type	 string
+        Message   string
+        Sent      bool
+        SenderId  IdType
+        Type	    string
       }
 
       message  := v["message"]
@@ -490,6 +498,5 @@ func WsEndpoint(w http.ResponseWriter, r *http.Request){
 
 	client := &Client{id: 0, socket: connection}
 
-	log.Println("Client Connection Established")
 	client.reader(connection)
 }

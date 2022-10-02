@@ -5,6 +5,7 @@ import {useAuth} from './../../App'
 import { ws } from './right-sidebar'
 import TimeAgo from 'timeago-react';
 import InputEmoji from 'react-input-emoji'
+import { useParams } from 'react-router-dom';
 
 
 let MESSAGES = []
@@ -178,8 +179,10 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
 function Textbox({scrollRef, handleSubmit, messages, setMessages, currentMessage, setCurrentMessage, target, mode = "default"}) {
   function handleOnEnter (text) {
     console.log('enter', text)
+    // const { id } = useParams();
+    // console.log("Id here: ", id);
     if (text !== '') {
-      let x = JSON.stringify({message: text, targetId: target.groupChatId, mode: mode})
+      let x = JSON.stringify({message: text, targetId: parseInt(target.groupChatId), mode: mode})
       ws.send(x)
     }
   }
