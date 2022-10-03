@@ -154,7 +154,9 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
   return (
     <div className={styles.messagebox}>
       <div className={styles.topbar}>
-        <img className={styles.profilePicture} src={`http://localhost:8000/static/alex.png`}  /> 
+        <svg className={styles.groupChatIcon} viewBox="0 0 24 24">
+          <path d="M12 6a4 4 0 0 1 4 3 4 4 0 0 1-4 4 4 4 0 0 1-3-4 4 4 0 0 1 3-3M5 8h2c-1 2 0 3 1 4l-3 2a3 3 0 0 1-3-3 3 3 0 0 1 3-3m14 0a3 3 0 0 1 3 3 3 3 0 0 1-3 3l-3-2c1-1 2-2 1-4h2M6 18c0-2 2-3 6-3s7 1 7 3v2H6v-2m-6 2v-1c0-2 2-3 4-3v4H0m24 0h-3v-2l-1-2c2 0 4 1 4 3v1Z"/>
+        </svg>
         <span className={styles.nickname} onClick={() => dispatch({type: "category", category: `${user.groupChatId}` })}>{user.groupChatCat}</span>
         <div className={styles.close} onClick={(e) => {
           setMessageCount(0)

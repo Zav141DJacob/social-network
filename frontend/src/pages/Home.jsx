@@ -21,7 +21,20 @@ export default function Home({post, dispatch}) {
       dispatch({type: "profile", Id: x.userId})
     }
     if (x?.groupId) {
-      dispatch({type: 'category', category: x.groupId})
+      let cookies = document.cookie
+      let output = {};
+      cookies.split(/\s*;\s*/).forEach(function(pair) {
+        pair = pair.split(/\s*=\s*/);
+        output[pair[0]] = pair.slice(1).join('=');
+      });
+      fetch('http://localhost:8000/api/v1/categories/',
+        {method: "GET", mode:'cors', cache:'no-cache', credentials: 'include',  headers: {Authentication: output.session}})
+        .then(item => {
+          item.json().then(item => {
+            let n = item.filter(i => i.CatId == x.groupId)
+            dispatch({type: 'category', category: x.groupId, catName: n[0].Title, postCat: x.groupId, public: n[0].IsPublic, groupChatCat: n[0].Title})
+          })
+        })
     }
     ws2Setup()
     wsSetup()

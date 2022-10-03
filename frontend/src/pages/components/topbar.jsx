@@ -195,48 +195,54 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
   
 
   useEffect(() => {
-
   }, [notifications])
   // let d;
   
   
   // console.log("data here: ", mockNotifications)
-// 
+  // 
   return (
     <>
       <div className={styles.arrowUpNotification}></div>
-
       <div className={styles.notificationDrop}>
         {notifications.map(item => {
           switch (item.Type) {
             case "follow": {
               return (
-                <div key={item.Nickname} className={styles.notification} onSubmit={handleFollow}>
+                <div key={item.Id} className={styles.notification} onSubmit={handleFollow}>
                   <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
-                  <span><strong>{item.Nickname}</strong><br/> has requested to follow you</span>
-                  <button onClick={() => handleFollow(true, item.Id, notifications, setNotifications, item.UserId)} className={styles.notificationAcceptBtn}>Accept</button>
-                  <button onClick={() => handleFollow(false, item.Id, notifications, setNotifications)} className={styles.notificationDeclineBtn}>Decline</button>
+                  <span><strong style={{cursor: "pointer"}}  onClick={() => dispatch({type: "profile", Id: item.Nickname})}>{item.Nickname}</strong><br/> has requested to follow you</span>
+                  <div className={styles.notificationBtns}>
+                    <button onClick={() => handleFollow(true, item.Id, notifications, setNotifications, item.UserId)} className={styles.notificationAcceptBtn}>Accept</button>
+                    <button onClick={() => handleFollow(false, item.Id, notifications, setNotifications)} className={styles.notificationDeclineBtn}>Decline</button>
+                  </div>
                   <hr />
                 </div>
               )
             }
             case "event": {
               return (
-                <div key={item.Nickname} className={styles.notification}>
+                <div key={item.Id} className={styles.notification}>
                   <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
-                  <span><strong>{item.Nickname}</strong><br/> has created a new event in {item.CategoryTitle}</span>
-                  <button className={styles.notificationAcceptBtn}>Join</button>
-                  <button className={styles.notificationDeclineBtn}>Refuse</button>
+                  <span><strong style={{cursor: "pointer"}}  onClick={() => dispatch({type: "profile", Id: item.Nickname})}>{item.Nickname}</strong><br/> has created a new event in {item.CategoryTitle}</span>
+                  <div className={styles.notificationBtns}>
+                    <button className={styles.notificationAcceptBtn}>Join</button>
+                    <button className={styles.notificationDeclineBtn}>Refuse</button>
+                  </div>
+                  <hr />
                 </div>
               )
             }
             case "join": {
               return (
-                <div key={item.Nickname} className={styles.notification}>
+                <div key={item.Id} className={styles.notification}>
                   <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
-                  <span><strong>{item.Nickname}</strong><br/> has requested to join your group <strong>{item.CategoryTitle}</strong></span>
-                  <button onClick={() => handleJoin(true, item.Id, notifications, setNotifications, item.UserId, item.CatId)} className={styles.notificationAcceptBtn}>Accept</button>
-                  <button onClick={() => handleJoin(false, item.Id, notifications, setNotifications)} className={styles.notificationDeclineBtn}>Decline</button>
+                  <span><strong style={{cursor: "pointer"}} onClick={() => dispatch({type: "profile", Id: item.Nickname})}>{item.Nickname}</strong><br/> has requested to join your group <strong>{item.CategoryTitle}</strong></span>
+                  <div className={styles.notificationBtns}>
+                    <button onClick={() => handleJoin(true, item.Id, notifications, setNotifications, item.UserId, item.CatId)} className={styles.notificationAcceptBtn}>Accept</button>
+                    <button onClick={() => handleJoin(false, item.Id, notifications, setNotifications)} className={styles.notificationDeclineBtn}>Decline</button>
+                  </div>
+                  <hr />
                 </div>
               )
             }

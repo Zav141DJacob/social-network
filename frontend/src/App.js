@@ -22,7 +22,7 @@ function postReducer(state, action) {
     public: undefined,
     following: false,
     followers: false,
-    groupChat: false,
+    groupChat: state.groupChat,
     groupChatCat: state.groupChatCat,
     groupChatId: state.groupChatId
   }

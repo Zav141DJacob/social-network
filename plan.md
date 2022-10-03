@@ -96,14 +96,10 @@ Events
     Attending users
     Event name, desc, date
 
-Left sidebar 
-  Show more opens discover groups page
-
 Groups
   Invite button
     Open users modal
     Send notification to target
-  Group chat
 
 Posts
   Specify post privacy
