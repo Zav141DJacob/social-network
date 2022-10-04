@@ -157,11 +157,9 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
         )}
       </div>
       {/* building post image - kaarel*/}
-      {postData?.Post?.Image ? (
+      {postData?.Post?.Image != "none" &&
         <img src={"http://localhost:8000/static/" + postData?.Post?.Image} />
-      ) : (
-        <div className="not"></div>
-      )}
+      }
       {!postInfo && (
         <div className={styles.commentBox}>
           <textarea

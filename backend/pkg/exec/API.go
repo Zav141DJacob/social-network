@@ -620,7 +620,7 @@ func CategoryAPI(w http.ResponseWriter, r *http.Request) {
       // 	w.Write([]byte(errMsg))
       // } else {
       InsertCategory(title, description, auth.UserId, false)
-      err = Post(auth.UserId, len(categories)+1, "First post in " + title.(string), "Welcome to \"" + title.(string) + "\"", "first-post-image.png")
+      err = Post(auth.UserId, len(categories)+1, "First post in " + title.(string), "Welcome to \"" + title.(string) + "\"", "none")
 
       if err != nil {
         HandleErr(err)

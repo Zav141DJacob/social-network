@@ -182,7 +182,6 @@ function Description({
 }) {
   const [visibility, setVisibility] = useState("public");
   const [selectedFile, setSelectedFile] = useState();
-  console.log(111, selectedFile);
   function submitPost() {
     let cookieStruct = {};
     for (const i of document.cookie.split("; ")) {
@@ -192,18 +191,30 @@ function Description({
     let formData = new FormData();
     let file = selectedFile;
     formData.append("file", file);
-    postImg("http://localhost:8000/api/v1/upload/", formData).then((x) => {
-      console.log("feed.jsx -> logging after image is uploaded", x);
+    if (file) {
+      postImg("http://localhost:8000/api/v1/upload/", formData).then((x) => {
+        console.log("feed.jsx -> logging after image is uploaded", x);
+        const postObj = {
+          title: title,
+          body: value,
+          image: x,
+          categoryId: parseInt(state.postCat),
+        };
+        postData("http://localhost:8000/api/v1/posts/", postObj)
+          .then((i) => dispatch({ type: "create", postId: i }))
+          .catch((err) => console.log("FOUND ERROR\n", err));
+      });
+    } else {
       const postObj = {
         title: title,
         body: value,
-        image: x,
+        image: "none",
         categoryId: parseInt(state.postCat),
-      };
+      }
       postData("http://localhost:8000/api/v1/posts/", postObj)
         .then((i) => dispatch({ type: "create", postId: i }))
         .catch((err) => console.log("FOUND ERROR\n", err));
-    });
+    }
   }
   if (title && value) {
     return (
