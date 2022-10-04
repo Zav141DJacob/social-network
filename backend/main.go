@@ -19,7 +19,6 @@ func main(){
   http.Handle("/static/", http.StripPrefix("/static/", fs))
 
   http.HandleFunc("/static", func(w http.ResponseWriter, r *http.Request) {
-    fmt.Println("HOI")
     http.ServeFile(w, r, "image.html")
   })
 
