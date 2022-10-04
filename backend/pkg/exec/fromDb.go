@@ -68,6 +68,7 @@ func FromPosts(condition string, value interface{}) ([]PostData, error){
 			&post.UserId,
 			&post.Title, 
 			&post.Body, 
+			&post.Image, 
 			&post.CatId,
 			&post.Date)
 
