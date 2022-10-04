@@ -155,11 +155,11 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
             <p className={styles.desc}>{postData?.Post?.Body}</p>
           </>
         )}
+      {postData?.Post?.Image != "none" &&
+        <img className={styles.postImg} src={"http://localhost:8000/static/" + postData?.Post?.Image} />
+      }
       </div>
       {/* building post image - kaarel*/}
-      {postData?.Post?.Image != "none" &&
-        <img src={"http://localhost:8000/static/" + postData?.Post?.Image} />
-      }
       {!postInfo && (
         <div className={styles.commentBox}>
           <textarea
