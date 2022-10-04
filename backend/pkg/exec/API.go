@@ -352,11 +352,17 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			
-	
+			
 			// userToken	:= v["userToken"]
 			categoryId  := v["categoryId"]
 			title  		:= v["title"]
 			body   		:= v["body"]
+			image   	:= v["image"]
+			fmt.Println("FROM API.go line 362", image)
+			if image == nil {
+				image = "no-image"
+				fmt.Println("image in v is NIL, v: ", v)
+			}
 			// ToDo:
 			// image		:= v["image"]
 			found := false
@@ -398,7 +404,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			// 	return
 			// }
 	
-			err = Post(auth.UserId, categoryId, title, body)
+			err = Post(auth.UserId, categoryId, title, body, image)
 			if err != nil {
 				HandleErr(err)
 				w.WriteHeader(http.StatusInternalServerError)
@@ -614,7 +620,7 @@ func CategoryAPI(w http.ResponseWriter, r *http.Request) {
       // 	w.Write([]byte(errMsg))
       // } else {
       InsertCategory(title, description, auth.UserId, false)
-      err = Post(auth.UserId, len(categories)+1, "First post in " + title.(string), "Welcome to \"" + title.(string) + "\"")
+      err = Post(auth.UserId, len(categories)+1, "First post in " + title.(string), "Welcome to \"" + title.(string) + "\"", "first-post-image.png")
 
       if err != nil {
         HandleErr(err)
