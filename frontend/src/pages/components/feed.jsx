@@ -74,8 +74,6 @@ export function Feed({
 
   useEffect(() => {
     if (selectedCat.postCat) {
-      setPostCopy(posts?.filter(post => post.Post.CatId == selectedCat.postCat))
-      wsSetup(selectedCat.postCat)
       setPostCopy(
         posts?.filter((post) => post.Post.CatId == selectedCat.postCat)
       );
@@ -87,15 +85,6 @@ export function Feed({
   if (postCopy?.length > 0) {
     return (
       <div className={styles.feed} ref={forwardRef}>
-        {selectedCat?.postCat && <CreatePost dispatch={dispatch} state={state}/>}
-        {selectedCat?.postCat && <button className={styles.groupChatBtn} onClick={() => dispatch({type: "groupChat", groupChatCat: state.catName, groupChatId: state.postCat})}>
-          <svg className={styles.groupChatBtnIcon} viewBox="0 0 24 24">
-            <path d="M12 6a4 4 0 0 1 4 3 4 4 0 0 1-4 4 4 4 0 0 1-3-4 4 4 0 0 1 3-3M5 8h2c-1 2 0 3 1 4l-3 2a3 3 0 0 1-3-3 3 3 0 0 1 3-3m14 0a3 3 0 0 1 3 3 3 3 0 0 1-3 3l-3-2c1-1 2-2 1-4h2M6 18c0-2 2-3 6-3s7 1 7 3v2H6v-2m-6 2v-1c0-2 2-3 4-3v4H0m24 0h-3v-2l-1-2c2 0 4 1 4 3v1Z"/>
-          </svg>
-          Group chat
-        </button>}
-        <div className={styles.posts} >
-          {postCopy?.map(i => <PostComponent key={i?.Post?.PostId} postInfo={i} dispatch={dispatch}/>)}
         {selectedCat?.postCat && (
           <CreatePost dispatch={dispatch} state={state} />
         )}
@@ -416,3 +405,4 @@ export async function postImg(url = "", data = {}, boolean = true) {
   }
   return response;
 }
+
