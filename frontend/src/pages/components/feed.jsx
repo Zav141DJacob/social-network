@@ -65,7 +65,7 @@ export function Feed({
         cache: "no-cache",
         credentials: "include",
         headers: { Authentication: output.session },
-      }).then((res) => res.json().then((i) => setPosts(i)));
+      }).then((res) => res.json().then((i) => setPosts(i.reverse())));
     }
     if (forwardRef.current) {
       throttler.current(scrollValue, forwardRef);
