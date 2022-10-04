@@ -169,12 +169,14 @@ export default function Login() {
       let formData = new FormData();
       let file = element.files[0];
       //check if user added avatar, else set default avatar
+      console.log(222, "HEY")
       if (file !== undefined) {
         formData.append("file", file);
         postImg("http://localhost:8000/api/v1/upload/", formData).then((x) =>
           saveCredentials("Avatar", x)
         );
       } else {
+        console.log("HEY")
         saveCredentials("Avatar", "default-avatar.png");
       }
     } else if (
@@ -208,7 +210,11 @@ export default function Login() {
 
     let e = document.querySelector("#inputfield-good");
     if (e) {
-      e.firstChild.focus();
+      if (e.firstChild.className == "fineinput" && e.firstChild.nextSibling.className == "Age-input") {
+        e.firstChild.nextSibling.focus()
+      } else {
+        e.firstChild.focus();
+      }
     } else {
       let r = document.querySelectorAll("#inputfield");
       if (r.length > 0) {
@@ -292,8 +298,7 @@ export default function Login() {
   };
 
   function handleSubmit(e) {
-    if (typeof e === "object") {
-      console.log(e);
+    if (!e.bubbles) {
       postData("http://localhost:8000/api/v1/sessions/", e).then((item) => {
         flushSync(() => {
           let invalidFields = { ...item };
@@ -305,32 +310,33 @@ export default function Login() {
         });
       });
       return;
-    }
-    e.stopPropagation();
-    let submitField;
-    switch (e.target.id) {
-      case "planePath": {
-        submitField =
+    } else {
+      e.stopPropagation();
+      let submitField;
+      switch (e.target.id) {
+        case "planePath": {
+          submitField =
           e.target.parentElement.parentElement.parentElement
-            .previousElementSibling;
-        break;
-      }
-      case "planeSVG": {
-        submitField =
+          .previousElementSibling;
+          break;
+        }
+        case "planeSVG": {
+          submitField =
           e.target.parentElement.parentElement.previousElementSibling;
-        break;
+          break;
+        }
+        case "plane": {
+          submitField = e.target.parentElement.previousElementSibling;
+          break;
+        }
+        default: {
+        }
       }
-      case "plane": {
-        submitField = e.target.parentElement.previousElementSibling;
-        break;
+      if (e.target.className === "submit") {
+        submitField = e.target.previousElementSibling;
       }
-      default: {
-      }
+      setupField(submitField).then();
     }
-    if (e.target.className === "submit") {
-      submitField = e.target.previousElementSibling;
-    }
-    setupField(submitField).then();
   }
 
   function handleKeyDown(event) {
@@ -386,23 +392,23 @@ export default function Login() {
           </div>
           <div id="bottombar">
             {errorFields &&
-              errorFields.map((bang, i) => {
-                return (
-                  <InputField
-                    id="inputfield"
-                    key={bang}
-                    name={bang}
-                    good={i === 0}
-                    submitId="submit"
-                    placeholder={bang}
-                    onClick={handleSubmit}
-                    onKeyDown={handleKeyDown}
-                    error={error}
-                    focus={i === 0}
-                    password={bang === "Password" || bang === "ConfirmPassword"}
-                  />
-                );
-              })}
+                errorFields.map((bang, i) => {
+                  return (
+                    <InputField
+                      id="inputfield"
+                      key={bang}
+                      name={bang}
+                      good={i === 0}
+                      submitId="submit"
+                      placeholder={bang}
+                      onClick={handleSubmit}
+                      onKeyDown={handleKeyDown}
+                      error={error}
+                      focus={i === 0}
+                      password={bang === "Password" || bang === "ConfirmPassword"}
+                    />
+                  );
+                })}
             <div id="pending-signup">
               <h2 id="usercheck">Sign up complete</h2>
             </div>
@@ -436,23 +442,23 @@ export default function Login() {
         </div>
         <div id="bottombar">
           {errorFields &&
-            errorFields.map((bang, i) => {
-              return (
-                <InputField
-                  id="inputfield"
-                  key={error ? bang + error[bang] : bang}
-                  name={bang}
-                  good={i === 0}
-                  submitId="submit"
-                  placeholder={bang}
-                  onClick={handleSubmit}
-                  onKeyDown={handleKeyDown}
-                  error={error}
-                  password={bang === "Password" || bang === "ConfirmPassword"}
-                  focus={i === 0}
-                />
-              );
-            })}
+              errorFields.map((bang, i) => {
+                return (
+                  <InputField
+                    id="inputfield"
+                    key={error ? bang + error[bang] : bang}
+                    name={bang}
+                    good={i === 0}
+                    submitId="submit"
+                    placeholder={bang}
+                    onClick={handleSubmit}
+                    onKeyDown={handleKeyDown}
+                    error={error}
+                    password={bang === "Password" || bang === "ConfirmPassword"}
+                    focus={i === 0}
+                  />
+                );
+              })}
           <div id="pending-login">
             <h2 id="usercheck">Confirming credentials</h2>
           </div>
