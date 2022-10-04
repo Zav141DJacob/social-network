@@ -85,6 +85,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 
 				//break when the reading process is finished
 				if err == io.EOF {
+          dst.Write(buffer[0:cBytes])
 					HandleErr(err)
 					break
 				}

@@ -105,7 +105,6 @@ Posts
   Specify post privacy
     Almost private
       Open a users modal to choose who sees it
-  Display images
 
 Comments
   Display images
