@@ -1,11 +1,9 @@
-
 import { useRef, useState, useEffect, Fragment, createRef } from 'react';
 import styles from './groupMessage.module.css'
-import {useAuth} from './../../App'
-import { ws } from './right-sidebar'
+import {useAuth} from '../../App'
+import { ws, wsOnMessage } from '../../App'
 import TimeAgo from 'timeago-react';
 import InputEmoji from 'react-input-emoji'
-import { useParams } from 'react-router-dom';
 
 
 let MESSAGES = []
@@ -89,20 +87,20 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
     setMessageCount(10)
   }, [user])
 
-  ws.onmessage = function(event) {
-    let jsonData = JSON.parse(event.data)
-    switch (jsonData.Type) {
-      case "default":
-        getOnlineUsers()
-        handleSubmit(jsonData);
-        break
-      case "groupMessage":
-        if (jsonData.TargetId == user.groupChatId) {
-          handleSubmit(jsonData, mode);
-          break
-        }
-    }
-  }
+
+  //ws.onmessage = function(event) {
+  //  console.log("FA")
+  //  let jsonData = JSON.parse(event.data)
+  //  switch (jsonData.Type) {
+  //    case "default":
+  //      break
+  //    case "groupMessage":
+  //      if (jsonData.TargetId == user.groupChatId) {
+  //        handleSubmit(jsonData, "groupMessage");
+  //        break
+  //      }
+  //  }
+  //}
 
   const handleSubmit = (message, mode = "default") => {
     let messagesCopy = [...messages]
@@ -113,15 +111,16 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
     var date = new Date(time)
 
 
-    if (message.value !== "" && message.SenderName !== nickname) {
+    if (message.value !== "" && message.SenderName !== nickname && message.Type == 'groupMessage') {
       messagesCopy.push({sent: message.Sent, message: message.Message, date: date.toString().split("GMT")[0], user: message.SenderName}) 
       setMessages(messagesCopy)
-    } else if (message.value !== "") {
+    } else if (message.value !== "" && message.Type == 'groupMessage') {
       messagesCopy.push({sent: message.Sent, message: message.Message, date: date.toString().split("GMT")[0]}) 
       setMessages(messagesCopy)
     }
-
   }
+
+  wsOnMessage(1, handleSubmit, 1, dispatch)
   useEffect(() => {
     let store = null
     const onScroll = (e) => {
@@ -147,6 +146,7 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
   })
 
   useEffect(() => {
+    console.log("DAMN")
     lastmsg.current?.scrollIntoView();
     setPrevTop(null)
   }, [messages] )

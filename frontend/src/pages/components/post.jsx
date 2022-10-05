@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as timeago from "timeago.js";
 import styles from "./post.module.css";
-import { useAuth } from "./../../App";
+import { useAuth, ws, wsOnMessage, wsSetup } from "./../../App";
 import { postData as postComment } from "../Login";
 
 export function PostComponent({ post, postInfo, dispatch, group }) {
@@ -117,7 +117,6 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
     });
   };
 
-  console.log(postData);
   return (
     <div className={styles.postC}>
       <div

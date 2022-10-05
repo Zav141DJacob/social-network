@@ -1,9 +1,7 @@
 import styles from './event.module.css'
-import { ws } from './right-sidebar'
+import { ws } from '../../App'
 import { useState } from 'react'
 import {useAuth} from './../../App'
-import { findCookies } from './right-sidebar';
-import { postData } from '../Login';
 import  DtPicker  from 'react-calendar-datetime-picker'
 import 'react-calendar-datetime-picker/dist/index.css'
 

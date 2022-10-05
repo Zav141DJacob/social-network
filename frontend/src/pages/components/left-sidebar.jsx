@@ -1,7 +1,6 @@
 import React from 'react' 
-import {wsOnMessage} from './right-sidebar'
 import styles from './leftsidebar.module.css'
-import {useAuth} from './../../App'
+import {useAuth, ws, wsOnMessage} from './../../App'
 import { useNavigate } from 'react-router-dom'
 import {useState, useEffect} from 'react'
 

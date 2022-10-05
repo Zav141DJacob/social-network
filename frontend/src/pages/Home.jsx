@@ -2,13 +2,14 @@ import {LeftSideBar} from './components/left-sidebar'
 import {RightSideBar} from './components/right-sidebar'
 import {Feed} from './components/feed'
 import { PostComponent } from './components/post'
-import { useState, useEffect, useReducer, createRef } from 'react'
-import { wsSetup } from './components/right-sidebar'
+import { useState, useEffect, createRef } from 'react'
+import { ws2Setup } from './components/topbar'
 import {Group} from './components/group'
 import {Profile} from './components/profile'
 import {Event} from './components/event'
 import {useParams} from 'react-router-dom'
-import { ws2Setup } from './components/topbar'
+import {wsSetup} from "../App"
+
 
 export default function Home({post, dispatch}) {
   const x = useParams()
@@ -67,7 +68,7 @@ export default function Home({post, dispatch}) {
     return (
       <>
         <LeftSideBar dispatch={dispatch} state={post}/>
-        {post.postSelected ? postLayout : post.createGroup ? <Group/> : post.event? <Event/> : post.profile ? <Profile state={post} user={post.profileId} dispatch={dispatch}/> : <Feed forwardRef={feedScroll} state={post} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
+        {post.postSelected ? postLayout : post.createGroup ? <Group dispatch={dispatch}/> : post.event? <Event/> : post.profile ? <Profile state={post} user={post.profileId} dispatch={dispatch}/> : <Feed forwardRef={feedScroll} state={post} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
         <RightSideBar dispatch={dispatch} state={post}/>
       </>
     )

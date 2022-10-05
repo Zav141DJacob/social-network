@@ -3,7 +3,6 @@
 import { ws2 } from "../pages/components/topbar"
 
 export const ForwardWS2 = (jsonData) => {
-    console.log(jsonData)
     // mockNotifications.push(jsonData)
     ws2.send(JSON.stringify(jsonData))
 }

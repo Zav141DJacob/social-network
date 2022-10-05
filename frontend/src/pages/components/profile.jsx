@@ -1,5 +1,4 @@
-import {useAuth} from './../../App'
-import { ws } from './right-sidebar'
+import {useAuth, ws, wsOnMessage} from './../../App'
 import {useState, useEffect} from 'react'
 import styles from './profile.module.css'
 import { PostComponent } from './post'

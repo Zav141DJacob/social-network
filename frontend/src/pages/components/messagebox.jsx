@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, Fragment, createRef } from 'react';
 import styles from './messagebox.module.css'
-import { ws } from './right-sidebar'
+import {useAuth, ws, wsOnMessage} from './../../App'
 import TimeAgo from 'timeago-react';
 import InputEmoji from 'react-input-emoji'
 import { getData } from './topbar';
@@ -22,58 +22,58 @@ const getMessages = (setMessages, messages, targetUser, mode = "default") => {
 
   if (mode == "groupMessage") {
     getData("http://localhost:8000/api/v1/group-messages/")
-    .then(response => {
-      console.log(response)
-    })
+      .then(response => {
+        console.log(response)
+      })
     return
-  }
+  } else {
+    fetch("http://localhost:8000/api/v1/messages/", {
+      method: "GET",
+      // mode: 'cors',
+      // cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authentication': cookieStruct.session
+      },
+    })
+      .then((response) => {
+        response.json()
+          .then ((xd) => {
+            fetch("http://localhost:8000/api/v1/users/nickname/" + cookieStruct.uID + "/")
+              .then(userResponse => {
+                userResponse.json()
+                  .then((user) => {
+                    let messagesCopy = []
+                    xd.forEach((elem) => {
+                      if (elem.SenderId == targetUser.UserId){
+                        if (elem.TargetId == user[0].UserId) {
+                          messagesCopy.push({
+                            sent: false,
+                            message: elem.Message,
+                            date: elem.Date
+                          }) 
+                        }
+                      } else if (elem.TargetId == targetUser.UserId) {
+                        // messagesCopy.push({sent: jsonData.Sent, message: jsonData.Message, date: date.toString().split("GMT")[0]}) 
+                        if (elem.SenderId == user[0].UserId ) {
+                          messagesCopy.push({
+                            sent: true,
+                            message: elem.Message,
+                            date: elem.Date
+                          }) 
+                        }
 
-  fetch("http://localhost:8000/api/v1/messages/", {
-    method: "GET",
-    // mode: 'cors',
-    // cache: 'no-cache',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authentication': cookieStruct.session
-    },
-  })
-    .then((response) => {
-      response.json()
-        .then ((xd) => {
-          fetch("http://localhost:8000/api/v1/users/nickname/" + cookieStruct.uID + "/")
-            .then(userResponse => {
-              userResponse.json()
-                .then((user) => {
-                  let messagesCopy = []
-                  xd.forEach((elem) => {
-                    if (elem.SenderId == targetUser.UserId){
-                      if (elem.TargetId == user[0].UserId) {
-                        messagesCopy.push({
-                          sent: false,
-                          message: elem.Message,
-                          date: elem.Date
-                        }) 
                       }
-                    } else if (elem.TargetId == targetUser.UserId) {
-                      // messagesCopy.push({sent: jsonData.Sent, message: jsonData.Message, date: date.toString().split("GMT")[0]}) 
-                      if (elem.SenderId == user[0].UserId ) {
-                        messagesCopy.push({
-                          sent: true,
-                          message: elem.Message,
-                          date: elem.Date
-                        }) 
-                      }
-
-                    }
+                    })
+                    setMessages(messagesCopy)
                   })
-                  setMessages(messagesCopy)
-                })
-            })
-        })})
+              })
+          })})
+  }
 }
 
 
-export function MessageBox({user, closeHandler, getOnlineUsers, dispatch, mode = "default"}) {
+export function MessageBox({user, getNotifications, postData, closeHandler, getOnlineUsers, dispatch, mode = "default"}) {
   // console.log("user", user)
   let lastmsg = useRef()
   const [messages, setMessages] = useState(MESSAGES)
@@ -89,21 +89,10 @@ export function MessageBox({user, closeHandler, getOnlineUsers, dispatch, mode =
     setMessageCount(10)
   }, [user])
 
-  ws.onmessage = function(event) {
-    let jsonData = JSON.parse(event.data)
-    console.log(jsonData)
-    switch (jsonData.Type) {
-      case "default":
-        getOnlineUsers()
-        handleSubmit(jsonData);
-        break
-      case "groupMessage":
-        handleSubmit(jsonData, mode);
-        break
-    }
-  }
+
 
   const handleSubmit = (message, mode = "default") => {
+    console.log(23597625)
     let messagesCopy = [...messages]
     lastmsg.current?.scrollIntoView();
 
@@ -112,12 +101,13 @@ export function MessageBox({user, closeHandler, getOnlineUsers, dispatch, mode =
     var date = new Date(time)
 
 
-    if (message.value !== '') {
+    if (message.value !== '' && mode != "groupMessage") {
       messagesCopy.push({sent: message.Sent, message: message.Message, date: date.toString().split("GMT")[0]}) 
       setMessages(messagesCopy)
     }
 
   }
+    wsOnMessage(1, handleSubmit, 1, dispatch, getOnlineUsers, postData, getNotifications)
   useEffect(() => {
     let store = null
     const onScroll = (e) => {
