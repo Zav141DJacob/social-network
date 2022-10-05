@@ -426,6 +426,7 @@ func (c *Client) reader(conn *websocket.Conn) {
         Message   string
         Sent      bool
         SenderId  IdType
+        TargetId IdType
         Type	    string
       }
 
@@ -436,6 +437,7 @@ func (c *Client) reader(conn *websocket.Conn) {
       to.Message = message.(string)
       to.Sent = false
       to.SenderId = c.id
+      to.TargetId = IdType(targetId.(float64))
       to.Type = mode
 
       jsonTo, err := json.Marshal(to)
