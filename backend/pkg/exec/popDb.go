@@ -2,7 +2,7 @@ package exec
 
 // Populate Database
 
-import(
+import (
 	"errors"
 )
 
@@ -39,8 +39,8 @@ func All() error {
 }
 
 // user, category, title, body
-// 
-func posts() error{
+//
+func posts() error {
 	// interfaceArr := make([]interface{}, 1)
 	err := Post(1, 1, "this is a test1 post", "this is the body of the test1")
 	if err != nil {
@@ -52,14 +52,15 @@ func posts() error{
 	return nil
 }
 
-// nickname, email, password, firstName, lastName, age 
+// nickname, email, password, firstName, lastName, age
 func users() error {
-  	err := Register("Jacob", "jaagup.tomingas@gmail.com", "q1w2e3r4t5y6", "Jaagup", "Tomingas", "20", "Backend guy", "jacob.png")
+	err := Register("Jacob", "jaagup.tomingas@gmail.com", "q1w2e3r4t5y6", "Jaagup", "Tomingas", "20", "Backend guy", "jacob.png")
 	if err != nil {
 		return errors.New("ERROR in users: " + err.Error())
 	}
 	Register("Kertu", "kertu.saul@gmail.com", "q1w2e3r4t5y6", "Kertu", "Saul", "22", "CTRL+F", "kertu.png")
-  	Register("Alexxx", "alex.viik@gmail.com", "aaaaaaaa", "Alex", "Viik", "28", "Wowwww123123", "alex.png")
+	Register("Alexxx", "alex.viik@gmail.com", "aaaaaaaa", "Alex", "Viik", "28", "Wowwww123123", "alex.png")
+	Register("testuser", "test.user@gmail.com", "testuser", "test", "user", "22", "testuser", "testuser.png")
 	return nil
 }
 
@@ -73,7 +74,6 @@ func comments() error {
 	Comment(":(", 4, 1)
 	return nil
 }
-
 
 func Categories() error {
 	err := InsertCategory("Golang", "For all of your Golang needs!", 0, true)
