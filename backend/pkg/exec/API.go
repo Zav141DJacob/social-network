@@ -2,10 +2,11 @@ package exec
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"net/url"
 	"sort"
 	"strings"
-	"net/url"
 
 	// "time"
 	"encoding/json"
@@ -24,7 +25,7 @@ import (
 
 //	401: "Unauthorized"
 //	409: "Conflict"
-//	419: i forgot xd; Probably a general error 
+//	419: i forgot xd; Probably a general error
 
 //	500: "Internal Server Error"
 
@@ -556,8 +557,32 @@ func CategoryAPI(w http.ResponseWriter, r *http.Request) {
         w.WriteHeader(http.StatusInternalServerError)
         return
       }
+			users, err := FromUsers("", "")
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+
+
+      // https://zetcode.com/golang/filter-slice/
       var returnCategories []CategoryData
       for _, c := range categories {
+        members, err := FromGroupMembers("catId", c.CatId)
+        if err != nil {
+          log.Println("ERROR: ", err)
+        }
+        c.Members = members
+
+        nonMembers := FilterUserData(users, func(user interface{}) bool {
+          userId := user.(UserData).UserId
+          for _, member := range members {
+            if userId == member.UserId {
+              return false
+            }
+          }
+          return true
+        })
+        c.Nonmembers = append(c.Nonmembers, nonMembers...)
         //if index < 3 {
         returnCategories = append(returnCategories, c)
         // break

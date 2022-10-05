@@ -183,7 +183,7 @@ func (c *Client) reader(conn *websocket.Conn) {
       //find targetId and write message to the senders and the targets connection
 
       target := to.TargetId
-      
+
       value, isValid := Manager.groupChats[target]
 
       // If target's connection is valid then WriteMessage to their connection
