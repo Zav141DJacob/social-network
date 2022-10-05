@@ -86,9 +86,10 @@ export function Feed({
             </div>
             <span className={styles.moduleLabel}>Invite people to {selectedCat.catName}</span>
             {groups[0].Nonmembers && groups[0]?.Nonmembers.map(follower => {
+              console.log(follower.Avatar)
               return (
                 <div key={follower.UserId} className={styles.follower}>
-                  <div className={styles.followerAvatar}><img className={styles.followerAvatarImg} src={`http://localhost:8000/static/${follower.Avatar}`}/></div>
+                  {follower.Avatar && <div className={styles.followerAvatar}><img className={styles.followerAvatarImg} src={`http://localhost:8000/static/${follower.Avatar}`}/></div>}
                   <div className={styles.followerNickname} onClick={() => dispatch({type: "profile", Id: `${follower.Nickname}`})}>{follower.Nickname}</div>
                   <button className={styles.inviteUserBtn}>Invite</button>
                 </div>

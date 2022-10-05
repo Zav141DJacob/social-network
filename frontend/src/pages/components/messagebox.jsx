@@ -156,7 +156,7 @@ const deleteNotification = (fromUserId, notification, setNotification) => {
   return (
     <div className={styles.messagebox}>
       <div className={styles.topbar}>
-        <img className={styles.profilePicture} src={`http://localhost:8000/static/${user?.Avatar}`}  /> 
+        {user?.Avatar && <img className={styles.profilePicture} src={`http://localhost:8000/static/${user?.Avatar}`}  /> }
         <div className={user?.Online ? styles.onlineIndicator : styles.offlineIndicator}></div>
         <span className={styles.nickname} onClick={() => dispatch({type: "profile", Id: `${user?.Nickname}` })}>{user?.Nickname}</span>
         <div className={styles.close} onClick={(e) => {

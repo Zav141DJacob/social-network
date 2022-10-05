@@ -143,7 +143,7 @@ export function RightSideBar({dispatch, state}) {
         {users.map(item => {
           return (
             <div key={item.UserId} className={styles.user}>
-              <img className={styles.profilePicture} src={`http://localhost:8000/static/${item.Avatar}`}  /> 
+              {item.Avatar && <img className={styles.profilePicture} src={`http://localhost:8000/static/${item.Avatar}`}  /> }
               <div className={item.Online ? styles.onlineIndicator : styles.offlineIndicator}>
                 {notification[item.UserId] && <div className={styles.notificationCount}>{notification[item.UserId] > 9 ? "9+" : notification[item.UserId]}</div>}
               </div>
@@ -158,7 +158,7 @@ export function RightSideBar({dispatch, state}) {
             </div>
           )
         })}
-        {state?.messageBox && <MessageBox state={state} dispatch={dispatch} user={messageUser} postData={postData} getNotifications={getNotifications} closeHandler={closeMessageBox} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}} notification={notification} setNotification={setNotification}/>}
+        {state?.messageBox && <MessageBox dispatch={dispatch} user={messageUser} postData={postData} getNotifications={getNotifications} closeHandler={closeMessageBox} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}} setNotification={setNotification}/>}
         {state?.groupChat && <GroupMessageBox dispatch={dispatch} user={state} closeHandler={closeMessageBox} mode={"groupMessage"} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}}/>}
       </div>
     )

@@ -207,7 +207,7 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
             case "follow": {
               return (
                 <div key={item.Id} className={styles.notification} onSubmit={handleFollow}>
-                  <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
+                  {item.UserAvatar && <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />}
                   <span><strong style={{cursor: "pointer"}}  onClick={() => dispatch({type: "profile", Id: item.Nickname})}>{item.Nickname}</strong><br/> has requested to follow you</span>
                   <div className={styles.notificationBtns}>
                     <button onClick={() => handleFollow(true, item.Id, notifications, setNotifications, item.UserId)} className={styles.notificationAcceptBtn}>Accept</button>
@@ -220,7 +220,7 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
             case "event": {
               return (
                 <div key={item.Id} className={styles.notification}>
-                  <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
+                  {item.UserAvatar && <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />}
                   <span><strong style={{cursor: "pointer"}}  onClick={() => dispatch({type: "profile", Id: item.Nickname})}>{item.Nickname}</strong><br/> has created a new event in {item.CategoryTitle}</span>
                   <div className={styles.notificationBtns}>
                     <button className={styles.notificationAcceptBtn}>Join</button>
@@ -233,7 +233,7 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
             case "join": {
               return (
                 <div key={item.Id} className={styles.notification}>
-                  <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
+                  {item.UserAvatar && <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />}
                   <span><strong style={{cursor: "pointer"}} onClick={() => dispatch({type: "profile", Id: item.Nickname})}>{item.Nickname}</strong><br/> has requested to join your group <strong>{item.CategoryTitle}</strong></span>
                   <div className={styles.notificationBtns}>
                     <button onClick={() => handleJoin(true, item.Id, notifications, setNotifications, item.UserId, item.CatId)} className={styles.notificationAcceptBtn}>Accept</button>
@@ -306,7 +306,7 @@ export function TopBar({dispatch, state}) {
           </svg>
         {notifications.length > 0 && <div className={styles.notificationCount}>{notifications.length > 9 ? "9+" : notifications.length}</div>}
         </div>
-        <img className={styles.profile} alt="avatar" onClick={() => dispatch({type: "profileDrop"})}src={`http://localhost:8000/static/${avatar}`} />
+        {avatar && <img className={styles.profile} alt="avatar" onClick={() => dispatch({type: "profileDrop"})}src={`http://localhost:8000/static/${avatar}`} />}
       </div>
       {state.notificationDrop && <NotificationDropdown 
         dispatch={dispatch} 

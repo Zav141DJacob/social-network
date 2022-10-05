@@ -154,7 +154,7 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
           </>
         )}
       {postData?.Post?.Image != "none" &&
-        <img className={styles.postImg} src={"http://localhost:8000/static/" + postData?.Post?.Image} />
+          postData?.Post?.Image && <img className={styles.postImg} src={"http://localhost:8000/static/" + postData?.Post?.Image} />
       }
       </div>
       {/* building post image - kaarel*/}

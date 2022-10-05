@@ -129,7 +129,7 @@ export function Profile({userId, state, dispatch}) {
     return (
       <div className={styles.feed}>
         <div className={styles.profile}>
-          <img className={styles.avatar} alt="avatar" src={`http://localhost:8000/static/${profile.User.Avatar}`} />
+          {profile.User.Avatar && <img className={styles.avatar} alt="avatar" src={`http://localhost:8000/static/${profile.User.Avatar}`} />}
           <h2 className={styles.name}>{profile.User.FirstName} {profile.User.LastName}
             {profile.User.Nickname !== nickname && <button className={styles.followBtn} onClick={() => follow(profile.User.UserId)}>Follow</button>}
             {profile.User.Nickname === nickname && <span onClick={() => {setModule("privacy")}}>
@@ -177,7 +177,7 @@ export function Profile({userId, state, dispatch}) {
     return (
       <div className={styles.feed}>
         <div className={styles.profile}>
-          <img className={styles.avatar} alt="avatar" src={`http://localhost:8000/static/${profile.User.Avatar}`} />
+          {profile.User.Avatar && <img className={styles.avatar} alt="avatar" src={`http://localhost:8000/static/${profile.User.Avatar}`} />}
           <h2 className={styles.name}>{profile.User.FirstName} {profile.User.LastName}
             {profile.User.Nickname !== nickname && !followStatus && <button className={styles.followBtn} onClick={() => follow(profile.User.UserId)}>Follow</button>}
             {profile.User.Nickname !== nickname && followStatus && <button className={styles.unfollowBtn} onClick={() => unfollow(profile.User.UserId)}>Unfollow</button>}
@@ -218,7 +218,7 @@ export function Profile({userId, state, dispatch}) {
           {profile.Following && profile?.Following.map(follower => {
             return (
               <div key={follower.UserId} className={styles.follower}>
-                <div className={styles.followerAvatar}><img className={styles.followerAvatarImg} src={`http://localhost:8000/static/${follower.Avatar}`}/></div>
+                {follower.FollowerAvatar && <div className={styles.followerAvatar}><img className={styles.followerAvatarImg} src={`http://localhost:8000/static/${follower.FollowerAvatar}`}/></div>}
                 <div className={styles.followerNickname} onClick={() => dispatch({type: "profile", Id: `${follower.Nickname}`})}>{follower.Nickname}</div>
               </div>
             )
@@ -248,7 +248,7 @@ export function Profile({userId, state, dispatch}) {
           {profile.Followers && profile?.Followers.map(follower => {
             return (
               <div key={follower.UserId} className={styles.follower}>
-                <div className={styles.followerAvatar}><img className={styles.followerAvatarImg} src={`http://localhost:8000/static/${follower.FollowerAvatar}`}/></div>
+                {follower.FollowerAvatar && <div className={styles.followerAvatar}><img className={styles.followerAvatarImg} src={`http://localhost:8000/static/${follower.FollowerAvatar}`}/></div>}
                 <div className={styles.followerNickname} onClick={() => dispatch({type: "profile", Id: `${follower.FollowerNickname}`})}>{follower.FollowerNickname}</div>
               </div>
             )
