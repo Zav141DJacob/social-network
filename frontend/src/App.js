@@ -6,7 +6,9 @@ import { Routes, Route,  useNavigate } from 'react-router-dom';
 import { useReducer, useState, createContext, useContext, useEffect} from 'react'
 import {ForwardWS2} from './utils/WsCases'
 import {postData} from "./pages/Login"
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+const queryClient = new QueryClient()
 let ws = {}
 export {ws}
 export const findCookies = () => {
@@ -243,17 +245,20 @@ function App() {
 
   return (
     <div className="App">
-      <AuthProvider>
-        <Routes>
-          <Route path='/login' element={<Login />} />
-          <Route element={<PrivateRoute dispatch={dispatch} state={post}/>}>
-            <Route path='/post/:postId' element={<Home dispatch={dispatch} post={post} />} />
-            <Route path='/users/:userId' element={<Home dispatch={dispatch} post={post} />} />
-            <Route path='/group/:groupId' element={<Home dispatch={dispatch} post={post} />} />
-            <Route index element={<Home dispatch={dispatch} post={post} />} />
-          </Route>
-        </Routes>
-      </AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <Routes>
+            <Route path='/login' element={<Login />} />
+            <Route element={<PrivateRoute dispatch={dispatch} state={post}/>}>
+              <Route path='/post/:postId' element={<Home dispatch={dispatch} post={post} />} />
+              <Route path='/users/:userId' element={<Home dispatch={dispatch} post={post} />} />
+              <Route path='/group/:groupId' element={<Home dispatch={dispatch} post={post} />} />
+              <Route index element={<Home dispatch={dispatch} post={post} />} />
+            </Route>
+          </Routes>
+        </AuthProvider>
+        <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+      </QueryClientProvider>
     </div>
   );
 }

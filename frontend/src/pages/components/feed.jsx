@@ -5,24 +5,44 @@ import { PostComponent } from "./post";
 import { throttle } from "lodash";
 import { postData } from "../Login";
 import { findCookies } from "./right-sidebar";
+import {useQuery, useQueryClient} from '@tanstack/react-query'
 
-// async function postData(url = '', data = {}) {
-//   // Default options are marked with *
-//   const response = await fetch(url, {
-//     method: 'POST',
-//     mode: 'cors',
-//     cache: 'no-cache',
-//     credentials: 'include',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     redirect: 'follow',
-//     referrerPolicy: 'no-referrer',
-//     body: JSON.stringify(data)
-//   });
-//   return response.json(); // parses JSON response into native JavaScript objects
-// }
 
+export async function fetchPosts() {
+  let cookies = document.cookie;
+  let output = {};
+  cookies.split(/\s*;\s*/).forEach(function (pair) {
+    pair = pair.split(/\s*=\s*/);
+    output[pair[0]] = pair.slice(1).join("=");
+  });
+  return await fetch(`http://localhost:8000/api/v1/posts/`, {
+        method: "GET",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "include",
+        headers: { Authentication: output.session },
+  }).then((response) =>
+    response.json()
+  );
+}
+
+export async function fetchGroups() {
+  let cookies = document.cookie;
+  let output = {};
+  cookies.split(/\s*;\s*/).forEach(function (pair) {
+    pair = pair.split(/\s*=\s*/);
+    output[pair[0]] = pair.slice(1).join("=");
+  });
+  return await fetch(`http://localhost:8000/api/v1/categories/`, {
+        method: "GET",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "include",
+        headers: { Authentication: output.session },
+  }).then((response) =>
+    response.json()
+  );
+}
 
 export function Feed({
   selectedCat,
@@ -31,19 +51,18 @@ export function Feed({
   forwardRef,
   scrollValue,
 }) {
+  const queryClient = useQueryClient();
   const { nickname } = useAuth();
-  const [posts, setPosts] = useState();
-  const [groups, setGroups] = useState();
   const [postCopy, setPostCopy] = useState();
   const throttler = useRef(
     throttle((newVal, ref) => ref?.current?.scroll({ top: newVal }), 40)
   );
-  let cookies = document.cookie;
-  let output = {};
-  cookies.split(/\s*;\s*/).forEach(function (pair) {
-    pair = pair.split(/\s*=\s*/);
-    output[pair[0]] = pair.slice(1).join("=");
-  });
+  const {
+    isLoading,
+    data: posts,
+    isError,
+    error,
+  } = useQuery(["posts"], fetchPosts)
 
   function join() {
     const postObj = { catId: selectedCat.postCat, nickname: nickname };
@@ -54,29 +73,16 @@ export function Feed({
   },[])
 
   useEffect(() => {
-    if (!posts) {
-      fetch(`http://localhost:8000/api/v1/posts/`, {
-        method: "GET",
-        mode: "cors",
-        cache: "no-cache",
-        credentials: "include",
-        headers: { Authentication: output.session },
-      }).then((res) => res.json().then((i) => setPosts(i.reverse())));
-    }
     if (forwardRef.current) {
       throttler.current(scrollValue, forwardRef);
     }
   });
 
-  useEffect(() => {
-    fetch('http://localhost:8000/api/v1/categories/',
-      {method: "GET", mode:'cors', cache:'no-cache', credentials: 'include',  headers: {Authentication: output.session}})
-      .then(item => {
-        item.json().then(item => {
-          let groupie = item.filter(i => i.CatId == state.postCat)
-          setGroups(groupie)})
-      })
-  }, [state])
+  const {data: groups} = useQuery(["groups"], fetchGroups, {
+    enabled: !!posts,
+    select: (i) => i.filter(e => e.CatId == state.postCat),
+    refetchOnMount: false
+  })
 
   useEffect(() => {
     if (selectedCat.postCat) {
@@ -86,6 +92,15 @@ export function Feed({
     } else {
       setPostCopy(posts?.slice()); }
   }, [posts, selectedCat]);
+
+  if (isLoading) {
+    return <div>loading</div>;
+  }
+
+  if (isError) {
+    return <div>{error.message}</div>;
+  }
+
   if (postCopy?.length > 0) {
     return (
       <div className={styles.feed} ref={forwardRef}>

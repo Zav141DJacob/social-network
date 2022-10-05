@@ -2,12 +2,13 @@ import {useAuth, ws, wsOnMessage} from './../../App'
 import {useState, useEffect} from 'react'
 import styles from './profile.module.css'
 import { PostComponent } from './post'
+import {fetchGroups} from './feed'
+import {useQuery} from '@tanstack/react-query'
 
 export function Profile({userId, state, dispatch}) {
   const {nickname} = useAuth();
   const [access, setAccess] = useState(false)
   const [profile, setProfile] = useState()
-  const [groups, setGroups] = useState()
   const [module, setModule] = useState()
   const [profilePrivate, setProfilePrivate] = useState()
   const [followStatus, setFollowStatus] = useState()
@@ -27,13 +28,9 @@ export function Profile({userId, state, dispatch}) {
     output[pair[0]] = pair.slice(1).join('=');
   });
 
-  useEffect(() => {
-    fetch('http://localhost:8000/api/v1/categories/',
-      {method: "GET", mode:'cors', cache:'no-cache', credentials: 'include',  headers: {Authentication: output.session}})
-      .then(item => {
-        item.json().then(item => setGroups(item))
-      })
-  }, [output.session])
+  const {data: groups} = useQuery(["groups"], fetchGroups, {
+    refetchOnMount: false
+  })
 
   useEffect(() => {
     if (state?.profile) {

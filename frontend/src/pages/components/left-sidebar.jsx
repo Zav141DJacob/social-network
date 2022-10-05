@@ -3,27 +3,13 @@ import styles from './leftsidebar.module.css'
 import {useAuth, ws, wsOnMessage} from './../../App'
 import { useNavigate } from 'react-router-dom'
 import {useState, useEffect} from 'react'
+import {fetchGroups} from './feed'
+import {useQuery} from '@tanstack/react-query'
 
 export function LeftSideBar({dispatch, state}) {
-  const {onLogout, nickname} = useAuth()
-  const [groups, setGroups] = useState()
-  const nav = useNavigate()
-
-  let cookies = document.cookie
-
-  let output = {};
-  cookies.split(/\s*;\s*/).forEach(function(pair) {
-    pair = pair.split(/\s*=\s*/);
-    output[pair[0]] = pair.slice(1).join('=');
-  });
-
-  useEffect(() => {
-    fetch('http://localhost:8000/api/v1/categories/',
-      {method: "GET", mode:'cors', cache:'no-cache', credentials: 'include',  headers: {Authentication: output.session}})
-      .then(item => {
-        item.json().then(item => setGroups(item))
-      })
-  }, [state])
+  const {data: groups} = useQuery(["groups"], fetchGroups, {
+    refetchOnMount: false
+  })
 
   const categoryHandler = (e) => {
     let select = groups.filter(i => i.CatId == e.target.id);
