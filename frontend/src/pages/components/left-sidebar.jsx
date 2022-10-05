@@ -1,10 +1,7 @@
 import React from 'react' 
 import styles from './leftsidebar.module.css'
-import {useAuth, ws, wsOnMessage} from './../../App'
-import { useNavigate } from 'react-router-dom'
-import {useState, useEffect} from 'react'
-import {fetchGroups} from './feed'
 import {useQuery} from '@tanstack/react-query'
+import {fetchGroups} from '../../utils/queries'
 
 export function LeftSideBar({dispatch, state}) {
   const {data: groups} = useQuery(["groups"], fetchGroups, {

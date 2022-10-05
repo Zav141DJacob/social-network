@@ -2,7 +2,7 @@ import {useAuth, ws, wsOnMessage} from './../../App'
 import {useState, useEffect} from 'react'
 import styles from './profile.module.css'
 import { PostComponent } from './post'
-import {fetchGroups} from './feed'
+import {fetchGroups} from '../../utils/queries'
 import {useQuery} from '@tanstack/react-query'
 
 export function Profile({userId, state, dispatch}) {

@@ -9,33 +9,29 @@ import {Profile} from './components/profile'
 import {Event} from './components/event'
 import {useParams} from 'react-router-dom'
 import {wsSetup} from "../App"
+import {useQuery, useQueryClient} from '@tanstack/react-query'
+import {fetchGroups} from '../utils/queries'
 
 
 export default function Home({post, dispatch}) {
   const x = useParams()
   let poster = false;
+  const [group, setGroup] = useState(true)
+  const {data: groups} = useQuery(["groups"], fetchGroups, {
+    select: (i) => i.filter(e => e.CatId == x.groupId),
+    enabled: !!x.groupId,
+    refetchOnMount: false
+  })
+  if (groups?.length > 0 && group) {
+    dispatch({type: 'category', category: x.groupId, catName: groups[0].Title, postCat: x.groupId, public: groups[0].IsPublic, groupChatCat: groups[0].Title})
+    setGroup(false)
+  }
   useEffect(() => {
     if (x?.postId) {
       dispatch({type: "select"})
     }
     if (x?.userId) {
       dispatch({type: "profile", Id: x.userId})
-    }
-    if (x?.groupId) {
-      let cookies = document.cookie
-      let output = {};
-      cookies.split(/\s*;\s*/).forEach(function(pair) {
-        pair = pair.split(/\s*=\s*/);
-        output[pair[0]] = pair.slice(1).join('=');
-      });
-      fetch('http://localhost:8000/api/v1/categories/',
-        {method: "GET", mode:'cors', cache:'no-cache', credentials: 'include',  headers: {Authentication: output.session}})
-        .then(item => {
-          item.json().then(item => {
-            let n = item.filter(i => i.CatId == x.groupId)
-            dispatch({type: 'category', category: x.groupId, catName: n[0].Title, postCat: x.groupId, public: n[0].IsPublic, groupChatCat: n[0].Title})
-          })
-        })
     }
     ws2Setup()
     wsSetup()
