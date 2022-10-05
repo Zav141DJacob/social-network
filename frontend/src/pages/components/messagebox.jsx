@@ -4,6 +4,7 @@ import {useAuth, ws, wsOnMessage} from './../../App'
 import TimeAgo from 'timeago-react';
 import InputEmoji from 'react-input-emoji'
 import { getData } from './topbar';
+import {findCookies} from './right-sidebar'
 // ws.onopen = function() {
 //   ws.send(JSON.stringify({message: "Initializing Websocket Connection", senderId: 1, targetId: 0, init: true}))
 // }
@@ -73,8 +74,9 @@ const getMessages = (setMessages, messages, targetUser, mode = "default") => {
 }
 
 
-export function MessageBox({user, getNotifications, postData, closeHandler, getOnlineUsers, dispatch, mode = "default"}) {
+export function MessageBox({user, notification, setNotification, getNotifications, postData, closeHandler, getOnlineUsers, dispatch, mode = "default"}) {
   // console.log("user", user)
+  const {userInfo } = useAuth()
   let lastmsg = useRef()
   const [messages, setMessages] = useState(MESSAGES)
   const [messageCount, setMessageCount] = useState(10)
@@ -92,7 +94,6 @@ export function MessageBox({user, getNotifications, postData, closeHandler, getO
 
 
   const handleSubmit = (message, mode = "default") => {
-    console.log(23597625)
     let messagesCopy = [...messages]
     lastmsg.current?.scrollIntoView();
 
@@ -100,14 +101,28 @@ export function MessageBox({user, getNotifications, postData, closeHandler, getO
     var time = new Date().getTime()
     var date = new Date(time)
 
-
-    if (message.value !== '' && mode != "groupMessage") {
+    if (message.value !== '' && mode != "groupMessage" && (user.UserId == message.SenderId || userInfo.UserId == message.SenderId)) {
       messagesCopy.push({sent: message.Sent, message: message.Message, date: date.toString().split("GMT")[0]}) 
       setMessages(messagesCopy)
     }
-
   }
-    wsOnMessage(1, handleSubmit, 1, dispatch, getOnlineUsers, postData, getNotifications)
+
+const deleteNotification = (fromUserId, notification, setNotification) => {
+  fetch('http://localhost:8000/api/v1/notifications/', { 
+    method: 'DELETE',
+    headers: {
+      Authentication: findCookies().session,
+    },
+    body: JSON.stringify({
+      FromUserId: fromUserId
+    }),
+  })
+    .then(() => {
+      getNotifications(notification, setNotification)
+    });
+  // console.log("delete")
+}
+  wsOnMessage(1, handleSubmit, 1, dispatch, 0, setNotification)
   useEffect(() => {
     let store = null
     const onScroll = (e) => {
@@ -135,14 +150,15 @@ export function MessageBox({user, getNotifications, postData, closeHandler, getO
   useEffect(() => {
     lastmsg.current?.scrollIntoView();
     setPrevTop(null)
+    deleteNotification(user.UserId, notification, setNotification)
   }, [messages] )
 
   return (
     <div className={styles.messagebox}>
       <div className={styles.topbar}>
-        <img className={styles.profilePicture} src={`http://localhost:8000/static/${user.Avatar}`}  /> 
-        <div className={user.Online ? styles.onlineIndicator : styles.offlineIndicator}></div>
-        <span className={styles.nickname} onClick={() => dispatch({type: "profile", Id: `${user.Nickname}` })}>{user.Nickname}</span>
+        <img className={styles.profilePicture} src={`http://localhost:8000/static/${user?.Avatar}`}  /> 
+        <div className={user?.Online ? styles.onlineIndicator : styles.offlineIndicator}></div>
+        <span className={styles.nickname} onClick={() => dispatch({type: "profile", Id: `${user?.Nickname}` })}>{user?.Nickname}</span>
         <div className={styles.close} onClick={(e) => {
           setMessageCount(0)
           closeHandler(e)

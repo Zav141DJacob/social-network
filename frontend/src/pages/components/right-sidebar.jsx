@@ -136,7 +136,6 @@ export function RightSideBar({dispatch, state}) {
     wsOnMessage(notification, setNotification, setUsers, dispatch, getNotifications)
     getOnlineUsers(notification, setNotification, setUsers)
   }, [])
-    wsOnMessage(notification, setNotification, setUsers, dispatch, getNotifications)
 
   if (users) {
     return (
@@ -159,7 +158,7 @@ export function RightSideBar({dispatch, state}) {
             </div>
           )
         })}
-        {state?.messageBox && <MessageBox dispatch={dispatch} user={messageUser} postData={postData} getNotifications={getNotifications} closeHandler={closeMessageBox} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}}/>}
+        {state?.messageBox && <MessageBox state={state} dispatch={dispatch} user={messageUser} postData={postData} getNotifications={getNotifications} closeHandler={closeMessageBox} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}} notification={notification} setNotification={setNotification}/>}
         {state?.groupChat && <GroupMessageBox dispatch={dispatch} user={state} closeHandler={closeMessageBox} mode={"groupMessage"} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}}/>}
       </div>
     )

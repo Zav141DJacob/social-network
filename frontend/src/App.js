@@ -32,14 +32,12 @@ export const wsSetup = () => {
     ws.send(JSON.stringify({nickname: nickname, mode: "register"}))
   }
 }
-export const wsOnMessage = (notification, setNotification, setUsers, dispatch, getNotifications) => {
+export const wsOnMessage = (notification, setNotification, setUsers, dispatch, getNotifications, lat) => {
   ws.onmessage = function(event) {
     let jsonData = JSON.parse(event.data)
-    console.log(jsonData)
     if (jsonData.CategoryId >= 0 && jsonData.Type !== 'join') {
       dispatch({type: "category", category: jsonData.CategoryId}) 
       window.history.pushState("y2", "x3", `/group/${jsonData.CategoryId}`)
-      console.log(ws)
       return
     }
     switch (jsonData.Type) {
@@ -86,11 +84,10 @@ export const wsOnMessage = (notification, setNotification, setUsers, dispatch, g
                               }
                             })
                           } 
-
-          setNotification(returnArr)
-        })
-    }).catch(() => console.log("BAD THING in right-sidebar 49"))
-}
+                          lat(returnArr)
+                        })
+                    }).catch(() => console.log("BAD THING in right-sidebar 49"))
+                }
             }
             setNotification(jsonData, "default")
             getNotifications(notification, setNotification)
@@ -173,30 +170,35 @@ function postReducer(state, action) {
 }
 
 const AuthProvider = ({ children }) => {
-    const [token, setToken] = useState(null);
-    const [nickname, setNickname] = useState(null);
-    const nav = useNavigate()
-    let cookies = document.cookie
-    let output = {};
-    cookies.split(/\s*;\s*/).forEach(function(pair) {
-        pair = pair.split(/\s*=\s*/);
-        output[pair[0]] = pair.splice(1).join('=');
-    });
-    if (!token && output.session) {
-      setToken(output.session);
-      setNickname(output.uID)
-    }
+  const [token, setToken] = useState(null);
+  const [nickname, setNickname] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
+  const nav = useNavigate()
+  let cookies = document.cookie
+  let output = {};
+  cookies.split(/\s*;\s*/).forEach(function(pair) {
+    pair = pair.split(/\s*=\s*/);
+    output[pair[0]] = pair.splice(1).join('=');
+  });
+  if (!token && output.session) {
+    setToken(output.session);
+    setNickname(output.uID)
+    fetch("http://localhost:8000/api/v1/users/nickname/" + output.uID + "/")
+      .then((item) => item.json().then(res =>  setUserInfo(res[0])))
+  }
 
   const handleLogout = () => {
     document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; samesite=strict";
     document.cookie = "uID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; samesite=strict";
     setToken(null);
+    setUserInfo(null);
     nav('/login', {replace:"true"})
   };
 
   const value = {
     token,
     nickname,
+    userInfo,
     onLogout: handleLogout,
   };
 

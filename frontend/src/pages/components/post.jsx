@@ -62,7 +62,6 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
   const closePostHandler = (e) => {
     e.stopPropagation();
     if (dispatch) {
-      console.log("damn");
       nav("/");
       dispatch({ type: "unselect" });
     } else {

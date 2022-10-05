@@ -1,5 +1,5 @@
 import styles from './topbar.module.css'
-import {useAuth} from './../../App'
+import {useAuth, wsSetup} from './../../App'
 import { useState } from 'react'
 import { findCookies, ws } from './right-sidebar'
 import { useEffect } from 'react'
@@ -179,12 +179,9 @@ function ws2OnMessage(setNotifications, notifications) {
     getData("http://localhost:8000/api/v1/notifications-list/")
     .then(data => {
       // d = data
-       console.log(data)
       if (data) {
-        console.log(1)
         setNotifications(data)
       } else {
-        console.log(2)
         setNotifications([])
       }
     })
@@ -260,6 +257,7 @@ export function TopBar({dispatch, state}) {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
+    wsSetup()
     getData("http://localhost:8000/api/v1/notifications-list/")
       .then(data => {
         // d = data

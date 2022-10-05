@@ -146,7 +146,6 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
   })
 
   useEffect(() => {
-    console.log("DAMN")
     lastmsg.current?.scrollIntoView();
     setPrevTop(null)
   }, [messages] )
