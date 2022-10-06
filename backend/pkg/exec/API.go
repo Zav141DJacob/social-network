@@ -2,10 +2,11 @@ package exec
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"net/url"
 	"sort"
 	"strings"
-	"net/url"
 
 	// "time"
 	"encoding/json"
@@ -24,7 +25,7 @@ import (
 
 //	401: "Unauthorized"
 //	409: "Conflict"
-//	419: i forgot xd; Probably a general error 
+//	419: i forgot xd; Probably a general error
 
 //	500: "Internal Server Error"
 
@@ -82,9 +83,10 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 				//Create and read the file into temparory byte array
 				buffer := make([]byte, 100000)
 				cBytes, err := part.Read(buffer)
-
+				
 				//break when the reading process is finished
 				if err == io.EOF {
+					dst.Write(buffer[0:cBytes])
 					HandleErr(err)
 					break
 				}
@@ -94,7 +96,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					HandleErr(err)
 				}
-		
+				
 			}
 			defer dst.Close()
 		}
@@ -352,13 +354,18 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			
-	
+			
 			// userToken	:= v["userToken"]
 			categoryId  := v["categoryId"]
 			title  		:= v["title"]
 			body   		:= v["body"]
-			// ToDo:
-			// image		:= v["image"]
+			image   	:= v["image"]
+			fmt.Println("FROM API.go line 362", image)
+			if image == nil {
+				image = "no-image"
+				fmt.Println("image in v is NIL, v: ", v)
+			}
+
 			found := false
 
 			memberTo, err := FromGroupMembers("userId", auth.UserId)
@@ -398,7 +405,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			// 	return
 			// }
 	
-			err = Post(auth.UserId, categoryId, title, body)
+			err = Post(auth.UserId, categoryId, title, body, image)
 			if err != nil {
 				HandleErr(err)
 				w.WriteHeader(http.StatusInternalServerError)
@@ -420,7 +427,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 
 func CommentAPI(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
-	case "GET":
+	case "GET":	
 		type toComments struct {
 			Comment	 	 CommentData
 			// CommentLikes []CLikeData
@@ -445,7 +452,7 @@ func CommentAPI(w http.ResponseWriter, r *http.Request) {
 			comments, err = FromComments("CommentId", path[4])
 		} else if len(path) == 5{
 			comments, err = FromComments("", "")
-		}
+		}		
 		
 		if err != nil {
 			HandleErr(err)
@@ -488,6 +495,7 @@ func CommentAPI(w http.ResponseWriter, r *http.Request) {
 				toAPI = append(toAPI, getStruct)				
 			}
 		}
+
 		jsonPosts, err := json.Marshal(toAPI)
 		if err != nil {
 			HandleErr(err)
@@ -509,9 +517,8 @@ func CommentAPI(w http.ResponseWriter, r *http.Request) {
 		// commentId	:= v["commentId"]
 		postId  	:= v["postId"]
 		body   		:= v["body"]
-		// ToDo:
-		// image		:= v["image"]
-
+		image		:= v["image"]
+		
 		user, err := FromSessions("sessionId", userToken)
 
 		if err != nil {
@@ -526,7 +533,7 @@ func CommentAPI(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = Comment(body, postId, user[0].UserId)
+		err = Comment(body, postId, user[0].UserId, image)
 		if err != nil {
 			HandleErr(err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -549,8 +556,32 @@ func CategoryAPI(w http.ResponseWriter, r *http.Request) {
         w.WriteHeader(http.StatusInternalServerError)
         return
       }
+			users, err := FromUsers("", "")
+			if err != nil {
+				w.WriteHeader(500)
+				return
+			}
+
+
+      // https://zetcode.com/golang/filter-slice/
       var returnCategories []CategoryData
       for _, c := range categories {
+        members, err := FromGroupMembers("catId", c.CatId)
+        if err != nil {
+          log.Println("ERROR: ", err)
+        }
+        c.Members = members
+
+        nonMembers := FilterUserData(users, func(user interface{}) bool {
+          userId := user.(UserData).UserId
+          for _, member := range members {
+            if userId == member.UserId {
+              return false
+            }
+          }
+          return true
+        })
+        c.Nonmembers = append(c.Nonmembers, nonMembers...)
         //if index < 3 {
         returnCategories = append(returnCategories, c)
         // break
@@ -614,7 +645,7 @@ func CategoryAPI(w http.ResponseWriter, r *http.Request) {
       // 	w.Write([]byte(errMsg))
       // } else {
       InsertCategory(title, description, auth.UserId, false)
-      err = Post(auth.UserId, len(categories)+1, "First post in " + title.(string), "Welcome to \"" + title.(string) + "\"")
+      err = Post(auth.UserId, len(categories)+1, "First post in " + title.(string), "Welcome to \"" + title.(string) + "\"", "none")
 
       if err != nil {
         HandleErr(err)

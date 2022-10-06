@@ -5,6 +5,7 @@
   width: 12%;
   top: 50px;
   min-width: 100px;
+  z-index: 3;
 }
 
 .user {

@@ -42,13 +42,13 @@ func All() error {
 //
 func posts() error {
 	// interfaceArr := make([]interface{}, 1)
-	err := Post(1, 1, "this is a test1 post", "this is the body of the test1")
+	err := Post(1, 1, "this is a test1 post", "this is the body of the test1", "test-image.png")
 	if err != nil {
 		return errors.New("ERROR in post: " + err.Error())
 	}
-	Post(2, 1, "this is a test2 post from Kertu", "this is the body of the test2 from Kertu")
-	Post(1, 2, "I am posting into Javascript", "Javascript is a great language!")
-	Post(2, 3, "Kertu is posting into RuS!", "I dont like Rust :(")
+	Post(2, 1, "this is a test2 post from Kertu", "this is the body of the test2 from Kertu", "test-image.png")
+	Post(1, 2, "I am posting into Javascript", "Javascript is a great language!", "test-image.png")
+	Post(2, 3, "Kertu is posting into RuS!", "I dont like Rust :(", "test-image.png")
 	return nil
 }
 
@@ -66,12 +66,12 @@ func users() error {
 
 // body, postId, userId
 func comments() error {
-	err := Comment("This is a test1 comment", 1, 1)
+	err := Comment("This is a test1 comment", 1, 1, "test-image.png")
 	if err != nil {
 		return errors.New("ERROR in comments: " + err.Error())
 	}
-	Comment("This is a test2 comment from Kertu", 1, 2)
-	Comment(":(", 4, 1)
+	Comment("This is a test2 comment from Kertu", 1, 2, "test-image.png")
+	Comment(":(", 4, 1, "test-image.png")
 	return nil
 }
 

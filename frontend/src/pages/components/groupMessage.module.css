@@ -3,7 +3,7 @@
   position: absolute;
   width: 330px;
   height: 432px;
-  top: calc(100% - 432px);
+  top: calc(100% - 425px);
   right: 60px;
   background: #2C2C2C;
   border-radius: 16px;
@@ -26,9 +26,9 @@
 
 .nickname {
   position: relative;
-  width: 154px;
+  width: 251px;
   height: 33px;
-  top: 8px;
+  top: 22px;
   left: 20px;
   font-family: 'Helvetica Neue', Helvetica, Arial;
   font-style: normal;
@@ -36,7 +36,11 @@
   font-size: 20px;
   line-height: 24px;
   color: #FFFFFF;
+  display: inline-block;
   cursor: pointer;
+  overflow:hidden; 
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .profilePicture {
@@ -149,6 +153,7 @@
 .messages {
   height: 340px;
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .datereceive {
@@ -169,8 +174,23 @@
   font-size: 13px;
 }
 
+.groupChatNickname {
+  position: relative;
+  top: 5px;
+  left: 7px;
+  display: block;
+  color: rgb(100, 133, 130);
+}
+
 .msgLoad {
   color: white;
   text-align:center;
   font-size: 13px;
+}
+.groupChatIcon {
+  position: relative;
+  width: 32px;
+  fill: rgb(232, 230, 227);
+  left: 12px;
+  top: 13px;
 }

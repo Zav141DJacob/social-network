@@ -1,7 +1,5 @@
 package exec
 
-import ()
-
 //Optional ToDo:
 //	use JOIN and only use the ID values of tables
 
@@ -27,6 +25,7 @@ type PostData struct {
 	UserId int
 	Title  string
 	Body   string
+	Image string
 	CatId  int
 	Date   string
 }
@@ -44,6 +43,7 @@ type CommentData struct {
 	PostId	  int
 	UserId	  int
 	Date	  string
+	Image     string
 }
 
 type CategoryData struct {
@@ -52,6 +52,8 @@ type CategoryData struct {
 	Description string
 	UserId		int
 	IsPublic	bool
+  Members []GroupMembersData
+  Nonmembers []UserData
 }
 
 // Post like struct

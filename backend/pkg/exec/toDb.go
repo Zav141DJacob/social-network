@@ -23,9 +23,10 @@ import (
 //	user Id
 //	title
 //	post body
-func Post(userId, catId, title, body interface{}) error {
+//  image?
+func Post(userId, catId, title, body, image interface{}) error {
 	
-	stmt, err := Db.Prepare("INSERT INTO posts (userId, title, body, catId, date) VALUES (?, ?, ?, ?, ?);")
+	stmt, err := Db.Prepare("INSERT INTO posts (userId, title, body, image, catId, date) VALUES (?, ?, ?, ?, ?, ?);")
 
 	if err != nil {
 		return err
@@ -33,7 +34,7 @@ func Post(userId, catId, title, body interface{}) error {
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(userId, title, body, catId, time.Now())
+	_, err = stmt.Exec(userId, title, body, image, catId, time.Now())
 
 	if err != nil {
 		return err
@@ -51,6 +52,7 @@ func Post(userId, catId, title, body interface{}) error {
 //	last name
 //	age
 func Register(nickname, email, password, firstName, lastName, age, bio, avatar interface{}) error {
+	fmt.Println("REGISTER line 54:", avatar) //kaarel
 	stmt, err := Db.Prepare(
 		`INSERT INTO users 
 		(nickname, eMail, password, firstName, lastName, age, bio, avatar, roleId, date, isPrivate) 
@@ -104,15 +106,15 @@ func Register(nickname, email, password, firstName, lastName, age, bio, avatar i
 //	comment body
 //	post id
 //	user id
-func Comment(body, postId, userId interface{}) error{
-	stmt, err := Db.Prepare("INSERT INTO comments (body, postId, userId, date) VALUES (?, ?, ?, ?);")
+func Comment(body, postId, userId, image interface{}) error{
+	stmt, err := Db.Prepare("INSERT INTO comments (body, postId, userId, date, image) VALUES (?, ?, ?, ?, ?);")
 
 	if err != nil {
 		return err
 	}
 	
 	defer stmt.Close()
-	stmt.Exec(body, postId, userId, time.Now())
+	stmt.Exec(body, postId, userId, time.Now(), image)
 	return nil
 }
 

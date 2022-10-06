@@ -9,11 +9,11 @@
 .postContainer {
   width: inherit;
   min-width: 300px;
+  max-width: 480px;
   top: 71px;
   background: rgb(48, 52, 54);
   border-radius: 10px;
-  margin-bottom: 20px;
-  margin: 0 auto;
+  margin: 20px auto;
 }
 
 .author {
@@ -34,7 +34,7 @@
   position: relative;
   top: 3px;
   left: 30px;
-  max-width: 570px;
+  width:inherit;
   font-family: 'Helvetica Neue', Helvetica, Arial;
   font-style: normal;
   font-weight: 400;
@@ -81,42 +81,6 @@
   color: #D0D0D0;
   height: 30px;
   border-radius: 10px;
-}
-
-.rustlogo {
-  position: relative;
-  top: 17px;
-  left: -28px;
-  width: 100%;
-  background-image: url(./../../Rust_programming_language_black_logo.svg);
-  background-size: cover;
-  height: 0;
-  padding: 0; /* reset */
-  padding-bottom: calc(100%);
-}
-
-.jslogo {
-  position: relative;
-  top: 16px;
-  left: -23px;
-  width: 100%;
-  background-image: url(./../../JS_logo.svg);
-  background-size: cover;
-  height: 0;
-  padding: 0; /* reset */
-  padding-bottom: calc(100%);
-}
-
-.gologo {
-  position: relative;
-  top: 7px;
-  left: -44px;
-  width: 100%;
-  background-image: url(./../../Go-Logo_Aqua.svg);
-  background-size: cover;
-  height: 0;
-  padding: 0; /* reset */
-  padding-bottom: calc(100%);
 }
 
 .desc {
@@ -243,4 +207,13 @@
   top: 2px;
   font-size: 14px;
   color: gray;
+}
+
+.postImg {
+  position: relative;
+  width: inherit;
+  left: 50%;
+  transform: translate(-50%);
+  cursor: pointer;
+  padding-bottom: 20px;
 }

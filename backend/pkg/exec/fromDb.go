@@ -68,6 +68,7 @@ func FromPosts(condition string, value interface{}) ([]PostData, error){
 			&post.UserId,
 			&post.Title, 
 			&post.Body, 
+			&post.Image, 
 			&post.CatId,
 			&post.Date)
 
@@ -134,7 +135,8 @@ func FromComments(condition string, value interface{}) ([]CommentData, error){
 			&comment.Body, 
 			&comment.PostId, 
 			&comment.UserId, 
-			&comment.Date)
+			&comment.Date,
+			&comment.Image)
 
 		if err != nil {
 			return nil, err

@@ -131,44 +131,6 @@
   padding-bottom: 0px;
 }
 
-
-.rustlogo {
-  position: relative;
-  top: 17px;
-  left: -28px;
-  width: 100%;
-  background-image: url(./../../Rust_programming_language_black_logo.svg);
-  background-size: cover;
-  height: 0;
-  padding: 0; /* reset */
-  padding-bottom: calc(100%);
-}
-
-.jslogo {
-  position: relative;
-  top: 16px;
-  left: -23px;
-  width: 100%;
-  background-image: url(./../../JS_logo.svg);
-  background-size: cover;
-  height: 0;
-  padding: 0; /* reset */
-  padding-bottom: calc(100%);
-}
-
-.gologo {
-  position: relative;
-  top: 6px;
-  left: -44px;
-  width: 100%;
-  background-image: url(./../../Go-Logo_Aqua.svg);
-  background-size: cover;
-  height: 0;
-  padding: 0; /* reset */
-  padding-bottom: calc(100%);
-}
-
-
 .submitready {
   position: relative;
   background: rgb(89, 96, 100);
@@ -186,7 +148,7 @@
   line-height: 24px;
   color: #D0D0D0;
   background: rgb(14, 57, 122);
-  cursor: default;
+  cursor: pointer;
 }
 
 .submit {

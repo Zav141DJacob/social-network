@@ -1,9 +1,22 @@
 import styles from './event.module.css'
-import { ws } from './right-sidebar'
+import { ws } from '../../App'
 import { useState } from 'react'
 import {useAuth} from './../../App'
-import { findCookies } from './right-sidebar';
-import { postData } from '../Login';
+import  DtPicker  from 'react-calendar-datetime-picker'
+import 'react-calendar-datetime-picker/dist/index.css'
+
+const DatePicker = () => {
+  const [date, setDate] = useState(null)
+  return (
+    <DtPicker
+      onChange={setDate}
+      withTime
+      showTimeInput //just show time in input
+      showWeekend
+      headerClass={styles.dateHeader}
+    />
+  )
+}
 
 // async function postData(url = '', data = {}) {
 //   console.log(url, data);
@@ -38,8 +51,11 @@ export function Event({dispatch}) {
       <div className={styles.creator}>
         <h1 style={{"position": "relative", "top": "14px" ,"color": "white", }}>Create an event</h1>
         <input className={styles.title} placeholder={"What is the group name, " + nickname + "?"} value={title} onChange={handleTitleChange} />
-        <input type="date" />
-        <Description nickname={nickname} title={title} value={desc} visibility={visibility} dispatch={dispatch} setDesc={setDesc} />
+        <div className={styles.date}>
+          <span style={{"color": "white", "paddingRight": "10px"}}>Event start</span>
+          <DatePicker/>
+        </div>
+        <Description className={styles.description} nickname={nickname} title={title} value={desc} visibility={visibility} dispatch={dispatch} setDesc={setDesc}/>
       </div>
     </div>
   )
@@ -54,7 +70,7 @@ function Description({nickname, title, value, visibility, setDesc, dispatch}) {
   if (title && value) {
     return (
       <>
-        <textarea className={styles.description} value={value} onChange={(e) => setDesc(e.target.value)} placeholder={"Please describe your thought..."}></textarea>
+        <textarea className={styles.description} value={value} onChange={(e) => setDesc(e.target.value)} placeholder={"Description"}></textarea>
         <div className={styles.submitready} onClick={submitPost}>Create</div>
       </>
     ) 
@@ -62,7 +78,7 @@ function Description({nickname, title, value, visibility, setDesc, dispatch}) {
 
   return (
     <>
-      <textarea className={styles.description} value={value} onChange={(e) => setDesc(e.target.value)} placeholder={"Please describe your thought..."}></textarea>
+      <textarea className={styles.description} value={value} onChange={(e) => setDesc(e.target.value)} placeholder={"Description"}></textarea>
       <div className={styles.submit}>Create</div>
     </>
   ) 

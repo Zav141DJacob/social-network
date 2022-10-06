@@ -419,3 +419,108 @@
   fill:none;
   stroke: white;
 }
+
+.groupChatBtn {
+  position: relative;
+  transform: translate(-50%);
+  z-index: 2;
+  left: 50%;
+  top: 100px;
+  width: 150px;
+  height: 30.77px;
+  background: rgb(14, 57, 122);
+  border-radius: 7px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 29px;
+  border: none;
+  color: rgb(232, 230, 227);
+  cursor: pointer;
+}
+.groupChatBtnIcon {
+  position: relative;
+  width: 22px;
+  fill: rgb(232, 230, 227);
+  left: -6px;
+  top: 3px;
+}
+
+.inviteModal {
+  position: absolute;
+  left: 49%;
+  transform: translate(-50%);
+  top: 140px;
+  border-radius: 12px;
+  background-color: #404040;
+  height: 300px;
+  width: 400px;
+  overflow-y: scroll;
+  box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.35);
+  z-index: 4;
+}
+
+.moduleLabel {
+  position: relative;
+  top: -7px;
+  left: 30px;
+  color: rgb(232, 230, 227);
+  font-family: 'Helvetica';
+  font-style: bold;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.follower {
+  position: relative;
+  display: flex;
+  left: 10px;
+  padding: 2px;
+
+}
+
+.followerAvatarImg {
+  position: relative;
+  top: 2px;
+  left: 20px;
+  width: 40px;
+  border-radius: 50%;
+}
+
+.followerNickname {
+  cursor: pointer;
+  position: relative;
+  top: 12px;
+  left: 30px;
+  color: rgb(232, 230, 227);
+  font-family: 'Helvetica';
+  font-style: normal;
+  font-size: 20px;
+  font-weight: 10;
+}
+
+.closeModal {
+  position: relative;
+  left: 90%;
+  top: 12px;
+  width: 20px;
+  height: 20px;
+  color: rgb(232, 230, 227);
+  cursor: pointer;
+}
+
+.inviteUserBtn {
+  position: absolute;
+  left: 270px;
+  top: 5px;
+  cursor: pointer;
+  height: 30px;
+  width: 80px;
+  font-size: 18px;
+  background-color: transparent;
+  border: 0px solid rgb(14, 57, 122);
+  border-radius: 7px;
+  color: rgb(232, 230, 227);
+  background-color: rgb(14, 57, 122);
+}

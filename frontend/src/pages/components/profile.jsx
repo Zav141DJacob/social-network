@@ -1,14 +1,14 @@
-import {useAuth} from './../../App'
-import { ws } from './right-sidebar'
+import {useAuth, ws, wsOnMessage} from './../../App'
 import {useState, useEffect} from 'react'
 import styles from './profile.module.css'
 import { PostComponent } from './post'
+import {fetchGroups} from '../../utils/queries'
+import {useQuery} from '@tanstack/react-query'
 
 export function Profile({userId, state, dispatch}) {
   const {nickname} = useAuth();
   const [access, setAccess] = useState(false)
   const [profile, setProfile] = useState()
-  const [groups, setGroups] = useState()
   const [module, setModule] = useState()
   const [profilePrivate, setProfilePrivate] = useState()
   const [followStatus, setFollowStatus] = useState()
@@ -28,13 +28,9 @@ export function Profile({userId, state, dispatch}) {
     output[pair[0]] = pair.slice(1).join('=');
   });
 
-  useEffect(() => {
-    fetch('http://localhost:8000/api/v1/categories/',
-      {method: "GET", mode:'cors', cache:'no-cache', credentials: 'include',  headers: {Authentication: output.session}})
-      .then(item => {
-        item.json().then(item => setGroups(item))
-      })
-  }, [output.session])
+  const {data: groups} = useQuery(["groups"], fetchGroups, {
+    refetchOnMount: false
+  })
 
   useEffect(() => {
     if (state?.profile) {
@@ -133,7 +129,7 @@ export function Profile({userId, state, dispatch}) {
     return (
       <div className={styles.feed}>
         <div className={styles.profile}>
-          <img className={styles.avatar} alt="avatar" src={`http://localhost:8000/static/${profile.User.Avatar}`} />
+          {profile.User.Avatar && <img className={styles.avatar} alt="avatar" src={`http://localhost:8000/static/${profile.User.Avatar}`} />}
           <h2 className={styles.name}>{profile.User.FirstName} {profile.User.LastName}
             {profile.User.Nickname !== nickname && <button className={styles.followBtn} onClick={() => follow(profile.User.UserId)}>Follow</button>}
             {profile.User.Nickname === nickname && <span onClick={() => {setModule("privacy")}}>
@@ -181,7 +177,7 @@ export function Profile({userId, state, dispatch}) {
     return (
       <div className={styles.feed}>
         <div className={styles.profile}>
-          <img className={styles.avatar} alt="avatar" src={`http://localhost:8000/static/${profile.User.Avatar}`} />
+          {profile.User.Avatar && <img className={styles.avatar} alt="avatar" src={`http://localhost:8000/static/${profile.User.Avatar}`} />}
           <h2 className={styles.name}>{profile.User.FirstName} {profile.User.LastName}
             {profile.User.Nickname !== nickname && !followStatus && <button className={styles.followBtn} onClick={() => follow(profile.User.UserId)}>Follow</button>}
             {profile.User.Nickname !== nickname && followStatus && <button className={styles.unfollowBtn} onClick={() => unfollow(profile.User.UserId)}>Unfollow</button>}
@@ -222,7 +218,7 @@ export function Profile({userId, state, dispatch}) {
           {profile.Following && profile?.Following.map(follower => {
             return (
               <div key={follower.UserId} className={styles.follower}>
-                <div className={styles.followerAvatar}><img className={styles.followerAvatarImg} src={`http://localhost:8000/static/${follower.Avatar}`}/></div>
+                {follower.FollowerAvatar && <div className={styles.followerAvatar}><img className={styles.followerAvatarImg} src={`http://localhost:8000/static/${follower.FollowerAvatar}`}/></div>}
                 <div className={styles.followerNickname} onClick={() => dispatch({type: "profile", Id: `${follower.Nickname}`})}>{follower.Nickname}</div>
               </div>
             )
@@ -252,7 +248,7 @@ export function Profile({userId, state, dispatch}) {
           {profile.Followers && profile?.Followers.map(follower => {
             return (
               <div key={follower.UserId} className={styles.follower}>
-                <div className={styles.followerAvatar}><img className={styles.followerAvatarImg} src={`http://localhost:8000/static/${follower.FollowerAvatar}`}/></div>
+                {follower.FollowerAvatar && <div className={styles.followerAvatar}><img className={styles.followerAvatarImg} src={`http://localhost:8000/static/${follower.FollowerAvatar}`}/></div>}
                 <div className={styles.followerNickname} onClick={() => dispatch({type: "profile", Id: `${follower.FollowerNickname}`})}>{follower.FollowerNickname}</div>
               </div>
             )
