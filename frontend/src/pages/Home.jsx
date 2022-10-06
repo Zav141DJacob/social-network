@@ -8,7 +8,7 @@ import {Group} from './components/group'
 import {Profile} from './components/profile'
 import {Event} from './components/event'
 import {useParams} from 'react-router-dom'
-import {wsSetup} from "../App"
+import {wsSetup, wsOnMessage} from "../App"
 import {useQuery, useQueryClient} from '@tanstack/react-query'
 import {fetchGroups} from '../utils/queries'
 
@@ -34,7 +34,6 @@ export default function Home({post, dispatch}) {
       dispatch({type: "profile", Id: x.userId})
     }
     ws2Setup()
-    wsSetup()
   }, [])
 
   const [scrollValue, setScrollValue] = useState(0);
@@ -64,7 +63,7 @@ export default function Home({post, dispatch}) {
     return (
       <>
         <LeftSideBar dispatch={dispatch} state={post}/>
-        {post.postSelected ? postLayout : post.createGroup ? <Group dispatch={dispatch}/> : post.event? <Event/> : post.profile ? <Profile state={post} user={post.profileId} dispatch={dispatch}/> : <Feed forwardRef={feedScroll} state={post} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
+        {post.postSelected ? postLayout : post.createGroup ? <Group dispatch={dispatch}/> : post.event? <Event dispatch={dispatch} state={post}/> : post.profile ? <Profile state={post} user={post.profileId} dispatch={dispatch}/> : <Feed forwardRef={feedScroll} state={post} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
         <RightSideBar dispatch={dispatch} state={post}/>
       </>
     )

@@ -244,6 +244,13 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
                 </div>
               )
             }
+            case "registerEvent": {
+              return (
+                <div key={item.Id} className={styles.notification}>
+                  <h1>YES</h1>
+                </div>
+              )
+            }
             default: {
               return <></>
             }

@@ -36,6 +36,7 @@ export const wsSetup = () => {
 }
 export const wsOnMessage = (notification, setNotification, setUsers, dispatch, getNotifications, lat) => {
   ws.onmessage = function(event) {
+    console.log("DDD")
     let jsonData = JSON.parse(event.data)
     if (jsonData.CategoryId >= 0 && jsonData.Type !== 'join') {
       dispatch({type: "category", category: jsonData.CategoryId}) 
@@ -43,6 +44,10 @@ export const wsOnMessage = (notification, setNotification, setUsers, dispatch, g
       return
     }
     switch (jsonData.Type) {
+      case "registerEvent": {
+        ForwardWS2(jsonData)
+        console.log("WS EVENT")
+      }
       case "follow":
         ForwardWS2(jsonData)  
         break
