@@ -1,36 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import styles from "./feed.module.css";
-import { useAuth } from "./../../App";
+import { useAuth, ws, wsOnMessage, wsSetup } from '../../App'
 import { PostComponent } from "./post";
 import { throttle } from "lodash";
 import { postData } from "../Login";
 import { findCookies } from "./right-sidebar";
+import {useQuery, useQueryClient} from '@tanstack/react-query'
+import {fetchPosts, fetchGroups} from '../../utils/queries'
 
-let ws = {};
-// async function postData(url = '', data = {}) {
-//   // Default options are marked with *
-//   const response = await fetch(url, {
-//     method: 'POST',
-//     mode: 'cors',
-//     cache: 'no-cache',
-//     credentials: 'include',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     redirect: 'follow',
-//     referrerPolicy: 'no-referrer',
-//     body: JSON.stringify(data)
-//   });
-//   return response.json(); // parses JSON response into native JavaScript objects
-// }
 
-export const wsSetup = (targetId) => {
-  if (ws.readyState != 0) {
-    ws = new WebSocket("ws://localhost:8000/ws/");
-  }
-  let cookieStruct = findCookies();
-  let nickname = cookieStruct.uID;
-};
 
 export function Feed({
   selectedCat,
@@ -39,77 +17,97 @@ export function Feed({
   forwardRef,
   scrollValue,
 }) {
+  const queryClient = useQueryClient();
   const { nickname } = useAuth();
-  const [posts, setPosts] = useState();
+  const [postCopy, setPostCopy] = useState();
   const throttler = useRef(
     throttle((newVal, ref) => ref?.current?.scroll({ top: newVal }), 40)
   );
-  const [postCopy, setPostCopy] = useState();
-  let cookies = document.cookie;
-  let output = {};
-  cookies.split(/\s*;\s*/).forEach(function (pair) {
-    pair = pair.split(/\s*=\s*/);
-    output[pair[0]] = pair.slice(1).join("=");
-  });
+  const {
+    isLoading,
+    data: posts,
+    isError,
+    error,
+  } = useQuery(["posts"], fetchPosts)
 
   function join() {
     const postObj = { catId: selectedCat.postCat, nickname: nickname };
     ws.send(JSON.stringify({ ...postObj, mode: "join" }));
   }
+  useEffect(() => {
+    wsSetup()
+  },[])
 
   useEffect(() => {
-    if (!posts) {
-      fetch(`http://localhost:8000/api/v1/posts/`, {
-        method: "GET",
-        mode: "cors",
-        cache: "no-cache",
-        credentials: "include",
-        headers: { Authentication: output.session },
-      }).then((res) => res.json().then((i) => setPosts(i)));
-    }
     if (forwardRef.current) {
       throttler.current(scrollValue, forwardRef);
     }
   });
+
+  const {data: groups} = useQuery(["groups"], fetchGroups, {
+    enabled: !!posts,
+    select: (i) => i.filter(e => e.CatId == state.postCat),
+    refetchOnMount: false
+  })
 
   useEffect(() => {
     if (selectedCat.postCat) {
       setPostCopy(
         posts?.filter((post) => post.Post.CatId == selectedCat.postCat)
       );
-      wsSetup(selectedCat.postCat);
     } else {
-      setPostCopy(posts?.slice());
-    }
+      setPostCopy(posts?.slice()); }
   }, [posts, selectedCat]);
+
+  if (isLoading) {
+    return <div>loading</div>;
+  }
+
+  if (isError) {
+    return <div>{error.message}</div>;
+  }
+
   if (postCopy?.length > 0) {
     return (
       <div className={styles.feed} ref={forwardRef}>
-        {selectedCat?.postCat && (
-          <CreatePost dispatch={dispatch} state={state} />
-        )}
-        <button
-          onClick={() =>
-            dispatch({
-              type: "groupChat",
-              groupChatCat: state.catName,
-              groupChatId: state.postCat,
-            })
-          }
-        >
-          Open chat
-        </button>
-        <div className={styles.posts}>
-          {postCopy?.map((i) => (
-            <PostComponent
-              key={i?.Post?.PostId}
-              postInfo={i}
-              dispatch={dispatch}
-            />
-          ))}
+        {selectedCat?.postCat && <CreatePost dispatch={dispatch} state={state}/>}
+        {selectedCat?.postCat && 
+          <div onClick={() => dispatch({type: "inviteGroup"})} className={styles.inviteBtn}>
+            <button>Invite</button>
+          </div>
+        }
+        {selectedCat?.inviteGroup && 
+          <div className={styles.inviteModal}>
+            <div className={styles.arrowUp}></div>
+            <div className={styles.closeModal} onClick={() => dispatch({type: "inviteGroupClose"})}>
+              <svg  viewBox="0 0 24 24">
+                <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+              </svg>
+            </div>
+            <span className={styles.moduleLabel}>Invite people to {selectedCat.catName}</span>
+            {groups[0].Nonmembers && groups[0]?.Nonmembers.map(follower => {
+              console.log(follower.Avatar)
+              return (
+                <div key={follower.UserId} className={styles.follower}>
+                  {follower.Avatar && <div className={styles.followerAvatar}><img className={styles.followerAvatarImg} src={`http://localhost:8000/static/${follower.Avatar}`}/></div>}
+                  <div className={styles.followerNickname} onClick={() => dispatch({type: "profile", Id: `${follower.Nickname}`})}>{follower.Nickname}</div>
+                  <button className={styles.inviteUserBtn}>Invite</button>
+                </div>
+              )
+            })}
+          </div>
+        }
+        {selectedCat?.postCat && <button className={styles.groupChatBtn} onClick={() => dispatch({type: "groupChat", groupChatCat: state.catName, groupChatId: state.postCat})}>
+          <svg className={styles.groupChatBtnIcon} viewBox="0 0 24 24">
+            <path d="M12 6a4 4 0 0 1 4 3 4 4 0 0 1-4 4 4 4 0 0 1-3-4 4 4 0 0 1 3-3M5 8h2c-1 2 0 3 1 4l-3 2a3 3 0 0 1-3-3 3 3 0 0 1 3-3m14 0a3 3 0 0 1 3 3 3 3 0 0 1-3 3l-3-2c1-1 2-2 1-4h2M6 18c0-2 2-3 6-3s7 1 7 3v2H6v-2m-6 2v-1c0-2 2-3 4-3v4H0m24 0h-3v-2l-1-2c2 0 4 1 4 3v1Z"/>
+          </svg>
+          Group chat
+        </button>}
+        <div className={styles.posts} >
+          {postCopy?.map(i => <PostComponent key={i?.Post?.PostId} postInfo={i} dispatch={dispatch}/>)}
         </div>
       </div>
-    );
+    )
   } else if (state.public === undefined) {
     return (
       <div className={styles.feed} ref={forwardRef}>
@@ -195,7 +193,6 @@ function Description({
 }) {
   const [visibility, setVisibility] = useState("public");
   const [selectedFile, setSelectedFile] = useState();
-  console.log(111, selectedFile);
   function submitPost() {
     let cookieStruct = {};
     for (const i of document.cookie.split("; ")) {
@@ -205,18 +202,30 @@ function Description({
     let formData = new FormData();
     let file = selectedFile;
     formData.append("file", file);
-    postImg("http://localhost:8000/api/v1/upload/", formData).then((x) => {
-      console.log("feed.jsx -> logging after image is uploaded", x);
+    if (file) {
+      postImg("http://localhost:8000/api/v1/upload/", formData).then((x) => {
+        console.log("feed.jsx -> logging after image is uploaded", x);
+        const postObj = {
+          title: title,
+          body: value,
+          image: x,
+          categoryId: parseInt(state.postCat),
+        };
+        postData("http://localhost:8000/api/v1/posts/", postObj)
+          .then((i) => dispatch({ type: "create", postId: i }))
+          .catch((err) => console.log("FOUND ERROR\n", err));
+      });
+    } else {
       const postObj = {
         title: title,
         body: value,
-        image: x,
+        image: "none",
         categoryId: parseInt(state.postCat),
-      };
+      }
       postData("http://localhost:8000/api/v1/posts/", postObj)
         .then((i) => dispatch({ type: "create", postId: i }))
         .catch((err) => console.log("FOUND ERROR\n", err));
-    });
+    }
   }
   if (title && value) {
     return (
@@ -405,3 +414,4 @@ export async function postImg(url = "", data = {}, boolean = true) {
   }
   return response;
 }
+

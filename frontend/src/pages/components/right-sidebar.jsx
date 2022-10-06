@@ -1,15 +1,11 @@
 import { useEffect, useState } from 'react'
 import styles from './rightsidebar.module.css'
+import { useAuth, ws, wsOnMessage } from "./../../App";
 import { MessageBox } from './messagebox.jsx'
 import { GroupMessageBox } from './groupMessage.jsx'
 import { postData } from '../Login'
-import { FollowCase } from '../../utils/WsCases'
-import { getData } from './topbar'
 
 
-export { ws }
-
-let ws = {}
 
 export const findCookies = () => {
   let cookieStruct = {}
@@ -51,34 +47,42 @@ const getNotifications = async (notification, setNotification) => {
         })
     }).catch(() => console.log("BAD THING in right-sidebar 49"))
 }
-export const wsOnMessage = (notification, setNotification, setUsers, dispatch) => {
-  ws.onmessage = function(event) {
-    let jsonData = JSON.parse(event.data)
-    console.log(jsonData)
-    if (jsonData.CategoryId) {
-      console.log(2312)
-      dispatch({type: "category", category: jsonData.CategoryId}) 
-      window.history.pushState("y2", "x3", `/group/${jsonData.CategoryId}`)
-    }
-    switch (jsonData.Type) {
-      case "follow":
-        FollowCase(jsonData)  
-        break
-      case "groupMessage":
-        console.log("FAGGY")
-        break
-      default:
-        getOnlineUsers(notification, setNotification, setUsers)
-        postData("http://localhost:8000/api/v1/notifications/", {FromUserId: JSON.parse(event.data).SenderId}, false)
-          .then(resp => {
-            getNotifications(notification, setNotification)
-          })
-          .catch(err => {
-            console.log("found error in wsOnMessage!: ", err)
-          })
-    }
-  }
-}
+// export const wsOnMessage = (notification, setNotification, setUsers, dispatch) => {
+//   ws.onmessage = function(event) {
+//     console.log(3)
+//     let jsonData = JSON.parse(event.data)
+//     console.log(jsonData)
+//     if (jsonData.CategoryId) {
+//       dispatch({type: "category", category: jsonData.CategoryId}) 
+//       window.history.pushState("y2", "x3", `/group/${jsonData.CategoryId}`)
+//     }
+//     switch (jsonData.Type) {
+//       case "follow":
+//         ForwardWS2(jsonData)  
+//         break
+//       case "registerGroup":
+//       dispatch({type: "category", category: jsonData.CategoryId}) 
+//       window.history.pushState("y2", "x3", `/group/${jsonData.CategoryId}`)
+//         console.log("")
+//         ForwardWS2(jsonData)  
+//         break
+//       case "join":
+//         ForwardWS2(jsonData)
+//         break
+//       case "groupMessage":
+//         break
+//       default:
+//         getOnlineUsers(notification, setNotification, setUsers)
+//         postData("http://localhost:8000/api/v1/notifications/", {FromUserId: JSON.parse(event.data).SenderId}, false)
+//           .then(resp => {
+//             getNotifications(notification, setNotification)
+//           })
+//           .catch(err => {
+//             console.log("found error in wsOnMessage!: ", err)
+//           })
+//     }
+//   }
+// }
 const deleteNotification = (fromUserId, notification, setNotification) => {
   fetch('http://localhost:8000/api/v1/notifications/', { 
     method: 'DELETE',
@@ -93,21 +97,6 @@ const deleteNotification = (fromUserId, notification, setNotification) => {
       getNotifications(notification, setNotification)
     });
   // console.log("delete")
-}
-export const wsSetup = () => {
-
-  if (ws.readyState != 0) {
-    ws = new WebSocket("ws://localhost:8000/ws/")
-  } 
-
-  let cookieStruct = findCookies()
-
-  let nickname = cookieStruct.uID
-
-  ws.onopen = function() {
-    ws.send(JSON.stringify({nickname: nickname, mode: "register"}))
-  }
-
 }
 
 const getOnlineUsers = (notification, setNotification, setUsers) => {
@@ -135,7 +124,8 @@ export function RightSideBar({dispatch, state}) {
     0: 0,
   })
   const closeMessageBox = () => {
-    wsOnMessage(notification, setNotification, setUsers, dispatch)
+    wsOnMessage(notification, setNotification, setUsers, dispatch, getNotifications)
+    dispatch({type: "messageBoxClose"})
     setMessageboxOpen(false)
   }
 
@@ -143,7 +133,7 @@ export function RightSideBar({dispatch, state}) {
   //   wsSetup()
   // }, [])
   useEffect(() => {
-    wsOnMessage(notification, setNotification, setUsers, dispatch)
+    wsOnMessage(notification, setNotification, setUsers, dispatch, getNotifications)
     getOnlineUsers(notification, setNotification, setUsers)
   }, [])
 
@@ -153,13 +143,14 @@ export function RightSideBar({dispatch, state}) {
         {users.map(item => {
           return (
             <div key={item.UserId} className={styles.user}>
-              <img className={styles.profilePicture} src={`http://localhost:8000/static/${item.Avatar}`}  /> 
+              {item.Avatar && <img className={styles.profilePicture} src={`http://localhost:8000/static/${item.Avatar}`}  /> }
               <div className={item.Online ? styles.onlineIndicator : styles.offlineIndicator}>
                 {notification[item.UserId] && <div className={styles.notificationCount}>{notification[item.UserId] > 9 ? "9+" : notification[item.UserId]}</div>}
               </div>
               <h1 className={styles.nickname} onClick={() => {
                 dispatch({type: "groupChatClose"})
                 setmessageUser(item)
+                dispatch({type: "messageBoxOpen"})
                 setMessageboxOpen(true)
                 deleteNotification(item.UserId, notification, setNotification)
               }}>{item.Nickname} </h1>
@@ -167,7 +158,7 @@ export function RightSideBar({dispatch, state}) {
             </div>
           )
         })}
-        {messageboxOpen && <MessageBox dispatch={dispatch} user={messageUser} closeHandler={closeMessageBox} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}}/>}
+        {state?.messageBox && <MessageBox dispatch={dispatch} user={messageUser} postData={postData} getNotifications={getNotifications} closeHandler={closeMessageBox} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}} setNotification={setNotification}/>}
         {state?.groupChat && <GroupMessageBox dispatch={dispatch} user={state} closeHandler={closeMessageBox} mode={"groupMessage"} getOnlineUsers={()=>{getOnlineUsers(notification, setNotification, setUsers)}}/>}
       </div>
     )

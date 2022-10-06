@@ -1,11 +1,9 @@
-
 import { useRef, useState, useEffect, Fragment, createRef } from 'react';
 import styles from './groupMessage.module.css'
-import {useAuth} from './../../App'
-import { ws } from './right-sidebar'
+import {useAuth} from '../../App'
+import { ws, wsOnMessage } from '../../App'
 import TimeAgo from 'timeago-react';
 import InputEmoji from 'react-input-emoji'
-import { useParams } from 'react-router-dom';
 
 
 let MESSAGES = []
@@ -32,21 +30,33 @@ const getMessages = (setMessages, messages, targetUser, mode = "default", nickna
       .then ((xd) => {
         fetch("http://localhost:8000/api/v1/users/nickname/" + cookieStruct.uID + "/")
           .then(userResponse => {
+            let prevSender = ""
             userResponse.json()
               .then((user) => {
                 let messagesCopy = []
                 xd?.forEach((elem) => {
                   if (elem.SenderName !== nickname) {
-                    messagesCopy.push({
-                      sent: false,
-                      message: elem.Message,
-                      date: elem.Date
-                    }) 
+                    if (prevSender !== elem.SenderName) {
+                      prevSender = elem.SenderName
+                      messagesCopy.push({
+                        sent: false,
+                        message: elem.Message,
+                        date: elem.Date,
+                        user: elem.SenderName
+                      }) 
+                    } else {
+                      messagesCopy.push({
+                        sent: false,
+                        message: elem.Message,
+                        date: elem.Date,
+                      }) 
+                    }
                   } else {
+                    prevSender = elem.SenderName
                     messagesCopy.push({
                       sent: true,
                       message: elem.Message,
-                      date: elem.Date
+                      date: elem.Date,
                     }) 
                   }
                 })
@@ -77,20 +87,20 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
     setMessageCount(10)
   }, [user])
 
-  ws.onmessage = function(event) {
-    let jsonData = JSON.parse(event.data)
-    switch (jsonData.Type) {
-      case "default":
-        getOnlineUsers()
-        handleSubmit(jsonData);
-        break
-      case "groupMessage":
-        if (jsonData.TargetId == user.groupChatId) {
-          handleSubmit(jsonData, mode);
-          break
-        }
-    }
-  }
+
+  //ws.onmessage = function(event) {
+  //  console.log("FA")
+  //  let jsonData = JSON.parse(event.data)
+  //  switch (jsonData.Type) {
+  //    case "default":
+  //      break
+  //    case "groupMessage":
+  //      if (jsonData.TargetId == user.groupChatId) {
+  //        handleSubmit(jsonData, "groupMessage");
+  //        break
+  //      }
+  //  }
+  //}
 
   const handleSubmit = (message, mode = "default") => {
     let messagesCopy = [...messages]
@@ -101,12 +111,16 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
     var date = new Date(time)
 
 
-    if (message.value !== '') {
+    if (message.value !== "" && message.SenderName !== nickname && message.Type == 'groupMessage') {
+      messagesCopy.push({sent: message.Sent, message: message.Message, date: date.toString().split("GMT")[0], user: message.SenderName}) 
+      setMessages(messagesCopy)
+    } else if (message.value !== "" && message.Type == 'groupMessage') {
       messagesCopy.push({sent: message.Sent, message: message.Message, date: date.toString().split("GMT")[0]}) 
       setMessages(messagesCopy)
     }
-
   }
+
+  wsOnMessage(1, handleSubmit, 1, dispatch)
   useEffect(() => {
     let store = null
     const onScroll = (e) => {
@@ -139,7 +153,9 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
   return (
     <div className={styles.messagebox}>
       <div className={styles.topbar}>
-        <img className={styles.profilePicture} src={`http://localhost:8000/static/alex.png`}  /> 
+        <svg className={styles.groupChatIcon} viewBox="0 0 24 24">
+          <path d="M12 6a4 4 0 0 1 4 3 4 4 0 0 1-4 4 4 4 0 0 1-3-4 4 4 0 0 1 3-3M5 8h2c-1 2 0 3 1 4l-3 2a3 3 0 0 1-3-3 3 3 0 0 1 3-3m14 0a3 3 0 0 1 3 3 3 3 0 0 1-3 3l-3-2c1-1 2-2 1-4h2M6 18c0-2 2-3 6-3s7 1 7 3v2H6v-2m-6 2v-1c0-2 2-3 4-3v4H0m24 0h-3v-2l-1-2c2 0 4 1 4 3v1Z"/>
+        </svg>
         <span className={styles.nickname} onClick={() => dispatch({type: "category", category: `${user.groupChatId}` })}>{user.groupChatCat}</span>
         <div className={styles.close} onClick={(e) => {
           setMessageCount(0)
@@ -153,6 +169,7 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
       <div className={styles.messages} ref={messageScroll}> {loading && messages.length-messageCount > 0 && <h1 className={styles.msgLoad}>Loading older messages</h1>}{messages.slice(messages.length-messageCount < 0 ? 0 : messages.length-messageCount).map((item, i) => {
         return (
           <Fragment key={i}>
+            {item.user && <span className={styles.groupChatNickname} onClick={() => dispatch({type: "profile", category: `${item.user}` })}>{item.user}</span>}
             <TimeAgo className={item.sent ? styles.datesent : styles.datereceive} datetime={item.date} opts={{ minInterval:60}}/>
             <div className={styles.message} ><div className={item.sent ? styles.sent : styles.received}>{item.message}</div></div>
           </Fragment>

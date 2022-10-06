@@ -2,8 +2,7 @@
 
 import { ws2 } from "../pages/components/topbar"
 
-export const FollowCase = (jsonData) => {
-    console.log(jsonData)
+export const ForwardWS2 = (jsonData) => {
     // mockNotifications.push(jsonData)
     ws2.send(JSON.stringify(jsonData))
 }

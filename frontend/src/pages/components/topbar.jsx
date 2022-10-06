@@ -1,5 +1,5 @@
 import styles from './topbar.module.css'
-import {useAuth} from './../../App'
+import {useAuth, wsSetup} from './../../App'
 import { useState } from 'react'
 import { findCookies, ws } from './right-sidebar'
 import { useEffect } from 'react'
@@ -179,7 +179,6 @@ function ws2OnMessage(setNotifications, notifications) {
     getData("http://localhost:8000/api/v1/notifications-list/")
     .then(data => {
       // d = data
-      // console.log(data)
       if (data) {
         setNotifications(data)
       } else {
@@ -193,49 +192,54 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
   
 
   useEffect(() => {
-
   }, [notifications])
   // let d;
   
   
   // console.log("data here: ", mockNotifications)
-// 
+  // 
   return (
     <>
       <div className={styles.arrowUpNotification}></div>
-
       <div className={styles.notificationDrop}>
         {notifications.map(item => {
           switch (item.Type) {
             case "follow": {
               return (
-                <div key={item.Nickname} className={styles.notification} onSubmit={handleFollow}>
-                  <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
-                  <span><strong>{item.Nickname}</strong><br/> has requested to follow you</span>
-                  <button onClick={() => handleFollow(true, item.Id, notifications, setNotifications, item.UserId)} className={styles.notificationAcceptBtn}>Accept</button>
-                  <button onClick={() => handleFollow(false, item.Id, notifications, setNotifications)} className={styles.notificationDeclineBtn}>Decline</button>
+                <div key={item.Id} className={styles.notification} onSubmit={handleFollow}>
+                  {item.UserAvatar && <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />}
+                  <span><strong style={{cursor: "pointer"}}  onClick={() => dispatch({type: "profile", Id: item.Nickname})}>{item.Nickname}</strong><br/> has requested to follow you</span>
+                  <div className={styles.notificationBtns}>
+                    <button onClick={() => handleFollow(true, item.Id, notifications, setNotifications, item.UserId)} className={styles.notificationAcceptBtn}>Accept</button>
+                    <button onClick={() => handleFollow(false, item.Id, notifications, setNotifications)} className={styles.notificationDeclineBtn}>Decline</button>
+                  </div>
                   <hr />
                 </div>
               )
             }
             case "event": {
               return (
-                <div key={item.Nickname} className={styles.notification}>
-                  <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
-                  <span><strong>{item.Nickname}</strong><br/> has created a new event in {item.CategoryTitle}</span>
-                  <button className={styles.notificationAcceptBtn}>Join</button>
-                  <button className={styles.notificationDeclineBtn}>Refuse</button>
+                <div key={item.Id} className={styles.notification}>
+                  {item.UserAvatar && <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />}
+                  <span><strong style={{cursor: "pointer"}}  onClick={() => dispatch({type: "profile", Id: item.Nickname})}>{item.Nickname}</strong><br/> has created a new event in {item.CategoryTitle}</span>
+                  <div className={styles.notificationBtns}>
+                    <button className={styles.notificationAcceptBtn}>Join</button>
+                    <button className={styles.notificationDeclineBtn}>Refuse</button>
+                  </div>
+                  <hr />
                 </div>
               )
             }
             case "join": {
-              console.table(item)
               return (
-                <div key={item.Nickname} className={styles.notification}>
-                  <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />
-                  <span><strong>{item.Nickname}</strong><br/> has requested to join your group <strong>{item.CategoryTitle}</strong></span>
-                  <button onClick={() => handleJoin(true, item.Id, notifications, setNotifications, item.UserId, item.CatId)} className={styles.notificationAcceptBtn}>Accept</button>
-                  <button onClick={() => handleJoin(false, item.Id, notifications, setNotifications)} className={styles.notificationDeclineBtn}>Decline</button>
+                <div key={item.Id} className={styles.notification}>
+                  {item.UserAvatar && <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />}
+                  <span><strong style={{cursor: "pointer"}} onClick={() => dispatch({type: "profile", Id: item.Nickname})}>{item.Nickname}</strong><br/> has requested to join your group <strong>{item.CategoryTitle}</strong></span>
+                  <div className={styles.notificationBtns}>
+                    <button onClick={() => handleJoin(true, item.Id, notifications, setNotifications, item.UserId, item.CatId)} className={styles.notificationAcceptBtn}>Accept</button>
+                    <button onClick={() => handleJoin(false, item.Id, notifications, setNotifications)} className={styles.notificationDeclineBtn}>Decline</button>
+                  </div>
+                  <hr />
                 </div>
               )
             }
@@ -253,6 +257,7 @@ export function TopBar({dispatch, state}) {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
+    wsSetup()
     getData("http://localhost:8000/api/v1/notifications-list/")
       .then(data => {
         // d = data
@@ -295,14 +300,13 @@ export function TopBar({dispatch, state}) {
     <div className={styles.topbar}>
       <div className={styles.logo} onClick={() => {dispatch({type: "home"})}}>Meetup</div>
       <div className={styles.actions}>
-        <div>{notifications.length}</div>
-
         <div className={styles.notifications} onClick={() => dispatch({type: "notificationDrop"})}>
           <svg className={styles.bell} viewBox="0 0 24 24">
             <path fill="whitesmoke" d="M10 21h4l-2 2-2-2m11-2v1H3v-1l2-2v-6c0-3 2-6 5-7l2-2 2 2c3 1 5 4 5 7v6l2 2m-4-8c0-3-2-5-5-5s-5 2-5 5v7h10v-7Z"/>
           </svg>
+        {notifications.length > 0 && <div className={styles.notificationCount}>{notifications.length > 9 ? "9+" : notifications.length}</div>}
         </div>
-        <img className={styles.profile} alt="avatar" onClick={() => dispatch({type: "profileDrop"})}src={`http://localhost:8000/static/${avatar}`} />
+        {avatar && <img className={styles.profile} alt="avatar" onClick={() => dispatch({type: "profileDrop"})}src={`http://localhost:8000/static/${avatar}`} />}
       </div>
       {state.notificationDrop && <NotificationDropdown 
         dispatch={dispatch} 

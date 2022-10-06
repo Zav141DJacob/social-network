@@ -52,6 +52,8 @@ type CategoryData struct {
 	Description string
 	UserId		int
 	IsPublic	bool
+  Members []GroupMembersData
+  Nonmembers []UserData
 }
 
 // Post like struct

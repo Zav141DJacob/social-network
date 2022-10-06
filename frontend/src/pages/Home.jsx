@@ -2,26 +2,36 @@ import {LeftSideBar} from './components/left-sidebar'
 import {RightSideBar} from './components/right-sidebar'
 import {Feed} from './components/feed'
 import { PostComponent } from './components/post'
-import { useState, useEffect, useReducer, createRef } from 'react'
-import { wsSetup } from './components/right-sidebar'
+import { useState, useEffect, createRef } from 'react'
+import { ws2Setup } from './components/topbar'
 import {Group} from './components/group'
 import {Profile} from './components/profile'
 import {Event} from './components/event'
 import {useParams} from 'react-router-dom'
-import { ws2Setup } from './components/topbar'
+import {wsSetup} from "../App"
+import {useQuery, useQueryClient} from '@tanstack/react-query'
+import {fetchGroups} from '../utils/queries'
+
 
 export default function Home({post, dispatch}) {
   const x = useParams()
   let poster = false;
+  const [group, setGroup] = useState(true)
+  const {data: groups} = useQuery(["groups"], fetchGroups, {
+    select: (i) => i.filter(e => e.CatId == x.groupId),
+    enabled: !!x.groupId,
+    refetchOnMount: false
+  })
+  if (groups?.length > 0 && group) {
+    dispatch({type: 'category', category: x.groupId, catName: groups[0].Title, postCat: x.groupId, public: groups[0].IsPublic, groupChatCat: groups[0].Title})
+    setGroup(false)
+  }
   useEffect(() => {
     if (x?.postId) {
       dispatch({type: "select"})
     }
     if (x?.userId) {
       dispatch({type: "profile", Id: x.userId})
-    }
-    if (x?.groupId) {
-      dispatch({type: 'category', category: x.groupId})
     }
     ws2Setup()
     wsSetup()
@@ -54,7 +64,7 @@ export default function Home({post, dispatch}) {
     return (
       <>
         <LeftSideBar dispatch={dispatch} state={post}/>
-        {post.postSelected ? postLayout : post.createGroup ? <Group/> : post.event? <Event/> : post.profile ? <Profile state={post} user={post.profileId} dispatch={dispatch}/> : <Feed forwardRef={feedScroll} state={post} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
+        {post.postSelected ? postLayout : post.createGroup ? <Group dispatch={dispatch}/> : post.event? <Event/> : post.profile ? <Profile state={post} user={post.profileId} dispatch={dispatch}/> : <Feed forwardRef={feedScroll} state={post} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
         <RightSideBar dispatch={dispatch} state={post}/>
       </>
     )

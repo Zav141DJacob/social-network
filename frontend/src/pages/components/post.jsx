@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as timeago from "timeago.js";
 import styles from "./post.module.css";
-import { useAuth } from "./../../App";
+import { useAuth, ws, wsOnMessage, wsSetup } from "./../../App";
 import { postData as postComment } from "../Login";
 import { postImg } from "./feed";
 import Comment from "./comment.jsx";
@@ -66,7 +66,6 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
   const closePostHandler = (e) => {
     e.stopPropagation();
     if (dispatch) {
-      console.log("damn");
       nav("/");
       dispatch({ type: "unselect" });
     } else {
@@ -183,13 +182,11 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
             <p className={styles.desc}>{postData?.Post?.Body}</p>
           </>
         )}
+      {postData?.Post?.Image != "none" &&
+          postData?.Post?.Image && <img className={styles.postImg} src={"http://localhost:8000/static/" + postData?.Post?.Image} />
+      }
       </div>
       {/* building post image - kaarel*/}
-      {postData?.Post?.Image ? (
-        <img src={"http://localhost:8000/static/" + postData?.Post?.Image} />
-      ) : (
-        <div className="not"></div>
-      )}
       {!postInfo && (
         <div className={styles.commentBox}>
           <textarea

@@ -1,9 +1,6 @@
 import styles from './group.module.css'
-import { ws } from './right-sidebar'
+import { useAuth, ws, wsOnMessage } from '../../App'
 import { useState } from 'react'
-import {useAuth} from './../../App'
-import { findCookies } from './right-sidebar';
-import { postData } from '../Login';
 
 // async function postData(url = '', data = {}) {
 //   console.log(url, data);
@@ -28,6 +25,7 @@ export function Group({dispatch}) {
   const [title, setTitle] = useState("")
   const [visibility, setVisibility] = useState("public")
   const [desc, setDesc] = useState()
+  wsOnMessage(9, 1, 1, dispatch)
 
   function handleTitleChange(e) {
     setTitle(e.target.value)
@@ -62,7 +60,6 @@ function Description({nickname, title, value, visibility, setDesc, dispatch}) {
   function submitPost() {
     let isPublic = visibility === "public"
     const postObj = {title: title, description: value, isPublic: isPublic}
-    console.log(postObj)
     ws.send(JSON.stringify({...postObj, mode: "registerGroup"}))
   }
   if (title && value) {
