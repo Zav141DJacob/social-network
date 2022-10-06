@@ -1,9 +1,10 @@
 import styles from './topbar.module.css'
 import {useAuth, wsSetup} from './../../App'
 import { useState } from 'react'
-import { findCookies, ws } from './right-sidebar'
 import { useEffect } from 'react'
 import { postData } from '../Login'
+import {fetchAvatar, findCookies} from '../../utils/queries'
+import {useQuery} from '@tanstack/react-query'
 
 export { ws2 }
 let ws2 = {}
@@ -289,12 +290,9 @@ export function TopBar({dispatch, state}) {
   // ws2OnMessage("setNotifications", setCount, count)
 
   let {nickname} = useAuth()
-  let [avatar, setAvatar] = useState()
+  const {isLoading, data: avatar, isError} = useQuery(["avatar", nickname], fetchAvatar)
 
-  if (!avatar) {
-    fetch("http://localhost:8000/api/v1/users/nickname/" + nickname + "/")
-      .then((item) => item.json().then(res =>  setAvatar(res[0].Avatar)))
-  }
+
 
   return (
     <div className={styles.topbar}>

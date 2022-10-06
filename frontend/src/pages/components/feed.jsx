@@ -4,9 +4,8 @@ import { useAuth, ws, wsOnMessage, wsSetup } from '../../App'
 import { PostComponent } from "./post";
 import { throttle } from "lodash";
 import { postData } from "../Login";
-import { findCookies } from "./right-sidebar";
 import {useQuery, useQueryClient} from '@tanstack/react-query'
-import {fetchPosts, fetchGroups} from '../../utils/queries'
+import {fetchPosts, fetchGroups, findCookies} from '../../utils/queries'
 
 
 

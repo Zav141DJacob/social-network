@@ -8,7 +8,7 @@ import {ForwardWS2} from './utils/WsCases'
 import {postData} from "./pages/Login"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-const queryClient = new QueryClient()
+export const queryClient = new QueryClient()
 let ws = {}
 export {ws}
 export const findCookies = () => {

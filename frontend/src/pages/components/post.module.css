@@ -83,42 +83,6 @@
   border-radius: 10px;
 }
 
-.rustlogo {
-  position: relative;
-  top: 17px;
-  left: -28px;
-  width: 100%;
-  background-image: url(./../../Rust_programming_language_black_logo.svg);
-  background-size: cover;
-  height: 0;
-  padding: 0; /* reset */
-  padding-bottom: calc(100%);
-}
-
-.jslogo {
-  position: relative;
-  top: 16px;
-  left: -23px;
-  width: 100%;
-  background-image: url(./../../JS_logo.svg);
-  background-size: cover;
-  height: 0;
-  padding: 0; /* reset */
-  padding-bottom: calc(100%);
-}
-
-.gologo {
-  position: relative;
-  top: 7px;
-  left: -44px;
-  width: 100%;
-  background-image: url(./../../Go-Logo_Aqua.svg);
-  background-size: cover;
-  height: 0;
-  padding: 0; /* reset */
-  padding-bottom: calc(100%);
-}
-
 .desc {
   position: relative;
   width: 95%;

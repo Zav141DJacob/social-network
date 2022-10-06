@@ -2,7 +2,7 @@ import "../App.css";
 import React from "react";
 import { flushSync } from "react-dom";
 import { useNavigate } from "react-router-dom";
-import { findCookies } from "./components/right-sidebar";
+import { findCookies } from "../utils/queries";
 
 // Example POST method implementation:
 export async function postData(url = "", data = {}, wantObject = true) {
