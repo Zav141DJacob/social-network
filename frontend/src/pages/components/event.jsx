@@ -1,6 +1,6 @@
 import styles from './event.module.css'
-import { ws } from '../../App'
-import { useState } from 'react'
+import { ws, wsOnMessage } from '../../App'
+import { useState, useEffect } from 'react'
 import {useAuth} from './../../App'
 import  DtPicker  from 'react-calendar-datetime-picker'
 import 'react-calendar-datetime-picker/dist/index.css'
@@ -36,11 +36,13 @@ const DatePicker = () => {
   // return response.json(); // parses JSON response into native JavaScript objects
 // }
 
-export function Event({dispatch}) {
+export function Event({state, dispatch}) {
   const { nickname } = useAuth();
   const [title, setTitle] = useState("")
   const [visibility, setVisibility] = useState("public")
   const [desc, setDesc] = useState()
+  wsOnMessage(1, 1, 1, dispatch)
+
 
   function handleTitleChange(e) {
     setTitle(e.target.value)
@@ -55,17 +57,17 @@ export function Event({dispatch}) {
           <span style={{"color": "white", "paddingRight": "10px"}}>Event start</span>
           <DatePicker/>
         </div>
-        <Description className={styles.description} nickname={nickname} title={title} value={desc} visibility={visibility} dispatch={dispatch} setDesc={setDesc}/>
+        <Description className={styles.description} catId={state.postCat} nickname={nickname} title={title} value={desc} visibility={visibility} dispatch={dispatch} setDesc={setDesc}/>
       </div>
     </div>
   )
 }
 
-function Description({nickname, title, value, visibility, setDesc, dispatch}) {
+function Description({nickname, title, value, visibility, setDesc, dispatch, catId}) {
   function submitPost() {
-    let isPublic = visibility === "public"
-    const postObj = {title: title, description: value, isPublic: isPublic}
-    ws.send(JSON.stringify({...postObj, mode: "registerGroup"}))
+    const postObj = {title: title, description: value, targetId: 2, catId: parseInt(catId)}
+    ws.send(JSON.stringify({...postObj, mode: "registerEvent"}))
+//    ws.onmessage(({data: JSON.stringify({...postObj, Type: "registerEvent"})}))
   }
   if (title && value) {
     return (
