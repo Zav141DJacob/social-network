@@ -5,6 +5,7 @@ CREATE TABLE "comments" (
 		"postId"	INTEGER NOT NULL,
 		"userId"	INTEGER NOT NULL,
 		"date"		DATETIME NOT NULL,
+		"image"	TEXT,
 		FOREIGN KEY ("postId") REFERENCES "posts"("postId")
 		FOREIGN KEY ("userId") REFERENCES "users"("userId")
 );

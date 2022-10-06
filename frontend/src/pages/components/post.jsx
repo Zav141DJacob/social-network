@@ -4,6 +4,8 @@ import * as timeago from "timeago.js";
 import styles from "./post.module.css";
 import { useAuth } from "./../../App";
 import { postData as postComment } from "../Login";
+import { postImg } from "./feed";
+import Comment from "./comment.jsx";
 
 export function PostComponent({ post, postInfo, dispatch, group }) {
   const [postData, setPostData] = useState();
@@ -14,6 +16,8 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
     minRows: 3,
     maxRows: 5,
   });
+  //image file from "add comment"
+  const [selectedFile, setSelectedFile] = useState(undefined);
 
   let cookies = document.cookie;
   let output = {};
@@ -71,29 +75,55 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
     return;
   };
 
-  const handleCommentChange = (event) => {
-    if (event.nativeEvent.inputType === "insertLineBreak") {
-      let cmntCp = [...commentData];
-      cmntCp.unshift({
-        Comment: { CommentID: 4, Body: currentComment.value, Date: Date.now() },
+  const onClick = (e) => {
+    e.preventDefault();
+    let cmntCp = [
+      ...commentData,
+      {
+        Comment: {
+          CommentID: 4,
+          Body: currentComment.value,
+          Date: Date.now(),
+          Image: "",
+        },
         User: nickname,
-      });
-      let cookieStruct = {};
-      for (const i of document.cookie.split("; ")) {
-        let split = i.split("=");
-        cookieStruct[split[0]] = split[1];
-      }
-      const commentObj = {
-        postId: post,
-        body: currentComment.value,
-        userToken: cookieStruct.session,
-      };
-      postComment("http://localhost:8000/api/v1/comments/", commentObj).then(
-        (i) => console.log(i)
-      );
-      setCommentData(cmntCp);
-      return;
+      },
+    ];
+
+    let cookieStruct = {};
+    for (const i of document.cookie.split("; ")) {
+      let split = i.split("=");
+      cookieStruct[split[0]] = split[1];
     }
+
+    const commentObj = {
+      postId: post,
+      body: currentComment.value,
+      userToken: cookieStruct.session,
+      image: "",
+    };
+
+    if (selectedFile !== undefined) {
+      let formData = new FormData();
+      let file = selectedFile;
+      formData.append("file", file);
+      postImg("http://localhost:8000/api/v1/upload/", formData)
+        .then((res) => {
+          cmntCp[cmntCp.length - 1].Comment.Image = res;
+          commentObj.image = res;
+        })
+        .then(() => {
+          postComment("http://localhost:8000/api/v1/comments/", commentObj);
+          setSelectedFile();
+        });
+      return setCommentData(cmntCp);
+    } else {
+      postComment("http://localhost:8000/api/v1/comments/", commentObj);
+      return setCommentData(cmntCp);
+    }
+  };
+
+  const handleCommentChange = (event) => {
     const textareaLineHeight = 23;
     const { minRows, maxRows } = currentComment;
     const previousRows = event.target.rows;
@@ -109,7 +139,6 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
       event.target.rows = maxRows;
       event.target.scrollTop = event.target.scrollHeight;
     }
-
     setCurrentComment({
       ...currentComment,
       value: event.target.value,
@@ -117,7 +146,6 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
     });
   };
 
-  console.log(postData);
   return (
     <div className={styles.postC}>
       <div
@@ -171,22 +199,38 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
             onChange={handleCommentChange}
             placeholder={"Write a comment..."}
           />
+          <div className={styles.addImg}>
+            <label className={styles.addImageBtn} htmlFor="upload">
+              {!selectedFile ? (
+                <span className={styles.addImageText}>Add an image</span>
+              ) : (
+                <span className={styles.addImageText}>Image added</span>
+              )}
+            </label>
+            <input
+              type="file"
+              id="upload"
+              accept="image/jpg, image/png, image/gif"
+              onChange={(e) => {
+                setSelectedFile(e.target.files[0]);
+              }}
+              hidden
+            />
+            <button type="submit" onClick={onClick}>
+              Hear me!
+            </button>
+          </div>
           <p className={styles.commentsLabel}>Comments</p>
+
           <div className={styles.comments}>
-            {commentData?.map((comment) => {
-              return (
-                <div
-                  className={styles.comment}
-                  key={comment?.Comment?.CommentId}
-                >
-                  <div className={styles.commentAuthor}>{comment?.User}</div>
-                  <p className={styles.commentBody}>{comment?.Comment?.Body}</p>
-                  <p className={styles.commentTime}>
-                    {timeago.format(comment?.Comment?.Date)}
-                  </p>
-                </div>
-              );
-            })}
+            {commentData
+              ?.slice(0)
+              .reverse()
+              .map((comment) => {
+                return (
+                  <Comment comment={comment} key={comment.Comment.CommentId} />
+                );
+              })}
           </div>
         </div>
       )}

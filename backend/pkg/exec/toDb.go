@@ -106,15 +106,15 @@ func Register(nickname, email, password, firstName, lastName, age, bio, avatar i
 //	comment body
 //	post id
 //	user id
-func Comment(body, postId, userId interface{}) error{
-	stmt, err := Db.Prepare("INSERT INTO comments (body, postId, userId, date) VALUES (?, ?, ?, ?);")
+func Comment(body, postId, userId, image interface{}) error{
+	stmt, err := Db.Prepare("INSERT INTO comments (body, postId, userId, date, image) VALUES (?, ?, ?, ?, ?);")
 
 	if err != nil {
 		return err
 	}
 	
 	defer stmt.Close()
-	stmt.Exec(body, postId, userId, time.Now())
+	stmt.Exec(body, postId, userId, time.Now(), image)
 	return nil
 }
 

@@ -65,12 +65,12 @@ func users() error {
 
 // body, postId, userId
 func comments() error {
-	err := Comment("This is a test1 comment", 1, 1)
+	err := Comment("This is a test1 comment", 1, 1, "test-image.png")
 	if err != nil {
 		return errors.New("ERROR in comments: " + err.Error())
 	}
-	Comment("This is a test2 comment from Kertu", 1, 2)
-	Comment(":(", 4, 1)
+	Comment("This is a test2 comment from Kertu", 1, 2, "test-image.png")
+	Comment(":(", 4, 1, "test-image.png")
 	return nil
 }
 

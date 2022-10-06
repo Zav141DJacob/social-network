@@ -135,7 +135,8 @@ func FromComments(condition string, value interface{}) ([]CommentData, error){
 			&comment.Body, 
 			&comment.PostId, 
 			&comment.UserId, 
-			&comment.Date)
+			&comment.Date,
+			&comment.Image)
 
 		if err != nil {
 			return nil, err

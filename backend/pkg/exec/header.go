@@ -1,7 +1,5 @@
 package exec
 
-import ()
-
 //Optional ToDo:
 //	use JOIN and only use the ID values of tables
 
@@ -45,6 +43,7 @@ type CommentData struct {
 	PostId	  int
 	UserId	  int
 	Date	  string
+	Image     string
 }
 
 type CategoryData struct {

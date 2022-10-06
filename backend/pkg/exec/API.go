@@ -82,9 +82,10 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 				//Create and read the file into temparory byte array
 				buffer := make([]byte, 100000)
 				cBytes, err := part.Read(buffer)
-
+				
 				//break when the reading process is finished
 				if err == io.EOF {
+					dst.Write(buffer[0:cBytes])
 					HandleErr(err)
 					break
 				}
@@ -94,7 +95,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					HandleErr(err)
 				}
-		
+				
 			}
 			defer dst.Close()
 		}
@@ -363,8 +364,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 				image = "no-image"
 				fmt.Println("image in v is NIL, v: ", v)
 			}
-			// ToDo:
-			// image		:= v["image"]
+
 			found := false
 
 			memberTo, err := FromGroupMembers("userId", auth.UserId)
@@ -426,7 +426,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 
 func CommentAPI(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
-	case "GET":
+	case "GET":	
 		type toComments struct {
 			Comment	 	 CommentData
 			// CommentLikes []CLikeData
@@ -451,7 +451,7 @@ func CommentAPI(w http.ResponseWriter, r *http.Request) {
 			comments, err = FromComments("CommentId", path[4])
 		} else if len(path) == 5{
 			comments, err = FromComments("", "")
-		}
+		}		
 		
 		if err != nil {
 			HandleErr(err)
@@ -494,6 +494,7 @@ func CommentAPI(w http.ResponseWriter, r *http.Request) {
 				toAPI = append(toAPI, getStruct)				
 			}
 		}
+
 		jsonPosts, err := json.Marshal(toAPI)
 		if err != nil {
 			HandleErr(err)
@@ -515,9 +516,8 @@ func CommentAPI(w http.ResponseWriter, r *http.Request) {
 		// commentId	:= v["commentId"]
 		postId  	:= v["postId"]
 		body   		:= v["body"]
-		// ToDo:
-		// image		:= v["image"]
-
+		image		:= v["image"]
+		
 		user, err := FromSessions("sessionId", userToken)
 
 		if err != nil {
@@ -532,7 +532,7 @@ func CommentAPI(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = Comment(body, postId, user[0].UserId)
+		err = Comment(body, postId, user[0].UserId, image)
 		if err != nil {
 			HandleErr(err)
 			w.WriteHeader(http.StatusInternalServerError)
