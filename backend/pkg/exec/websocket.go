@@ -32,6 +32,7 @@ type IdType int
 var Manager = ClientManager{
   register:   make(chan *Client),
   unregister: make(chan *Client),
+  registerGroup: make(chan *Client),
   clients:    make(map[IdType]*websocket.Conn),
 	groupChats: make(map[IdType](map[IdType]*websocket.Conn)),
 }
@@ -50,12 +51,15 @@ func Empty(w http.ResponseWriter, r *http.Request) {
 		messageType, p, err := conn.ReadMessage()
 
 		if err != nil {
-      		HandleErr(err)
+      HandleErr(CreateErr("1"))
+      HandleErr(err)
 			return
 		}
 		err = conn.WriteMessage(messageType,[]byte(p))
 
 		if err != nil {
+      HandleErr(CreateErr("2"))
+
 			HandleErr(err)
 		}
 	}
@@ -84,10 +88,10 @@ func (Manager *ClientManager) start() {
         for _, member := range members {
           Manager.groupChats[IdType(member.CatId)][conn.id] = conn.socket
         }
-        log.Println(Manager.groupChats)
       }
 
       Manager.clients[conn.id] = conn.socket
+      log.Println("Client Connection Established")
 
     case conn := <-Manager.unregister:
       if _, ok := Manager.clients[conn.id]; ok {
@@ -101,13 +105,11 @@ func (Manager *ClientManager) start() {
         // errCode = 500
         // ToDo: idk what to add here
       }
+      fmt.Println("Here!")
       Manager.groupChats[IdType(len(all))][conn.id] = conn.socket
     }
   }
 }
-
-// ToDo:
-// add Follow function to websocket
 
 // ToDo:
 //	think of a better name for this function
@@ -131,6 +133,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 		var v map[string]interface{}
 		json.Unmarshal([]byte(p), &v)
 
+    log.Println(v)
 		mode := v["mode"].(string)
 		
 		
