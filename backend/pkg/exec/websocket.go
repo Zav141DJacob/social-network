@@ -105,7 +105,6 @@ func (Manager *ClientManager) start() {
         // errCode = 500
         // ToDo: idk what to add here
       }
-      fmt.Println("Here!")
       Manager.groupChats[IdType(len(all))][conn.id] = conn.socket
     }
   }
@@ -133,7 +132,6 @@ func (c *Client) reader(conn *websocket.Conn) {
 		var v map[string]interface{}
 		json.Unmarshal([]byte(p), &v)
 
-    log.Println(v)
 		mode := v["mode"].(string)
 		
 		
@@ -404,7 +402,6 @@ func (c *Client) reader(conn *websocket.Conn) {
         Category 	string
       }
       targetId := v["targetId"]
-      fmt.Println(targetId)
       user, err := FromUsers("userId", c.id)
       if err != nil {
         HandleErr(err)
