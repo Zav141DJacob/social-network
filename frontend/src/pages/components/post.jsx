@@ -150,7 +150,6 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
   if (isLoading && !postData) {
     return <div>Loading...</div>
   }
-
   if (postData) {
     return (
       <div className={styles.postC}>
@@ -195,43 +194,13 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
         </div>
         {/* building post image - kaarel*/}
         {!postInfo && (
-          <>
-            <p className={styles.desc}>{postData?.Post?.Body}</p>
-          </>
-        )}
-        {postData?.Post?.Image != "none" && postData?.Post?.Image && (
-          <img
-            className={styles.postImg}
-            src={"http://localhost:8000/static/" + postData?.Post?.Image}
-          />
-        )}
-      </div>
-      {/* building post image - kaarel*/}
-      {!postInfo && (
-        <div className={styles.commentBox}>
-          <textarea
-            className={styles.commentInput}
-            rows="3"
-            value={currentComment.value}
-            onChange={handleCommentChange}
-            placeholder={"Write a comment..."}
-          />
-          <div className={styles.addImg}>
-            <label className={styles.addImageBtn} htmlFor="upload">
-              {!selectedFile ? (
-                <span className={styles.addImageText}>Add an image</span>
-              ) : (
-                <span className={styles.addImageText}>Image added</span>
-              )}
-            </label>
-            <input
-              type="file"
-              id="upload"
-              accept="image/jpg, image/png, image/gif"
-              onChange={(e) => {
-                setSelectedFile(e.target.files[0]);
-              }}
-              hidden
+          <div className={styles.commentBox}>
+            <textarea
+              className={styles.commentInput}
+              rows="3"
+              value={currentComment.value}
+              onChange={handleCommentChange}
+              placeholder={"Write a comment..."}
             />
             <div className={styles.addImg}>
               <label className={styles.addImageBtn} htmlFor="upload">
