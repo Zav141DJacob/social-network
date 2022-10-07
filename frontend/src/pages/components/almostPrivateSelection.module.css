@@ -1,0 +1,45 @@
+.search {
+  position: relative;
+  top: 10px;
+  height: 2rem;
+  margin-left: 212px;
+  margin-bottom: 10px;
+  padding-left: 9px;
+  padding-right: 9px;
+  background: rgb(89, 96, 100);
+  border-radius: 9px;
+  outline: none;
+  border: none;
+  color: whitesmoke;
+  font-family: "Helvetica Neue", Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  padding-right: 10px;
+}
+
+.search::placeholder {
+  color: rgba(245, 245, 245, 0.5);
+}
+
+.addedUsers {
+  display: flex;
+  gap: 1rem;
+  color: whitesmoke;
+  font-family: "Helvetica Neue", Helvetica, Arial;
+}
+
+.addedUsers > p {
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.2rem 0.3rem 0.2rem 0.3rem;
+  border: 1px solid rgba(245, 245, 245, 0.3);
+  border-radius: 0.4rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+.addedUsers > p:hover {
+  background: rgb(87, 87, 87);
+}

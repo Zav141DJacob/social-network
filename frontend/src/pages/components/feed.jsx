@@ -1,14 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import styles from "./feed.module.css";
-import { useAuth, ws, wsOnMessage, wsSetup } from '../../App'
+import { useAuth, ws, wsOnMessage, wsSetup } from "../../App";
 import { PostComponent } from "./post";
 import { throttle } from "lodash";
 import { postData } from "../Login";
 import { findCookies } from "./right-sidebar";
-import {useQuery, useQueryClient} from '@tanstack/react-query'
-import {fetchPosts, fetchGroups} from '../../utils/queries'
-
-
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchPosts, fetchGroups } from "../../utils/queries";
+import AlmostPrivateSelection from "./almostPrivateSelection";
 
 export function Feed({
   selectedCat,
@@ -28,15 +27,15 @@ export function Feed({
     data: posts,
     isError,
     error,
-  } = useQuery(["posts"], fetchPosts)
+  } = useQuery(["posts"], fetchPosts);
 
   function join() {
     const postObj = { catId: selectedCat.postCat, nickname: nickname };
     ws.send(JSON.stringify({ ...postObj, mode: "join" }));
   }
   useEffect(() => {
-    wsSetup()
-  },[])
+    wsSetup();
+  }, []);
 
   useEffect(() => {
     if (forwardRef.current) {
@@ -44,11 +43,11 @@ export function Feed({
     }
   });
 
-  const {data: groups} = useQuery(["groups"], fetchGroups, {
+  const { data: groups } = useQuery(["groups"], fetchGroups, {
     enabled: !!posts,
-    select: (i) => i.filter(e => e.CatId == state.postCat),
-    refetchOnMount: false
-  })
+    select: (i) => i.filter((e) => e.CatId == state.postCat),
+    refetchOnMount: false,
+  });
 
   useEffect(() => {
     if (selectedCat.postCat) {
@@ -56,7 +55,8 @@ export function Feed({
         posts?.filter((post) => post.Post.CatId == selectedCat.postCat)
       );
     } else {
-      setPostCopy(posts?.slice()); }
+      setPostCopy(posts?.slice());
+    }
   }, [posts, selectedCat]);
 
   if (isLoading) {
@@ -70,55 +70,120 @@ export function Feed({
   if (postCopy?.length > 0) {
     return (
       <div className={styles.feed} ref={forwardRef}>
-        {selectedCat?.postCat && <CreatePost dispatch={dispatch} state={state}/>}
-        {selectedCat?.postCat && 
-          <div onClick={() => dispatch({type: "inviteGroup"})} className={styles.inviteBtn}>
+        {selectedCat?.postCat && (
+          <CreatePost dispatch={dispatch} state={state} />
+        )}
+        {selectedCat?.postCat && (
+          <div
+            onClick={() => dispatch({ type: "inviteGroup" })}
+            className={styles.inviteBtn}
+          >
             <button>Invite</button>
           </div>
-        }
-        {selectedCat?.inviteGroup && 
+        )}
+        {selectedCat?.inviteGroup && (
           <div className={styles.inviteModal}>
             <div className={styles.arrowUp}></div>
-            <div className={styles.closeModal} onClick={() => dispatch({type: "inviteGroupClose"})}>
-              <svg  viewBox="0 0 24 24">
-                <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+            <div
+              className={styles.closeModal}
+              onClick={() => dispatch({ type: "inviteGroupClose" })}
+            >
+              <svg viewBox="0 0 24 24">
+                <path
+                  fill="currentColor"
+                  d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
+                />
               </svg>
             </div>
-            <span className={styles.moduleLabel}>Invite people to {selectedCat.catName}</span>
-            {groups[0].Nonmembers && groups[0]?.Nonmembers.map(follower => {
-              console.log(follower.Avatar)
-              return (
-                <div key={follower.UserId} className={styles.follower}>
-                  {follower.Avatar && <div className={styles.followerAvatar}><img className={styles.followerAvatarImg} src={`http://localhost:8000/static/${follower.Avatar}`}/></div>}
-                  <div className={styles.followerNickname} onClick={() => dispatch({type: "profile", Id: `${follower.Nickname}`})}>{follower.Nickname}</div>
-                  <button className={styles.inviteUserBtn}>Invite</button>
-                </div>
-              )
-            })}
+            <span className={styles.moduleLabel}>
+              Invite people to {selectedCat.catName}
+            </span>
+            {groups[0].Nonmembers &&
+              groups[0]?.Nonmembers.map((follower) => {
+                console.log(follower.Avatar);
+                return (
+                  <div key={follower.UserId} className={styles.follower}>
+                    {follower.Avatar && (
+                      <div className={styles.followerAvatar}>
+                        <img
+                          className={styles.followerAvatarImg}
+                          src={`http://localhost:8000/static/${follower.Avatar}`}
+                        />
+                      </div>
+                    )}
+                    <div
+                      className={styles.followerNickname}
+                      onClick={() =>
+                        dispatch({
+                          type: "profile",
+                          Id: `${follower.Nickname}`,
+                        })
+                      }
+                    >
+                      {follower.Nickname}
+                    </div>
+                    <button className={styles.inviteUserBtn}>Invite</button>
+                  </div>
+                );
+              })}
           </div>
-        }
-        {selectedCat?.postCat && <button className={styles.groupChatBtn} onClick={() => dispatch({type: "groupChat", groupChatCat: state.catName, groupChatId: state.postCat})}>
-          <svg className={styles.groupChatBtnIcon} viewBox="0 0 24 24">
-            <path d="M12 6a4 4 0 0 1 4 3 4 4 0 0 1-4 4 4 4 0 0 1-3-4 4 4 0 0 1 3-3M5 8h2c-1 2 0 3 1 4l-3 2a3 3 0 0 1-3-3 3 3 0 0 1 3-3m14 0a3 3 0 0 1 3 3 3 3 0 0 1-3 3l-3-2c1-1 2-2 1-4h2M6 18c0-2 2-3 6-3s7 1 7 3v2H6v-2m-6 2v-1c0-2 2-3 4-3v4H0m24 0h-3v-2l-1-2c2 0 4 1 4 3v1Z"/>
-          </svg>
-          Group chat
-        </button>}
-        <div className={styles.posts} >
-          {postCopy?.map(i => <PostComponent key={i?.Post?.PostId} postInfo={i} dispatch={dispatch}/>)}
+        )}
+        {selectedCat?.postCat && (
+          <button
+            className={styles.groupChatBtn}
+            onClick={() =>
+              dispatch({
+                type: "groupChat",
+                groupChatCat: state.catName,
+                groupChatId: state.postCat,
+              })
+            }
+          >
+            <svg className={styles.groupChatBtnIcon} viewBox="0 0 24 24">
+              <path d="M12 6a4 4 0 0 1 4 3 4 4 0 0 1-4 4 4 4 0 0 1-3-4 4 4 0 0 1 3-3M5 8h2c-1 2 0 3 1 4l-3 2a3 3 0 0 1-3-3 3 3 0 0 1 3-3m14 0a3 3 0 0 1 3 3 3 3 0 0 1-3 3l-3-2c1-1 2-2 1-4h2M6 18c0-2 2-3 6-3s7 1 7 3v2H6v-2m-6 2v-1c0-2 2-3 4-3v4H0m24 0h-3v-2l-1-2c2 0 4 1 4 3v1Z" />
+            </svg>
+            Group chat
+          </button>
+        )}
+        <div className={styles.posts}>
+          {postCopy?.map((i) => {
+            // only summon this post when i.Post.Privacy === "public"
+            if (
+              i.Post.Privacy === "public" ||
+              i.User === nickname ||
+              i.Post.AccessList.split(",").includes(nickname)
+            ) {
+              return (
+                <PostComponent
+                  key={i?.Post?.PostId}
+                  postInfo={i}
+                  dispatch={dispatch}
+                />
+              );
+            }
+          })}
         </div>
       </div>
-    )
+    );
   } else if (state.public === undefined) {
     return (
       <div className={styles.feed} ref={forwardRef}>
         <div className={styles.posts}>
-          {postCopy?.map((i) => (
-            <PostComponent
-              key={i?.Post?.PostId}
-              postInfo={i}
-              dispatch={dispatch}
-            />
-          ))}
+          {postCopy?.map((i) => {
+            if (
+              i.Post.Privacy === "public" ||
+              i.User === nickname ||
+              i.Post.AccessList.split(",").includes(nickname)
+            ) {
+              return (
+                <PostComponent
+                  key={i?.Post?.PostId}
+                  postInfo={i}
+                  dispatch={dispatch}
+                />
+              );
+            }
+          })}
         </div>
       </div>
     );
@@ -193,6 +258,12 @@ function Description({
 }) {
   const [visibility, setVisibility] = useState("public");
   const [selectedFile, setSelectedFile] = useState();
+  const [postViewers, setPostViewers] = useState([]);
+
+  const setViewers = (arrOfUsers) => {
+    return setPostViewers([...arrOfUsers]);
+  };
+
   function submitPost() {
     let cookieStruct = {};
     for (const i of document.cookie.split("; ")) {
@@ -204,12 +275,13 @@ function Description({
     formData.append("file", file);
     if (file) {
       postImg("http://localhost:8000/api/v1/upload/", formData).then((x) => {
-        console.log("feed.jsx -> logging after image is uploaded", x);
         const postObj = {
           title: title,
           body: value,
           image: x,
           categoryId: parseInt(state.postCat),
+          privacy: visibility,
+          accessList: postViewers.toString(),
         };
         postData("http://localhost:8000/api/v1/posts/", postObj)
           .then((i) => dispatch({ type: "create", postId: i }))
@@ -221,7 +293,9 @@ function Description({
         body: value,
         image: "none",
         categoryId: parseInt(state.postCat),
-      }
+        privacy: visibility,
+        accessList: postViewers.toString(),
+      };
       postData("http://localhost:8000/api/v1/posts/", postObj)
         .then((i) => dispatch({ type: "create", postId: i }))
         .catch((err) => console.log("FOUND ERROR\n", err));
@@ -270,6 +344,11 @@ function Description({
             </svg>
             <span className={styles.almostPrivateText}>Almost private</span>
           </div>
+        </div>
+        <div style={{ display: "flex" }}>
+          {visibility == "almostprivate" && (
+            <AlmostPrivateSelection setViewers={setViewers} />
+          )}
         </div>
         <textarea
           className={styles.description}
@@ -354,6 +433,12 @@ function Description({
           <span className={styles.almostPrivateText}>Almost private</span>
         </div>
       </div>
+      <div style={{ display: "flex" }}>
+        {visibility == "almostprivate" && (
+          <AlmostPrivateSelection setViewers={setViewers} />
+        )}
+      </div>
+
       <textarea
         className={styles.description}
         value={value}
@@ -414,4 +499,3 @@ export async function postImg(url = "", data = {}, boolean = true) {
   }
   return response;
 }
-

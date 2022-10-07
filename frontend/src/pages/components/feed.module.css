@@ -9,8 +9,8 @@
   transform: translate(-50%);
   max-width: 600px;
   min-width: 250px;
-  padding-left:20px;
-  padding-right:20px;
+  padding-left: 20px;
+  padding-right: 20px;
   min-height: 57px;
   top: 71px;
   background: rgb(48, 52, 54);
@@ -30,7 +30,7 @@
   outline: none;
   border: none;
   color: whitesmoke;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
@@ -41,12 +41,12 @@
 .title::placeholder {
   position: relative;
   padding: 4px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
   line-height: 24px;
-  color: #D0D0D0;
+  color: #d0d0d0;
 }
 
 .description {
@@ -62,7 +62,7 @@
   outline: none;
   border: none;
   color: whitesmoke;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
@@ -74,7 +74,6 @@
   top: 20px;
   display: flex;
 }
-
 
 .publicText {
   position: relative;
@@ -101,11 +100,11 @@
   padding-left: 40px;
   padding-right: 10px;
   margin: 0px 10px 20px 0px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
-  color: #D0D0D0;
+  color: #d0d0d0;
   background: rgb(47, 47, 47);
   height: 30px;
 }
@@ -133,37 +132,37 @@
   padding-left: 40px;
   padding-right: 10px;
   margin: 0px 10px 20px 0px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
-  color: #D0D0D0;
+  color: #d0d0d0;
   background: rgb(89, 96, 100);
   height: 30px;
 }
 
 .publicIcon {
-  position:relative;
+  position: relative;
   scale: 0.5;
   top: -6px;
   left: -40px;
-  fill: #D0D0D0;
+  fill: #d0d0d0;
 }
 
 .privateIcon {
-  position:relative;
+  position: relative;
   scale: 0.5;
   top: -8px;
   left: -40px;
-  fill: #D0D0D0;
+  fill: #d0d0d0;
 }
 
 .almostPrivateIcon {
-  position:relative;
+  position: relative;
   scale: 0.22;
   top: -33px;
   left: -64px;
-  fill: #D0D0D0;
+  fill: #d0d0d0;
 }
 
 .addImageBtn {
@@ -174,12 +173,12 @@
   left: 90px;
   padding-left: 40px;
   padding-right: 12px;
-  margin-right:10px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  margin-right: 10px;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 800;
   font-size: 14px;
-  color: #D0D0D0;
+  color: #d0d0d0;
   background: rgb(47, 47, 47);
   height: 30px;
   width: 99px;
@@ -194,11 +193,11 @@
   left: 90px;
   padding-left: 40px;
   padding-right: 12px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
-  color: #D0D0D0;
+  color: #d0d0d0;
   background: rgb(87, 87, 87);
   height: 30px;
   width: 99px;
@@ -210,13 +209,12 @@
   left: 4px;
 }
 
-
-.addImageIcon{
-  position:relative;
+.addImageIcon {
+  position: relative;
   scale: 0.22;
   top: -34px;
   left: -60px;
-  fill: #D0D0D0;
+  fill: #d0d0d0;
 }
 
 .eventBtn {
@@ -227,11 +225,11 @@
   left: 90px;
   padding-left: 40px;
   padding-right: 10px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 800;
   font-size: 14px;
-  color: #D0D0D0;
+  color: #d0d0d0;
   background: rgb(47, 47, 47);
   height: 30px;
   width: 99px;
@@ -243,22 +241,22 @@
 }
 
 .eventIcon {
-  position:relative;
+  position: relative;
   scale: 0.22;
   top: -34px;
   left: -60px;
 }
 
 .eventBtnText {
-  position:relative;
+  position: relative;
   color: white;
   top: -96px;
   left: 10px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 800;
   font-size: 14px;
-  color: #D0D0D0;
+  color: #d0d0d0;
 }
 
 .bottomBtns {
@@ -267,9 +265,8 @@
 
 .description::placeholder {
   padding: 4px;
-  color: #D0D0D0;
+  color: #d0d0d0;
 }
-
 
 .categories {
   position: absolute;
@@ -285,11 +282,11 @@
 
 .ul {
   position: relative;
-   list-style-type: none;
-   top: -10px;
-   margin: auto;
-   padding: 0;
-   overflow: hidden;
+  list-style-type: none;
+  top: -10px;
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
 }
 
 .category {
@@ -304,11 +301,11 @@
   padding-left: 40px;
   padding-right: 10px;
   margin: 0px 10px 20px 30px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
-  color: #D0D0D0;
+  color: #d0d0d0;
   height: 30px;
 }
 
@@ -327,7 +324,6 @@
   padding-bottom: 0px;
 }
 
-
 .submitready {
   position: relative;
   width: 97%;
@@ -337,12 +333,12 @@
   padding-top: 2px;
   padding-bottom: 2px;
   border-radius: 7px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
   line-height: 24px;
-  color: #D0D0D0;
+  color: #d0d0d0;
   background: rgb(14, 57, 122);
   cursor: pointer;
 }
@@ -357,15 +353,14 @@
   padding-top: 2px;
   padding-bottom: 2px;
   border-radius: 7px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
   line-height: 24px;
-  color: #D0D0D0;
+  color: #d0d0d0;
   cursor: not-allowed;
 }
-
 
 .posts {
   position: relative;
@@ -375,7 +370,7 @@
   width: inherit;
   max-width: 980px;
   min-width: 320px;
-  cursor:default;
+  cursor: default;
 }
 
 .private {
@@ -392,7 +387,7 @@
   transform: translate(-50%);
   max-width: 600px;
   min-width: 450px;
-  padding-left:20px;
+  padding-left: 20px;
   min-height: 157px;
   top: 71px;
   background: rgb(48, 52, 54);
@@ -416,7 +411,7 @@
   left: -7px;
   top: -250px;
   padding: 5px;
-  fill:none;
+  fill: none;
   stroke: white;
 }
 
@@ -430,7 +425,7 @@
   height: 30.77px;
   background: rgb(14, 57, 122);
   border-radius: 7px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 400;
   font-size: 19px;
@@ -466,7 +461,7 @@
   top: -7px;
   left: 30px;
   color: rgb(232, 230, 227);
-  font-family: 'Helvetica';
+  font-family: "Helvetica";
   font-style: bold;
   font-size: 16px;
   font-weight: 800;
@@ -477,7 +472,6 @@
   display: flex;
   left: 10px;
   padding: 2px;
-
 }
 
 .followerAvatarImg {
@@ -494,7 +488,7 @@
   top: 12px;
   left: 30px;
   color: rgb(232, 230, 227);
-  font-family: 'Helvetica';
+  font-family: "Helvetica";
   font-style: normal;
   font-size: 20px;
   font-weight: 10;

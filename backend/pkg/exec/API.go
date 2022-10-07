@@ -110,7 +110,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 func UserAPI(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		
+		fmt.Println("getting users")
 		var users []UserData
 		var err error
 
@@ -360,7 +360,9 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			title  		:= v["title"]
 			body   		:= v["body"]
 			image   	:= v["image"]
-			fmt.Println("FROM API.go line 362", image)
+			privacy   	:= v["privacy"]
+			accessList  := v["accessList"]
+			fmt.Println("FROM API.go line 362", privacy)
 			if image == nil {
 				image = "no-image"
 				fmt.Println("image in v is NIL, v: ", v)
@@ -404,8 +406,8 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			// 	HandleErr(err)
 			// 	return
 			// }
-	
-			err = Post(auth.UserId, categoryId, title, body, image)
+			fmt.Println(accessList)
+			err = Post(auth.UserId, categoryId, title, body, image, privacy, accessList)
 			if err != nil {
 				HandleErr(err)
 				w.WriteHeader(http.StatusInternalServerError)
@@ -645,7 +647,7 @@ func CategoryAPI(w http.ResponseWriter, r *http.Request) {
       // 	w.Write([]byte(errMsg))
       // } else {
       InsertCategory(title, description, auth.UserId, false)
-      err = Post(auth.UserId, len(categories)+1, "First post in " + title.(string), "Welcome to \"" + title.(string) + "\"", "none")
+      err = Post(auth.UserId, len(categories)+1, "First post in " + title.(string), "Welcome to \"" + title.(string) + "\"", "none", "public", "Kertu,Jacob")
 
       if err != nil {
         HandleErr(err)

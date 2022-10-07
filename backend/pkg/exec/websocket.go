@@ -253,7 +253,7 @@ func (c *Client) reader(conn *websocket.Conn) {
         to.CategoryId = category[0].CatId
         to.ErrCode = errCode
 
-        err = Post(1, to.CategoryId, "First post in " + title.(string), "Welcome to \"" + title.(string) + "\"", "none")
+        err = Post(1, to.CategoryId, "First post in " + title.(string), "Welcome to \"" + title.(string) + "\"", "none", "public", "")
         if err != nil {
           HandleErr(err)
         }

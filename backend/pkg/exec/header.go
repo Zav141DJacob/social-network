@@ -28,6 +28,8 @@ type PostData struct {
 	Image string
 	CatId  int
 	Date   string
+	Privacy string
+	AccessList string
 }
 
 type PostCategoryData struct {

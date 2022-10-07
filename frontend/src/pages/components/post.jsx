@@ -19,6 +19,8 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
   //image file from "add comment"
   const [selectedFile, setSelectedFile] = useState(undefined);
 
+  // check the privacy setting on this post
+
   let cookies = document.cookie;
   let output = {};
   cookies.split(/\s*;\s*/).forEach(function (pair) {
@@ -182,9 +184,12 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
             <p className={styles.desc}>{postData?.Post?.Body}</p>
           </>
         )}
-      {postData?.Post?.Image != "none" &&
-          postData?.Post?.Image && <img className={styles.postImg} src={"http://localhost:8000/static/" + postData?.Post?.Image} />
-      }
+        {postData?.Post?.Image != "none" && postData?.Post?.Image && (
+          <img
+            className={styles.postImg}
+            src={"http://localhost:8000/static/" + postData?.Post?.Image}
+          />
+        )}
       </div>
       {/* building post image - kaarel*/}
       {!postInfo && (
