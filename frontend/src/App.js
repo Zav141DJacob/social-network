@@ -36,13 +36,11 @@ export const wsSetup = () => {
 }
 export const wsOnMessage = (notification, setNotification, setUsers, dispatch, getNotifications, lat) => {
   ws.onmessage = function(event) {
-    console.log("DDD")
     let jsonData = JSON.parse(event.data)
     if (jsonData.CategoryId >= 0 && jsonData.Type !== 'join') {
       dispatch({type: "category", category: jsonData.CategoryId}) 
       window.history.pushState("y2", "x3", `/group/${jsonData.CategoryId}`)
       queryClient.invalidateQueries("groups")
-      console.log('bamb')
       return
     }
     switch (jsonData.Type) {

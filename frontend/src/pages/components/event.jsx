@@ -90,10 +90,10 @@ function Description({
   catId,
 }) {
   function submitPost() {
+    console.log(catId)
     const postObj = {
       title: title,
       description: value,
-      targetId: 2,
       catId: parseInt(catId),
     };
     ws.send(JSON.stringify({ ...postObj, mode: "registerEvent" }));

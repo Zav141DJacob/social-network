@@ -245,9 +245,16 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
               )
             }
             case "registerEvent": {
+              console.log("YU")
               return (
                 <div key={item.Id} className={styles.notification}>
-                  <h1>YES</h1>
+                  {item.UserAvatar && <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />}
+                  <span><strong style={{cursor: "pointer"}}  onClick={() => dispatch({type: "profile", Id: item.Nickname})}>{item.Nickname}</strong><br/> has created a new event in {item.CategoryTitle}</span>
+                  <div className={styles.notificationBtns}>
+                    <button className={styles.notificationAcceptBtn}>Join</button>
+                    <button className={styles.notificationDeclineBtn}>Refuse</button>
+                  </div>
+                  <hr />
                 </div>
               )
             }
