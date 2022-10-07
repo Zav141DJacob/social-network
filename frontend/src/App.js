@@ -8,7 +8,7 @@ import {ForwardWS2} from './utils/WsCases'
 import {postData} from "./pages/Login"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-const queryClient = new QueryClient()
+export const queryClient = new QueryClient()
 let ws = {}
 export {ws}
 export const findCookies = () => {
@@ -40,16 +40,21 @@ export const wsOnMessage = (notification, setNotification, setUsers, dispatch, g
     if (jsonData.CategoryId >= 0 && jsonData.Type !== 'join') {
       dispatch({type: "category", category: jsonData.CategoryId}) 
       window.history.pushState("y2", "x3", `/group/${jsonData.CategoryId}`)
+      queryClient.invalidateQueries("groups")
       return
     }
     switch (jsonData.Type) {
+      case "registerEvent": {
+        ForwardWS2(jsonData)
+        console.log("WS EVENT")
+      }
       case "follow":
         ForwardWS2(jsonData)  
         break
       case "registerGroup":
         dispatch({type: "category", category: jsonData.CategoryId}) 
         window.history.pushState("y2", "x3", `/group/${jsonData.CategoryId}`)
-        ForwardWS2(jsonData)  
+        queryClient.invalidateQueries("groups")
         break
       case "join":
         ForwardWS2(jsonData)

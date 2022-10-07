@@ -65,7 +65,12 @@ func main(){
 // Allows foreign sites to access Data
 func Middleware(fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Middleware method: " + r.Method)
+
+    // !!!
+    // Uncomment this to test API endpoints
+    // fmt.Println("Middleware method: " + r.Method)
+    // !!!
+
 
     w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authentication")
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")

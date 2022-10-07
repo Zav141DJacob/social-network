@@ -1,10 +1,10 @@
 import { useRef, useState, useEffect, Fragment, createRef } from 'react';
 import styles from './messagebox.module.css'
-import {useAuth, ws, wsOnMessage} from './../../App'
+import {queryClient, useAuth, ws, wsOnMessage} from './../../App'
 import TimeAgo from 'timeago-react';
 import InputEmoji from 'react-input-emoji'
 import { getData } from './topbar';
-import {findCookies} from './right-sidebar'
+import {findCookies} from '../../utils/queries'
 // ws.onopen = function() {
 //   ws.send(JSON.stringify({message: "Initializing Websocket Connection", senderId: 1, targetId: 0, init: true}))
 // }
@@ -74,7 +74,7 @@ const getMessages = (setMessages, messages, targetUser, mode = "default") => {
 }
 
 
-export function MessageBox({user, notification, setNotification, getNotifications, postData, closeHandler, getOnlineUsers, dispatch, mode = "default"}) {
+export function MessageBox({user, notification, setNotification, postData, closeHandler, getOnlineUsers, dispatch, mode = "default"}) {
   // console.log("user", user)
   const {userInfo } = useAuth()
   let lastmsg = useRef()
@@ -118,7 +118,7 @@ const deleteNotification = (fromUserId, notification, setNotification) => {
     }),
   })
     .then(() => {
-      getNotifications(notification, setNotification)
+      queryClient.invalidateQueries("notifications")
     });
   // console.log("delete")
 }

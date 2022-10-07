@@ -1,6 +1,6 @@
 package exec
 
-import(
+import (
 	"fmt"
 	// "forum/pkg/header"
 	"database/sql"
@@ -9,7 +9,7 @@ import(
 // SPECIAL ToDo:
 //	add a length check to all "From..()" functions
 
-func FromUsers(condition string, value interface{}) ([]UserData, error){
+func FromUsers(condition string, value interface{}) ([]UserData, error) {
 
 	rows, err := doRows("users", condition, value)
 
@@ -25,21 +25,21 @@ func FromUsers(condition string, value interface{}) ([]UserData, error){
 		var user UserData
 
 		err = rows.Scan(
-			&user.UserId, 
-			&user.Nickname, 
-			&user.Email, 
+			&user.UserId,
+			&user.Nickname,
+			&user.Email,
 			&user.Password,
 			&user.FirstName,
 			&user.LastName,
 			&user.Age,
 			&user.Bio,
-      		&user.Avatar,
+			&user.Avatar,
 			&user.RoleId,
 			&user.Date,
 			&user.IsPrivate)
 
 		if err != nil {
-        fmt.Println("API168", err)
+			fmt.Println("API168", err)
 			return nil, err
 		}
 
@@ -49,7 +49,7 @@ func FromUsers(condition string, value interface{}) ([]UserData, error){
 	return returnUser, nil
 }
 
-func FromPosts(condition string, value interface{}) ([]PostData, error){
+func FromPosts(condition string, value interface{}) ([]PostData, error) {
 	rows, err := doRows("posts", condition, value)
 
 	if err != nil {
@@ -64,11 +64,11 @@ func FromPosts(condition string, value interface{}) ([]PostData, error){
 		var post PostData
 
 		err = rows.Scan(
-			&post.PostId, 
+			&post.PostId,
 			&post.UserId,
-			&post.Title, 
-			&post.Body, 
-			&post.Image, 
+			&post.Title,
+			&post.Body,
+			&post.Image,
 			&post.CatId,
 			&post.Date,
 			&post.Privacy,
@@ -84,8 +84,7 @@ func FromPosts(condition string, value interface{}) ([]PostData, error){
 	return returnPost, nil
 }
 
-
-func FromPostCategory(condition string, value interface{}) ([]PostCategoryData, error){
+func FromPostCategory(condition string, value interface{}) ([]PostCategoryData, error) {
 	rows, err := doRows("postCategory", condition, value)
 
 	if err != nil {
@@ -106,7 +105,7 @@ func FromPostCategory(condition string, value interface{}) ([]PostCategoryData, 
 			&postCategory.PostId,
 			&postCategory.CatId,
 			&postCategory.CategoryTitle,
-			)
+		)
 
 		if err != nil {
 			return nil, err
@@ -118,7 +117,7 @@ func FromPostCategory(condition string, value interface{}) ([]PostCategoryData, 
 	return returnPostCat, nil
 }
 
-func FromComments(condition string, value interface{}) ([]CommentData, error){
+func FromComments(condition string, value interface{}) ([]CommentData, error) {
 	rows, err := doRows("comments", condition, value)
 
 	if err != nil {
@@ -126,17 +125,17 @@ func FromComments(condition string, value interface{}) ([]CommentData, error){
 	}
 
 	defer rows.Close()
-	
+
 	var returnComment []CommentData
 
 	for rows.Next() {
 		var comment CommentData
 
 		err = rows.Scan(
-			&comment.CommentId, 
-			&comment.Body, 
-			&comment.PostId, 
-			&comment.UserId, 
+			&comment.CommentId,
+			&comment.Body,
+			&comment.PostId,
+			&comment.UserId,
 			&comment.Date,
 			&comment.Image)
 
@@ -150,13 +149,13 @@ func FromComments(condition string, value interface{}) ([]CommentData, error){
 	return returnComment, nil
 }
 
-func FromCategories(condition string, value interface{}) ([]CategoryData, error){
+func FromCategories(condition string, value interface{}) ([]CategoryData, error) {
 	rows, err := doRows("categories", condition, value)
-		
+
 	if err != nil {
 		return nil, err
 	}
-	
+
 	defer rows.Close()
 
 	var returnCategory []CategoryData
@@ -165,7 +164,7 @@ func FromCategories(condition string, value interface{}) ([]CategoryData, error)
 		var category CategoryData
 
 		err = rows.Scan(
-			&category.CatId, 
+			&category.CatId,
 			&category.Title,
 			&category.Description,
 			&category.UserId,
@@ -181,7 +180,7 @@ func FromCategories(condition string, value interface{}) ([]CategoryData, error)
 	return returnCategory, nil
 }
 
-func FromPLikes(condition string, value interface{}) ([]PLikeData, error){
+func FromPLikes(condition string, value interface{}) ([]PLikeData, error) {
 	rows, err := doRows("postLikes", condition, value)
 
 	if err != nil {
@@ -197,7 +196,7 @@ func FromPLikes(condition string, value interface{}) ([]PLikeData, error){
 		var postLike PLikeData
 
 		err = rows.Scan(
-			&postLike.UserId, 
+			&postLike.UserId,
 			&postLike.PostId,
 			&postLike.Value)
 
@@ -211,7 +210,7 @@ func FromPLikes(condition string, value interface{}) ([]PLikeData, error){
 	return returnPLikes, nil
 }
 
-func FromCLikes(condition string, value interface{}) ([]CLikeData, error){
+func FromCLikes(condition string, value interface{}) ([]CLikeData, error) {
 	rows, err := doRows("commentLikes", condition, value)
 
 	if err != nil {
@@ -219,7 +218,7 @@ func FromCLikes(condition string, value interface{}) ([]CLikeData, error){
 	}
 
 	defer rows.Close()
-	
+
 	//return comment likes
 	var returnCLikes []CLikeData
 
@@ -227,7 +226,7 @@ func FromCLikes(condition string, value interface{}) ([]CLikeData, error){
 		var commentLike CLikeData
 
 		err = rows.Scan(
-			&commentLike.UserId, 
+			&commentLike.UserId,
 			&commentLike.CommentId,
 			&commentLike.Value)
 
@@ -241,8 +240,7 @@ func FromCLikes(condition string, value interface{}) ([]CLikeData, error){
 	return returnCLikes, nil
 }
 
-
-func FromSessions(condition string, value interface{}) ([]SessionData, error){
+func FromSessions(condition string, value interface{}) ([]SessionData, error) {
 
 	rows, err := doRows("sessions", condition, value)
 
@@ -274,7 +272,7 @@ func FromSessions(condition string, value interface{}) ([]SessionData, error){
 	return returnSession, nil
 }
 
-func FromGroupMembers(condition string, value interface{}) ([]GroupMembersData, error){
+func FromGroupMembers(condition string, value interface{}) ([]GroupMembersData, error) {
 	rows, err := doRows("groupMembers", condition, value)
 
 	if err != nil {
@@ -310,7 +308,7 @@ func FromGroupMembers(condition string, value interface{}) ([]GroupMembersData, 
 // 	FOREIGN KEY ("fromUserId") REFERENCES "users"("userId")
 // )`,
 
-func FromNotifications(condition string, value interface{}) ([]NotificationData, error){
+func FromNotifications(condition string, value interface{}) ([]NotificationData, error) {
 
 	rows, err := doRows("notifications", condition, value)
 
@@ -339,7 +337,7 @@ func FromNotifications(condition string, value interface{}) ([]NotificationData,
 	return returnNotification, nil
 }
 
-func FromNotificationsList(condition string, value interface{}) ([]NotificationsListData, error){
+func FromNotificationsList(condition string, value interface{}) ([]NotificationsListData, error) {
 
 	rows, err := doRows("notificationsList", condition, value)
 
@@ -374,8 +372,7 @@ func FromNotificationsList(condition string, value interface{}) ([]Notifications
 	return returnNotification, nil
 }
 
-
-func FromMessages(senderValue, targetValue interface{}) ([]MessageData, error){
+func FromMessages(senderValue, targetValue interface{}) ([]MessageData, error) {
 
 	var rows *sql.Rows
 	var stmt *sql.Stmt
@@ -387,8 +384,8 @@ func FromMessages(senderValue, targetValue interface{}) ([]MessageData, error){
 	case "":
 		if targetValue != "" {
 			stmt, err = Db.Prepare(
-				"SELECT * FROM messages WHERE targetId = ? OR senderId = ?" , 
-			)	
+				"SELECT * FROM messages WHERE targetId = ? OR senderId = ?",
+			)
 			rows, err2 = stmt.Query(targetValue, targetValue)
 		}
 	// With condition
@@ -396,18 +393,17 @@ func FromMessages(senderValue, targetValue interface{}) ([]MessageData, error){
 		switch targetValue {
 		case "":
 			stmt, err = Db.Prepare(
-				"SELECT * FROM messages WHERE senderId = ? OR targetId = ?" , 
+				"SELECT * FROM messages WHERE senderId = ? OR targetId = ?",
 			)
 			rows, err2 = stmt.Query(senderValue, senderValue)
-		
+
 		default:
 			stmt, err = Db.Prepare(
-				"SELECT * FROM messages WHERE (senderId = ? AND targetId = ?) OR (senderId = ? AND targetId = ?)" , 
+				"SELECT * FROM messages WHERE (senderId = ? AND targetId = ?) OR (senderId = ? AND targetId = ?)",
 			)
 			rows, err2 = stmt.Query(senderValue, targetValue, targetValue, senderValue)
 		}
 	}
-	
 
 	if err != nil {
 		return nil, err
@@ -473,7 +469,7 @@ func FromFollowers(condition string, value interface{}) ([]FollowerData, error) 
 			&follower.Id,
 			&follower.Nickname,
 			&follower.UserId,
-      &follower.Avatar,
+			&follower.Avatar,
 			&follower.FollowerNickname,
 			&follower.FollowerUserId,
 			&follower.FollowerAvatar)
@@ -488,8 +484,7 @@ func FromFollowers(condition string, value interface{}) ([]FollowerData, error) 
 	return returnFollowers, nil
 }
 
-
-func FromGroupMessages(condition string, value interface{}) ([]GroupMessageData, error){
+func FromGroupMessages(condition string, value interface{}) ([]GroupMessageData, error) {
 
 	rows, err := doRows("groupMessages", condition, value)
 
@@ -521,8 +516,7 @@ func FromGroupMessages(condition string, value interface{}) ([]GroupMessageData,
 	return returnMessage, nil
 }
 
-
-func FromEvents(condition string, value interface{}) ([]EventsData, error) {
+func FromEvents(condition string, value interface{}) ([]EventData, error) {
 	rows, err := doRows("events", condition, value)
 
 	if err != nil {
@@ -531,12 +525,12 @@ func FromEvents(condition string, value interface{}) ([]EventsData, error) {
 
 	defer rows.Close()
 
-	var returnEvents []EventsData
+	var returnEvents []EventData
 	for rows.Next() {
-		var event EventsData
+		var event EventData
 
 		err = rows.Scan(
-			&event.Id,
+			&event.EventId,
 			&event.Title,
 			&event.Description,
 			&event.Date)
@@ -551,11 +545,10 @@ func FromEvents(condition string, value interface{}) ([]EventsData, error) {
 	return returnEvents, nil
 }
 
-
 // Pulls data from the database
 // SELECT - how many arguments (* for all)
 // FROM	  - from where you pull data from
-// condition, value - "WHERE condition = value" 
+// condition, value - "WHERE condition = value"
 func doRows(FROM, condition string, value interface{}) (*sql.Rows, error) {
 	var rows *sql.Rows
 	var err error
@@ -566,10 +559,10 @@ func doRows(FROM, condition string, value interface{}) (*sql.Rows, error) {
 	// No condition
 	case "":
 		rows, err = Db.Query("SELECT * FROM " + FROM)
-	
+
 	// With condition
 	default:
-		rows, err = Db.Query("SELECT * FROM " + FROM + " WHERE " + condition + " = $1", value)
+		rows, err = Db.Query("SELECT * FROM "+FROM+" WHERE "+condition+" = $1", value)
 
 	}
 

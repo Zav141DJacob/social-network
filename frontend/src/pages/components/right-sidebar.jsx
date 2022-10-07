@@ -118,7 +118,6 @@ const getOnlineUsers = (notification, setNotification, setUsers) => {
 
 export function RightSideBar({dispatch, state}) {
   const [users, setUsers] = useState(null)
-  const [messageboxOpen, setMessageboxOpen] = useState(false)
   const [messageUser, setmessageUser] = useState(null)
   const [notification, setNotification] = useState({
     0: 0,
@@ -126,14 +125,13 @@ export function RightSideBar({dispatch, state}) {
   const closeMessageBox = () => {
     wsOnMessage(notification, setNotification, setUsers, dispatch, getNotifications)
     dispatch({type: "messageBoxClose"})
-    setMessageboxOpen(false)
   }
 
   // useEffect(() => {
   //   wsSetup()
   // }, [])
-  useEffect(() => {
     wsOnMessage(notification, setNotification, setUsers, dispatch, getNotifications)
+  useEffect(() => {
     getOnlineUsers(notification, setNotification, setUsers)
   }, [])
 
@@ -151,7 +149,6 @@ export function RightSideBar({dispatch, state}) {
                 dispatch({type: "groupChatClose"})
                 setmessageUser(item)
                 dispatch({type: "messageBoxOpen"})
-                setMessageboxOpen(true)
                 deleteNotification(item.UserId, notification, setNotification)
               }}>{item.Nickname} </h1>
               {notification[item.UserId] && <div className={styles.notification} />}
@@ -168,13 +165,3 @@ export function RightSideBar({dispatch, state}) {
     </div>
   )
 }
-
-//        {
-//          () => {
-//            
-//            getData("http://localhost:8000/api/v1/categories/")
-//            .then(categoryResponse => {
-//              console.log(categoryResponse)
-//            }) 
-//          }
-//        }
