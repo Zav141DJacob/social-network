@@ -158,7 +158,6 @@ func (c *Client) reader(conn *websocket.Conn) {
         Description  string
         Type		    string
       }
-      fmt.Println(1)
 
       description  := v["description"]
       title  := v["title"]
@@ -172,12 +171,10 @@ func (c *Client) reader(conn *websocket.Conn) {
       to.Description = description.(string)
       to.Type = mode
 
-      fmt.Println(2)
       jsonTo, err := json.Marshal(to)
       if err != nil {
         break
       }
-      fmt.Println(3)
       // s, err := strconv.ParseFloat(fmt.Sprintf("%v",targetId), 64)
       // senderId, senderName, message, targetId
 
@@ -188,15 +185,12 @@ func (c *Client) reader(conn *websocket.Conn) {
       user, err := FromUsers("userId", c.id)
 
 
-      fmt.Println(4)
       // value, isValid := Manager.groupChats[target]
       members, err := FromGroupMembers("catId", targetId)
       fmt.Printf("%+v", members)
 
-      fmt.Println(5)
       // If target's connection is valid then WriteMessage to their connection
       if members != nil {
-        fmt.Println(6)
         for i, v := range members {
           if i == 0 {
             continue
@@ -217,7 +211,6 @@ func (c *Client) reader(conn *websocket.Conn) {
           //}
         }
       }
-      fmt.Println(7)
       target := to.TargetId
 
       value, isValid := Manager.groupChats[target]
@@ -241,15 +234,12 @@ func (c *Client) reader(conn *websocket.Conn) {
         HandleErr(err)
         continue
       }
-      fmt.Println(8)
 
       // Message(c.id, targetId, message)
 
       err = conn.WriteMessage(messageType,[]byte(jsonTo))
 
-      fmt.Println(9)
       if err != nil {
-        fmt.Println("LAST ERROR")
         HandleErr(err)
       }
     case "groupMessage":

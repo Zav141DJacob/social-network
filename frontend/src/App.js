@@ -41,6 +41,8 @@ export const wsOnMessage = (notification, setNotification, setUsers, dispatch, g
     if (jsonData.CategoryId >= 0 && jsonData.Type !== 'join') {
       dispatch({type: "category", category: jsonData.CategoryId}) 
       window.history.pushState("y2", "x3", `/group/${jsonData.CategoryId}`)
+      queryClient.invalidateQueries("groups")
+      console.log('bamb')
       return
     }
     switch (jsonData.Type) {
@@ -54,7 +56,7 @@ export const wsOnMessage = (notification, setNotification, setUsers, dispatch, g
       case "registerGroup":
         dispatch({type: "category", category: jsonData.CategoryId}) 
         window.history.pushState("y2", "x3", `/group/${jsonData.CategoryId}`)
-        ForwardWS2(jsonData)  
+        queryClient.invalidateQueries("groups")
         break
       case "join":
         ForwardWS2(jsonData)

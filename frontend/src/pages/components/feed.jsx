@@ -7,8 +7,6 @@ import { postData } from "../Login";
 import {useQuery, useQueryClient} from '@tanstack/react-query'
 import {fetchPosts, fetchGroups, findCookies} from '../../utils/queries'
 
-
-
 export function Feed({
   selectedCat,
   dispatch,
