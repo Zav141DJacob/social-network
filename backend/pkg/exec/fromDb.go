@@ -70,7 +70,9 @@ func FromPosts(condition string, value interface{}) ([]PostData, error) {
 			&post.Body,
 			&post.Image,
 			&post.CatId,
-			&post.Date)
+			&post.Date,
+			&post.Privacy,
+			&post.AccessList)
 
 		if err != nil {
 			return nil, err

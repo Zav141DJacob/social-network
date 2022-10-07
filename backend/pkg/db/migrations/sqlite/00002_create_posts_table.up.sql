@@ -7,5 +7,7 @@ CREATE TABLE "posts" (
 		"image"		TEXT,
 		"catId"		INTEGER NOT NULL,
 		"date"		DATETIME NOT NULL,
+		"privacy"   TEXT NOT NULL,
+		"accessList" TEXT,
 		FOREIGN KEY (userId) REFERENCES "users"("userId")
 );
