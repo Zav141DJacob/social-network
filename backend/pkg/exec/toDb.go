@@ -23,9 +23,9 @@ import (
 //	title
 //	post body
 //  image?
-func Post(userId, catId, title, body, image interface{}) error {
+func Post(userId, catId, title, body, image, privacy, accessList interface{}) error {
 
-	stmt, err := Db.Prepare("INSERT INTO posts (userId, title, body, image, catId, date) VALUES (?, ?, ?, ?, ?, ?);")
+  stmt, err := Db.Prepare("INSERT INTO posts (userId, title, body, image, catId, date, privacy, accessList) VALUES (?, ?, ?, ?, ?, ?, ?, ?);")
 
 	if err != nil {
 		return err
@@ -33,7 +33,7 @@ func Post(userId, catId, title, body, image interface{}) error {
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(userId, title, body, image, catId, time.Now())
+	_, err = stmt.Exec(userId, title, body, image, catId, time.Now(), privacy, accessList)
 
 	if err != nil {
 		return err
