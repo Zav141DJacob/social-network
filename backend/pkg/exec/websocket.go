@@ -158,7 +158,6 @@ func (c *Client) reader(conn *websocket.Conn) {
 				Description string
 				Type        string
 			}
-			fmt.Println(1)
 
 			description := v["description"]
 			title := v["title"]
@@ -172,12 +171,10 @@ func (c *Client) reader(conn *websocket.Conn) {
 			to.Description = description.(string)
 			to.Type = mode
 
-			fmt.Println(2)
 			jsonTo, err := json.Marshal(to)
 			if err != nil {
 				break
 			}
-			fmt.Println(3)
 			// s, err := strconv.ParseFloat(fmt.Sprintf("%v",targetId), 64)
 			// senderId, senderName, message, targetId
 
@@ -187,23 +184,19 @@ func (c *Client) reader(conn *websocket.Conn) {
 			//find targetId and write message to the senders and the targets connection
 			user, err := FromUsers("userId", c.id)
 
-			fmt.Println(4)
 			// value, isValid := Manager.groupChats[target]
 			members, err := FromGroupMembers("catId", targetId)
-			fmt.Printf("%+v", members)
 
-			fmt.Println(5)
 			// If target's connection is valid then WriteMessage to their connection
 			if members != nil {
-				fmt.Println(6)
 				for i, v := range members {
 					if i == 0 {
 						continue
 					}
-					smack, err := FromUsers("userId", v.UserId)
+					targetUser, err := FromUsers("userId", v.UserId)
 
 					// value2, isValid := v
-					err = Notify(user, smack, 0, mode)
+					err = Notify(user, targetUser, 0, mode)
 					if err != nil {
 						HandleErr(err)
 						break
@@ -216,15 +209,17 @@ func (c *Client) reader(conn *websocket.Conn) {
 					//}
 				}
 			}
-			fmt.Println(7)
 			target := to.TargetId
 
 			value, isValid := Manager.groupChats[target]
 
 			// If target's connection is valid then WriteMessage to their connection
 			if isValid {
-				for _, v := range value {
-					// value2, isValid := v
+				for key, v := range value {
+          fmt.Println(123, c.id, key)
+          if key == c.id {
+            continue
+          }
 					if v != conn {
 						err = v.WriteMessage(messageType, []byte(jsonTo))
 						if err != nil {
@@ -239,13 +234,11 @@ func (c *Client) reader(conn *websocket.Conn) {
 				HandleErr(err)
 				continue
 			}
-			fmt.Println(8)
 
 			// Message(c.id, targetId, message)
 
 			err = conn.WriteMessage(messageType, []byte(jsonTo))
 
-			fmt.Println(9)
 			if err != nil {
 				fmt.Println("LAST ERROR")
 				HandleErr(err)
