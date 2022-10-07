@@ -24,6 +24,7 @@ import (
 //	post body
 //  image?
 func Post(userId, catId, title, body, image, privacy, accessList interface{}) error {
+  fmt.Printf("%+v", accessList)
 	
 	stmt, err := Db.Prepare("INSERT INTO posts (userId, title, body, image, catId, date, privacy, accessList) VALUES (?, ?, ?, ?, ?, ?, ?, ?);")
 

@@ -43,3 +43,16 @@
 .addedUsers > p:hover {
   background: rgb(87, 87, 87);
 }
+
+.username {
+  position: relative;
+  display: inline-block;
+  padding: 10px;
+  color: white;
+  left: 230px;
+  cursor: pointer;
+  background-color: rgb(47, 47, 47);
+}
+.users {
+  height: 30px;
+}

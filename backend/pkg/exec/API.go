@@ -363,6 +363,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			privacy   	:= v["privacy"]
 			accessList  := v["accessList"]
 			fmt.Println("FROM API.go line 362", privacy)
+			fmt.Println("FROM API.go line 362", accessList)
 			if image == nil {
 				image = "no-image"
 				fmt.Println("image in v is NIL, v: ", v)

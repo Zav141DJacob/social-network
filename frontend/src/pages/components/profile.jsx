@@ -43,7 +43,7 @@ export function Profile({userId, state, dispatch}) {
               'Content-Type': 'application/json',
               'Authentication': output.session,
             },})
-          .then((item) => {setAccess(state.profileId == nickname || item.status != 401);item.json().then(res =>  setProfile(res))})
+          .then((item) => {setAccess(state.profileId == nickname || item.status != 401);item.json().then(res =>  setProfile({...res, Posts: res.Posts.reverse()}))})
         window.history.pushState("y2", "x3", `/users/${state.profileId}`)
       } else if (userId) {
         fetch(`http://localhost:8000/api/v1/profile/?nickname=${userId}`,
@@ -200,7 +200,11 @@ export function Profile({userId, state, dispatch}) {
         <div className={styles.posts} >
           {profile.Posts?.map(i => {
             let cat = groups?.filter(x => x.CatId === i.CatId)
-            if (cat) {
+            if (i.Privacy == "almostprivate" && (i.AccessList.includes(nickname) || profile.User.Nickname == nickname)) {
+              return (
+                <PostComponent key={i.PostId} postInfo={{"Post": i}} dispatch={dispatch} group={cat[0].Title}/>
+              )
+            } else if (cat && i.Privacy == "public") {
               return (
                 <PostComponent key={i.PostId} postInfo={{"Post": i}} dispatch={dispatch} group={cat[0].Title}/>
               )
