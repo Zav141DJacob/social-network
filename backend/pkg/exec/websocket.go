@@ -250,6 +250,13 @@ func (c *Client) reader(conn *websocket.Conn) {
 				fmt.Println("LAST ERROR")
 				HandleErr(err)
 			}
+
+			//db integration
+			err = InsertEvent(userId, targetId, title, description)
+			if err != nil {
+				fmt.Println("websocket.go: insert event err")
+				HandleErr(err)
+			}
 		case "groupMessage":
 			type toClient struct {
 				Message    string
