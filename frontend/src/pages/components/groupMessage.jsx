@@ -35,7 +35,8 @@ const getMessages = (setMessages, messages, targetUser, mode = "default", nickna
               .then((user) => {
                 let messagesCopy = []
                 xd?.forEach((elem) => {
-                  if (elem.SenderName !== nickname && targetUser.postCat == elem.TargetId) {
+                  console.log(targetUser, elem)
+                  if (elem.SenderName !== nickname && targetUser.groupChatId == elem.TargetId) {
                     if (prevSender !== elem.SenderName) {
                       prevSender = elem.SenderName
                       messagesCopy.push({
@@ -109,12 +110,13 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
     // https://stackoverflow.com/questions/4673527/converting-milliseconds-to-a-date-jquery-javascript
     var time = new Date().getTime()
     var date = new Date(time)
+    console.log(user, message)
 
 
-    if (message.value !== "" && message.SenderName !== nickname && message.Type == 'groupMessage') {
+    if (message.value !== "" && message.SenderName !== nickname && message.Type == 'groupMessage' && user.groupChatId == message.TargetId) {
       messagesCopy.push({sent: message.Sent, message: message.Message, date: date.toString().split("GMT")[0], user: message.SenderName}) 
       setMessages(messagesCopy)
-    } else if (message.value !== "" && message.Type == 'groupMessage') {
+    } else if (message.value !== "" && message.Type == 'groupMessage' && user.groupChatId == message.TargetId) {
       messagesCopy.push({sent: message.Sent, message: message.Message, date: date.toString().split("GMT")[0]}) 
       setMessages(messagesCopy)
     }

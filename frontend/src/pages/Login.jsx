@@ -49,7 +49,7 @@ export async function postImg(url = "", data = {}, boolean = true) {
 }
 let credentials = {};
 
-let loginFields = ["Nickname or email", "Password"];
+let loginFields = ["Nickname", "Password"];
 let signupFields = [
   "Nickname",
   "Email",
