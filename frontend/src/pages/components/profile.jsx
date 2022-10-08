@@ -202,7 +202,11 @@ export function Profile({userId, state, dispatch}) {
         <div className={styles.posts} >
           {profile.Posts?.map(i => {
             let cat = groups?.filter(x => x.CatId === i.CatId)
-            if (cat) {
+            if (i.Privacy == "almostprivate" && (i.AccessList.includes(nickname) || profile.User.Nickname == nickname)) {
+              return (
+                <PostComponent key={i.PostId} postInfo={{"Post": i}} dispatch={dispatch} group={cat[0].Title}/>
+              )
+            } else if (cat && i.Privacy == "public") {
               return (
                 <PostComponent key={i.PostId} postInfo={{"Post": i}} dispatch={dispatch} group={cat[0].Title}/>
               )

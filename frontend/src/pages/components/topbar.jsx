@@ -185,7 +185,7 @@ function ws2OnMessage(setNotifications, notifications) {
       } else {
         setNotifications([])
       }
-    })
+    }).catch(() => console.log("BAMB"))
     // setNotifications(mockNotifications)
   }
 }
@@ -273,6 +273,7 @@ export function TopBar({dispatch, state}) {
 
   useEffect(() => {
     wsSetup()
+    ws2Setup()
     getData("http://localhost:8000/api/v1/notifications-list/")
       .then(data => {
         // d = data

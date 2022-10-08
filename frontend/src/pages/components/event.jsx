@@ -90,7 +90,6 @@ function Description({
   catId,
 }) {
   function submitPost() {
-    console.log(catId)
     const postObj = {
       title: title,
       description: value,

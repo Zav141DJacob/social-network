@@ -37,22 +37,15 @@ export const wsSetup = () => {
 export const wsOnMessage = (notification, setNotification, setUsers, dispatch, getNotifications, lat) => {
   ws.onmessage = function(event) {
     let jsonData = JSON.parse(event.data)
-    if (jsonData.CategoryId >= 0 && jsonData.Type !== 'join') {
-      dispatch({type: "category", category: jsonData.CategoryId}) 
-      window.history.pushState("y2", "x3", `/group/${jsonData.CategoryId}`)
-      queryClient.invalidateQueries("groups")
-      return
-    }
     switch (jsonData.Type) {
       case "registerEvent": {
         ForwardWS2(jsonData)
-        console.log("WS EVENT")
       }
       case "follow":
         ForwardWS2(jsonData)  
         break
       case "registerGroup":
-        dispatch({type: "category", category: jsonData.CategoryId}) 
+        dispatch({type: "category", category: jsonData.CategoryId, catName: jsonData.CategoryTitle}) 
         window.history.pushState("y2", "x3", `/group/${jsonData.CategoryId}`)
         queryClient.invalidateQueries("groups")
         break
@@ -189,9 +182,16 @@ const AuthProvider = ({ children }) => {
   });
   if (!token && output.session) {
     setToken(output.session);
-    setNickname(output.uID)
     fetch("http://localhost:8000/api/v1/users/nickname/" + output.uID + "/")
       .then((item) => item.json().then(res =>  setUserInfo(res[0])))
+  }
+  if (!nickname && output.session) {
+    fetch('http://localhost:8000/api/v1/sessions/',
+      {method: "GET", mode:'cors', cache:'no-cache', credentials: 'include',  headers: {Authentication: output.session}})
+      .then(item => item.json().then(i => {
+        document.cookie = `uID=${i.Nickname}; path=/;`;
+        setNickname(i.Nickname)
+      }))
   }
 
   const handleLogout = () => {
@@ -199,6 +199,7 @@ const AuthProvider = ({ children }) => {
     document.cookie = "uID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; samesite=strict";
     setToken(null);
     setUserInfo(null);
+    setNickname(null)
     nav('/login', {replace:"true"})
   };
 

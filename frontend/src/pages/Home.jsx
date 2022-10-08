@@ -33,7 +33,6 @@ export default function Home({post, dispatch}) {
     if (x?.userId) {
       dispatch({type: "profile", Id: x.userId})
     }
-    ws2Setup()
   }, [])
 
   const [scrollValue, setScrollValue] = useState(0);

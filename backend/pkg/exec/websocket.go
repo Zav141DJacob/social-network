@@ -137,6 +137,9 @@ func (c *Client) reader(conn *websocket.Conn) {
 
 		// registers the user with their ID
     switch mode {
+    case "open": 
+      catId := v["catId"]
+      Manager.groupChats[IdType(catId.(float64))][c.id] = c.socket
     case "register":
       nickname := v["nickname"]
       user, err := FromUsers("nickname", nickname)
@@ -169,13 +172,9 @@ func (c *Client) reader(conn *websocket.Conn) {
       to.TargetId = IdType(catId.(float64))
       to.Description = description.(string)
       to.Type = mode
-      fmt.Println()
-      fmt.Printf("%+v", to)
-      fmt.Println()
 
       jsonTo, err := json.Marshal(to)
       if err != nil {
-        fmt.Println("DAMN")
         break
       }
       // s, err := strconv.ParseFloat(fmt.Sprintf("%v",targetId), 64)
@@ -200,7 +199,7 @@ func (c *Client) reader(conn *websocket.Conn) {
 
       // If target's connection is valid then WriteMessage to their connection
       for i, v := range members {
-        if i == 0 {
+        if i == 0  && catId.(float64) < 4{
           continue
         }
         targetUser, err := FromUsers("userId", v.UserId)
@@ -231,6 +230,8 @@ func (c *Client) reader(conn *websocket.Conn) {
           if key == c.id {
             continue
           }
+
+          err = v.WriteMessage(messageType, []byte(jsonTo))
           if v != conn {
             err = v.WriteMessage(messageType, []byte(jsonTo))
             if err != nil {
@@ -329,7 +330,9 @@ func (c *Client) reader(conn *websocket.Conn) {
     case "registerGroup":
       type toClient struct {
         CategoryId int
+        CategoryTitle string
         ErrCode    int
+        Type       string
       }
 
       to := toClient{}
@@ -364,6 +367,8 @@ func (c *Client) reader(conn *websocket.Conn) {
         }
         to.CategoryId = category[0].CatId
         to.ErrCode = errCode
+        to.CategoryTitle = title.(string)
+        to.Type = mode
 
         err = Post(1, to.CategoryId, "First post in " + title.(string), "Welcome to \"" + title.(string) + "\"", "none", "public", "")
         if err != nil {

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import styles from "./almostPrivateSelection.module.css";
 
 const AlmostPrivateSelection = ({ setViewers }) => {
   const [users, setUsers] = useState();
   const [addedUsers, setAddedUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState();
+  const myRef = useRef()
 
   if (!users) {
     const uList = fetch("http://localhost:8000/api/v1/users/", {})
@@ -28,18 +29,28 @@ const AlmostPrivateSelection = ({ setViewers }) => {
   };
 
   //add/remove users that will have access to post
-  const modifyAddedUsers = (e) => {
-    if (
+  const modifyAddedUsers = (e, user, inputText) => {
+    if ( 
       e.key === "Enter" &&
       !addedUsers.includes(e.target.value) &&
       filteredUsers.includes(e.target.value)
     ) {
       setAddedUsers((prev) => [...prev, e.target.value]);
+      setFilteredUsers([])
+      return;
+    } else if (e == 0 && user && !addedUsers.includes(user) && filteredUsers.includes(user)) {
+      setAddedUsers((prev) => [...prev, user]);
+      inputText.current.value = ""
+      setFilteredUsers([])
       return;
     }
-    if (e.target.innerText) {
+    if (e?.target?.innerText) {
       let temp = addedUsers;
       temp = temp.filter((value) => value !== e.target.innerText);
+      return setAddedUsers(temp);
+    } else {
+      let temp = addedUsers;
+      temp = temp.filter((value) => value !== user);
       return setAddedUsers(temp);
     }
   };
@@ -52,6 +63,7 @@ const AlmostPrivateSelection = ({ setViewers }) => {
     <div>
       <div className="user-list" id="userList">
         <input
+          ref={myRef}
           className={styles.search}
           list="users"
           placeholder="Search users..."
@@ -59,17 +71,17 @@ const AlmostPrivateSelection = ({ setViewers }) => {
           onKeyUp={modifyAddedUsers}
         />
         {filteredUsers && (
-          <datalist id="users">
+          <div id="users" className={styles.users}>
             {filteredUsers.map((user) => {
-              return <option value={user} />;
+              return <span key={user} className={styles.username} value={user} onClick={() => modifyAddedUsers(0, user, myRef)}>{user}</span>;
             })}
-          </datalist>
+          </div>
         )}
       </div>
       <div className={styles.addedUsers}>
         {addedUsers &&
           addedUsers.map((viewer) => {
-            return <p onClick={modifyAddedUsers}>{viewer} </p>;
+            return <p key={viewer} onClick={modifyAddedUsers}>{viewer} </p>;
           })}
       </div>
     </div>

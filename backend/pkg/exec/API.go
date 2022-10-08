@@ -2,6 +2,7 @@ package exec
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -110,7 +111,6 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 func UserAPI(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		fmt.Println("getting users")
 		var users []UserData
 		var err error
 
@@ -175,6 +175,29 @@ func UserAPI(w http.ResponseWriter, r *http.Request) {
 
 		// toDo: FrontEnd
 		// var isPrivate = v["Private"]
+
+		//if nickname is NOT entered, get and set a pseudorandom nickname
+		if v["Nickname"] == "" {
+
+			response, err := http.Get("https://names.drycodes.com/1")
+			if err != nil {
+				fmt.Print(err.Error())
+				nickname = firstName
+			}
+			responseData, err := ioutil.ReadAll(response.Body)
+    		if err != nil {
+				fmt.Print(err.Error())
+        		nickname = firstName
+    		}
+			defer response.Body.Close()
+			var responseObject []string
+			err = json.Unmarshal(responseData, &responseObject)
+			if err != nil {
+				fmt.Print(err.Error())
+        		nickname = firstName
+    		}
+			nickname = responseObject[0]
+		}
 
 		respUser := AuthRegister(nickname, email, password, firstName, lastName, age, bio, avatar)
 
@@ -362,15 +385,11 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			image   	:= v["image"]
 			privacy   	:= v["privacy"]
 			accessList  := v["accessList"]
-			fmt.Println("FROM API.go line 362", privacy)
 			if image == nil {
 				image = "no-image"
 				fmt.Println("image in v is NIL, v: ", v)
 			}
 
-			found := false
-
-			memberTo, err := FromGroupMembers("userId", auth.UserId)
 
 			if err != nil {
 				HandleErr(err)
@@ -378,20 +397,6 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			
-			for _, v := range memberTo {
-
-				if v.CatId == int(categoryId.(float64)) {
-					fmt.Println(v.CatId, categoryId)
-
-					found = true
-					break
-				}
-			}
-
-			if found == false {
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
 	
 			// user, err := FromSessions("sessionId", auth.)
 			
@@ -675,7 +680,6 @@ func CategoryAPI(w http.ResponseWriter, r *http.Request) {
       var catId = v["catId"]
       // var userToken = v["userToken"]
 
-      fmt.Println(userId, catId)
       stmt, err := Db.Prepare("INSERT INTO groupMembers (userId, catId) VALUES (?, ?)")
 
       if err != nil {
@@ -723,7 +727,6 @@ func SessionAPI(w http.ResponseWriter, r *http.Request) {
 		err := json.NewDecoder(r.Body).Decode(&v)
 		if err != nil {
 			HandleErr(err)
-			fmt.Println("found error in here")
 			w.WriteHeader(500)
 		}
 		// https://stackoverflow.com/questions/27595480/does-golang-request-parseform-work-with-application-json-content-type
@@ -1332,7 +1335,6 @@ func FollowerAPI(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		fmt.Println(followers)
 
 		for _, follower := range followers {
 			fmt.Println(follower.FollowerUserId, userId)

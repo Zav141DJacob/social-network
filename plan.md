@@ -87,8 +87,10 @@ TODO: if on a group page the post will be in that group only
 
 KAAREL 
 Registration
-  If nickname and avatar is not provided
-    Generate nickname and avatar
+  If nickname is not provided
+    Generate nickname (and check if it is available)
+  If avatar is not provided
+    BUG: default avatar is not working (front end problem?)
 
 OTO & ALEX
 Events
@@ -97,30 +99,18 @@ Events
     Invite users
     Attending users
     Event name, desc, date
-
-    Create event -> FE ws? (title, date, desc, group) => BE ws (group members get notified), insert event to DB, reply to FE => (eventId, statusCode == 201/40) 
-
-  BE
-    insert to db
-    send notification if created
-    get events from db
-   POST meetod event lisamiseks
-   fetch(backend:8000/v1/api/events/) <= BE saab aru et saada all evendid
-   fetch(backend:8000/v1/api/events/1) <= BE saab aru et saada event 1 data
-   fetch(.../categories/1) <= lisada event array igale grupile (header.go CategoryData, CategoryAPI get method)
-
-   
+  Send notification (BUG: user created group event doesn't send)
 
 Groups
-  Invite button
-    Open users modal
+  Invite button CSS
     Send notification to target
-
-Posts
-  Specify post privacy
-    Almost private
-      Open a users modal to choose who sees it
+  Show events
 
 Comments
   Image CSS
+  Add image button CSS
+  Hear me! button CSS
+
+Fix websocket problems
+Fix react-query
 
