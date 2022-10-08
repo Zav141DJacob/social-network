@@ -176,6 +176,7 @@ function ws2OnMessage(setNotifications, notifications) {
   //   return
   // }
   ws2.onmessage = function(event) {
+    console.log("DAVAI")
     // let jsonData = JSON.parse(event.data)
     getData("http://localhost:8000/api/v1/notifications-list/")
     .then(data => {
@@ -274,6 +275,7 @@ export function TopBar({dispatch, state}) {
 
   useEffect(() => {
     wsSetup()
+    ws2Setup()
     getData("http://localhost:8000/api/v1/notifications-list/")
       .then(data => {
         // d = data

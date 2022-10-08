@@ -169,13 +169,9 @@ func (c *Client) reader(conn *websocket.Conn) {
       to.TargetId = IdType(catId.(float64))
       to.Description = description.(string)
       to.Type = mode
-      fmt.Println()
-      fmt.Printf("%+v", to)
-      fmt.Println()
 
       jsonTo, err := json.Marshal(to)
       if err != nil {
-        fmt.Println("DAMN")
         break
       }
       // s, err := strconv.ParseFloat(fmt.Sprintf("%v",targetId), 64)
@@ -199,10 +195,7 @@ func (c *Client) reader(conn *websocket.Conn) {
       }
 
       // If target's connection is valid then WriteMessage to their connection
-      for i, v := range members {
-        if i == 0 {
-          continue
-        }
+      for _, v := range members {
         targetUser, err := FromUsers("userId", v.UserId)
         if v.UserId == int(c.id) {
           continue
@@ -227,10 +220,13 @@ func (c *Client) reader(conn *websocket.Conn) {
 
       // If target's connection is valid then WriteMessage to their connection
       if isValid {
+        fmt.Println("JAMMIN", len(value))
         for key, v := range value {
           if key == c.id {
             continue
           }
+
+          err = v.WriteMessage(messageType, []byte(jsonTo))
           if v != conn {
             err = v.WriteMessage(messageType, []byte(jsonTo))
             if err != nil {
