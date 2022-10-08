@@ -179,7 +179,6 @@ function ws2OnMessage(setNotifications, notifications) {
     // let jsonData = JSON.parse(event.data)
     getData("http://localhost:8000/api/v1/notifications-list/")
     .then(data => {
-      console.log(data)
       // d = data
       if (data) {
         setNotifications(data)

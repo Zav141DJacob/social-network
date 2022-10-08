@@ -35,7 +35,6 @@ const getMessages = (setMessages, messages, targetUser, mode = "default", nickna
               .then((user) => {
                 let messagesCopy = []
                 xd?.forEach((elem) => {
-                  console.log(targetUser, elem)
                   if (elem.SenderName !== nickname && targetUser.groupChatId == elem.TargetId) {
                     if (prevSender !== elem.SenderName) {
                       prevSender = elem.SenderName
@@ -110,7 +109,6 @@ export function GroupMessageBox({user, closeHandler, getOnlineUsers, dispatch, m
     // https://stackoverflow.com/questions/4673527/converting-milliseconds-to-a-date-jquery-javascript
     var time = new Date().getTime()
     var date = new Date(time)
-    console.log(user, message)
 
 
     if (message.value !== "" && message.SenderName !== nickname && message.Type == 'groupMessage' && user.groupChatId == message.TargetId) {

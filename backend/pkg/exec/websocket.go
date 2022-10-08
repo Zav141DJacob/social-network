@@ -137,6 +137,9 @@ func (c *Client) reader(conn *websocket.Conn) {
 
 		// registers the user with their ID
     switch mode {
+    case "open": 
+      catId := v["catId"]
+      Manager.groupChats[IdType(catId.(float64))][c.id] = c.socket
     case "register":
       nickname := v["nickname"]
       user, err := FromUsers("nickname", nickname)

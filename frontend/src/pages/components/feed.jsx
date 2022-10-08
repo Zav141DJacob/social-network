@@ -28,9 +28,7 @@ export function Feed({
     data: posts,
     isError,
     error,
-  } = useQuery(["posts"], fetchPosts, {
-    refetchOnWindowFocus: false
-  });
+  } = useQuery(["posts"], fetchPosts);
 
   function join() {
     const postObj = { catId: selectedCat.postCat, nickname: nickname };
@@ -51,6 +49,7 @@ export function Feed({
 
   useEffect(() => {
     if (selectedCat.postCat) {
+      ws.send(JSON.stringify({catId: parseInt(selectedCat.postCat), mode: "open"}))
       setPostCopy(
         posts?.filter((post) => {return post.Post.CatId == selectedCat.postCat}).reverse()
       );
@@ -98,7 +97,7 @@ export function Feed({
             <span className={styles.moduleLabel}>
               Invite people to {selectedCat.catName}
             </span>
-            {groups[0].Nonmembers &&
+            {groups[0]?.Nonmembers &&
               groups[0]?.Nonmembers.map((follower) => {
                 console.log(follower.Avatar);
                 return (
@@ -165,7 +164,7 @@ export function Feed({
         </div>
       </div>
     );
-  } else if (state.public === undefined) {
+  } else if (groups?.IsPublic) {
     return (
       <div className={styles.feed} ref={forwardRef}>
         <div className={styles.posts}>
