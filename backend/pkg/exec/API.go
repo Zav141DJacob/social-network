@@ -2,6 +2,7 @@ package exec
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -175,6 +176,29 @@ func UserAPI(w http.ResponseWriter, r *http.Request) {
 
 		// toDo: FrontEnd
 		// var isPrivate = v["Private"]
+
+		//if nickname is NOT entered, get and set a pseudorandom nickname
+		if v["Nickname"] == "" {
+
+			response, err := http.Get("https://names.drycodes.com/1")
+			if err != nil {
+				fmt.Print(err.Error())
+				nickname = firstName
+			}
+			responseData, err := ioutil.ReadAll(response.Body)
+    		if err != nil {
+				fmt.Print(err.Error())
+        		nickname = firstName
+    		}
+			defer response.Body.Close()
+			var responseObject []string
+			err = json.Unmarshal(responseData, &responseObject)
+			if err != nil {
+				fmt.Print(err.Error())
+        		nickname = firstName
+    		}
+			nickname = responseObject[0]
+		}
 
 		respUser := AuthRegister(nickname, email, password, firstName, lastName, age, bio, avatar)
 
