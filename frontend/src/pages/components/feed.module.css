@@ -4,6 +4,7 @@
   overflow-x: hidden;
 }
 .creator {
+  z-index:1;
   position: relative;
   left: 50%;
   transform: translate(-50%);
@@ -534,6 +535,24 @@
   color: rgb(232, 230, 227);
   cursor: pointer;
 }
+
+.joinedBtn{
+  position: relative;
+  z-index: 2;
+  top: 100px;
+  width: 150px;
+  height: 30.77px;
+  background: rgb(14, 57, 22);
+  border-radius: 7px;
+  font-family: "Helvetica Neue", Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 29px;
+  border: none;
+  color: rgb(232, 230, 227);
+  cursor: pointer;
+}
 .inviteBtn {
   position: relative;
   z-index: 2;
@@ -554,6 +573,7 @@
 
 .btns {
 	display: flex;
+  z-index: 0;
 	justify-content: space-evenly;
 	width: 600px;
 	position: relative;

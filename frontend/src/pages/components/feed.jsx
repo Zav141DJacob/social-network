@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import styles from "./feed.module.css";
-import { useAuth, ws, wsOnMessage, wsSetup } from "../../App";
+import { useAuth, userInfo , ws, wsOnMessage, wsSetup } from "../../App";
 import { PostComponent } from "./post";
 import { throttle } from "lodash";
 import { postData } from "../Login";
@@ -18,8 +18,9 @@ export function Feed({
   scrollValue,
 }) {
   const queryClient = useQueryClient();
-  const { nickname } = useAuth();
+  const { nickname, userInfo } = useAuth();
   const [postCopy, setPostCopy] = useState();
+  const [joined, setJoined] = useState(null)
   const throttler = useRef(
     throttle((newVal, ref) => ref?.current?.scroll({ top: newVal }), 40)
   );
@@ -31,6 +32,11 @@ export function Feed({
   } = useQuery(["posts"], fetchPosts);
 
   function join() {
+    const postObj = { catId: selectedCat.postCat, nickname: nickname };
+    ws.send(JSON.stringify({ ...postObj, mode: "join" }));
+  }
+
+  function unjoin() {
     const postObj = { catId: selectedCat.postCat, nickname: nickname };
     ws.send(JSON.stringify({ ...postObj, mode: "join" }));
   }
@@ -49,6 +55,10 @@ export function Feed({
 
   useEffect(() => {
     if (selectedCat.postCat) {
+      if (groups) {
+        console.log(groups, joined)
+        setJoined(groups[0]?.Members?.filter(i => i.UserId == userInfo.UserId))
+      }
       ws.send(JSON.stringify({catId: parseInt(selectedCat.postCat), mode: "open"}))
       setPostCopy(
         posts?.filter((post) => {return post.Post.CatId == selectedCat.postCat}).reverse()
@@ -75,7 +85,7 @@ export function Feed({
         {selectedCat?.postCat && (
           <div className={styles.btns}>
               <button onClick={() => dispatch({ type: "inviteGroup" })} className={styles.inviteBtn} >Invite</button>
-              <button className={styles.joinBtn} onClick={join}>Join</button>
+            {joined ? <button className={styles.joinBtn} onClick={join}>Join</button> : <button className={styles.joinedBtn} onClick={unjoin}>Joined</button>}
           <button
             className={styles.groupChatBtn}
             onClick={() =>
