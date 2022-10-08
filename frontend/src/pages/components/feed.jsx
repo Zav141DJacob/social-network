@@ -33,9 +33,6 @@ export function Feed({
     const postObj = { catId: selectedCat.postCat, nickname: nickname };
     ws.send(JSON.stringify({ ...postObj, mode: "join" }));
   }
-  useEffect(() => {
-    wsSetup();
-  }, []);
 
   useEffect(() => {
     if (forwardRef.current) {
