@@ -37,12 +37,6 @@ export const wsSetup = () => {
 export const wsOnMessage = (notification, setNotification, setUsers, dispatch, getNotifications, lat) => {
   ws.onmessage = function(event) {
     let jsonData = JSON.parse(event.data)
-    if (jsonData.CategoryId >= 0 && jsonData.Type !== 'join') {
-      dispatch({type: "category", category: jsonData.CategoryId}) 
-      window.history.pushState("y2", "x3", `/group/${jsonData.CategoryId}`)
-      queryClient.invalidateQueries("groups")
-      return
-    }
     switch (jsonData.Type) {
       case "registerEvent": {
         ForwardWS2(jsonData)
@@ -51,7 +45,7 @@ export const wsOnMessage = (notification, setNotification, setUsers, dispatch, g
         ForwardWS2(jsonData)  
         break
       case "registerGroup":
-        dispatch({type: "category", category: jsonData.CategoryId}) 
+        dispatch({type: "category", category: jsonData.CategoryId, catName: jsonData.CategoryTitle}) 
         window.history.pushState("y2", "x3", `/group/${jsonData.CategoryId}`)
         queryClient.invalidateQueries("groups")
         break

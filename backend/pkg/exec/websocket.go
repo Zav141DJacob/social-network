@@ -330,7 +330,9 @@ func (c *Client) reader(conn *websocket.Conn) {
     case "registerGroup":
       type toClient struct {
         CategoryId int
+        CategoryTitle string
         ErrCode    int
+        Type       string
       }
 
       to := toClient{}
@@ -365,6 +367,8 @@ func (c *Client) reader(conn *websocket.Conn) {
         }
         to.CategoryId = category[0].CatId
         to.ErrCode = errCode
+        to.CategoryTitle = title.(string)
+        to.Type = mode
 
         err = Post(1, to.CategoryId, "First post in " + title.(string), "Welcome to \"" + title.(string) + "\"", "none", "public", "")
         if err != nil {
