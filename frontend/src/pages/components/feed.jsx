@@ -73,11 +73,24 @@ export function Feed({
           <CreatePost dispatch={dispatch} state={state} />
         )}
         {selectedCat?.postCat && (
-          <div
-            onClick={() => dispatch({ type: "inviteGroup" })}
-            className={styles.inviteBtn}
+          <div className={styles.btns}>
+              <button onClick={() => dispatch({ type: "inviteGroup" })} className={styles.inviteBtn} >Invite</button>
+              <button className={styles.joinBtn} onClick={join}>Join</button>
+          <button
+            className={styles.groupChatBtn}
+            onClick={() =>
+                dispatch({
+                  type: "groupChat",
+                  groupChatCat: state.catName,
+                  groupChatId: state.postCat,
+                })
+            }
           >
-            <button>Invite</button>
+            <svg className={styles.groupChatBtnIcon} viewBox="0 0 24 24">
+              <path d="M12 6a4 4 0 0 1 4 3 4 4 0 0 1-4 4 4 4 0 0 1-3-4 4 4 0 0 1 3-3M5 8h2c-1 2 0 3 1 4l-3 2a3 3 0 0 1-3-3 3 3 0 0 1 3-3m14 0a3 3 0 0 1 3 3 3 3 0 0 1-3 3l-3-2c1-1 2-2 1-4h2M6 18c0-2 2-3 6-3s7 1 7 3v2H6v-2m-6 2v-1c0-2 2-3 4-3v4H0m24 0h-3v-2l-1-2c2 0 4 1 4 3v1Z" />
+            </svg>
+            Group chat
+          </button>
           </div>
         )}
         {selectedCat?.inviteGroup && (
@@ -98,51 +111,34 @@ export function Feed({
               Invite people to {selectedCat.catName}
             </span>
             {groups[0]?.Nonmembers &&
-              groups[0]?.Nonmembers.map((follower) => {
-                console.log(follower.Avatar);
-                return (
-                  <div key={follower.UserId} className={styles.follower}>
-                    {follower.Avatar && (
-                      <div className={styles.followerAvatar}>
-                        <img
-                          className={styles.followerAvatarImg}
-                          src={`http://localhost:8000/static/${follower.Avatar}`}
-                        />
+                groups[0]?.Nonmembers.map((follower) => {
+                  console.log(follower.Avatar);
+                  return (
+                    <div key={follower.UserId} className={styles.follower}>
+                      {follower.Avatar && (
+                        <div className={styles.followerAvatar}>
+                          <img
+                            className={styles.followerAvatarImg}
+                            src={`http://localhost:8000/static/${follower.Avatar}`}
+                          />
+                        </div>
+                      )}
+                      <div
+                        className={styles.followerNickname}
+                        onClick={() =>
+                            dispatch({
+                              type: "profile",
+                              Id: `${follower.Nickname}`,
+                            })
+                        }
+                      >
+                        {follower.Nickname}
                       </div>
-                    )}
-                    <div
-                      className={styles.followerNickname}
-                      onClick={() =>
-                        dispatch({
-                          type: "profile",
-                          Id: `${follower.Nickname}`,
-                        })
-                      }
-                    >
-                      {follower.Nickname}
+                      <button className={styles.inviteUserBtn}>Invite</button>
                     </div>
-                    <button className={styles.inviteUserBtn}>Invite</button>
-                  </div>
-                );
-              })}
+                  );
+                })}
           </div>
-        )}
-        {selectedCat?.postCat && (
-          <button
-            className={styles.groupChatBtn}
-            onClick={() =>
-              dispatch({
-                type: "groupChat",
-                groupChatCat: state.catName,
-                groupChatId: state.postCat,
-              })
-            }
-          >
-            <svg className={styles.groupChatBtnIcon} viewBox="0 0 24 24">
-              <path d="M12 6a4 4 0 0 1 4 3 4 4 0 0 1-4 4 4 4 0 0 1-3-4 4 4 0 0 1 3-3M5 8h2c-1 2 0 3 1 4l-3 2a3 3 0 0 1-3-3 3 3 0 0 1 3-3m14 0a3 3 0 0 1 3 3 3 3 0 0 1-3 3l-3-2c1-1 2-2 1-4h2M6 18c0-2 2-3 6-3s7 1 7 3v2H6v-2m-6 2v-1c0-2 2-3 4-3v4H0m24 0h-3v-2l-1-2c2 0 4 1 4 3v1Z" />
-            </svg>
-            Group chat
-          </button>
         )}
         <div className={styles.posts}>
           {postCopy?.map((i) => {
@@ -167,6 +163,9 @@ export function Feed({
   } else if (groups?.IsPublic) {
     return (
       <div className={styles.feed} ref={forwardRef}>
+        <div className={styles.joinBtn}>
+          <button onClick={join}>Join</button>
+        </div>
         <div className={styles.posts}>
           {postCopy?.map((i) => {
             if (
