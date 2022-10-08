@@ -189,8 +189,14 @@ const AuthProvider = ({ children }) => {
     output[pair[0]] = pair.splice(1).join('=');
   });
   if (!token && output.session) {
+    fetch('http://localhost:8000/api/v1/sessions/',
+      {method: "GET", mode:'cors', cache:'no-cache', credentials: 'include',  headers: {Authentication: output.session}})
+      .then(item => item.json().then(i => {
+        console.log(i)
+        document.cookie = `uID=${i.Nickname}; path=/;`;
+        setNickname(i.Nickname)
+      }))
     setToken(output.session);
-    setNickname(output.uID)
     fetch("http://localhost:8000/api/v1/users/nickname/" + output.uID + "/")
       .then((item) => item.json().then(res =>  setUserInfo(res[0])))
   }
