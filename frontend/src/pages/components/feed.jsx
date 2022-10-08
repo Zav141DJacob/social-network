@@ -45,6 +45,7 @@ export function Feed({
     if (forwardRef.current) {
       throttler.current(scrollValue, forwardRef);
     }
+    console.log(joined)
   });
 
   const { data: groups } = useQuery(["groups"], fetchGroups, {
@@ -56,8 +57,8 @@ export function Feed({
   useEffect(() => {
     if (selectedCat.postCat) {
       if (groups) {
-        console.log(groups, joined)
-        setJoined(groups[0]?.Members?.filter(i => i.UserId == userInfo.UserId))
+        console.log(groups, userInfo.UserId)
+        setJoined(groups[0]?.Members?.some(i => {console.log(i.UserId, userInfo.UserId); return i.UserId == userInfo.UserId}))
       }
       ws.send(JSON.stringify({catId: parseInt(selectedCat.postCat), mode: "open"}))
       setPostCopy(
@@ -85,7 +86,7 @@ export function Feed({
         {selectedCat?.postCat && (
           <div className={styles.btns}>
               <button onClick={() => dispatch({ type: "inviteGroup" })} className={styles.inviteBtn} >Invite</button>
-            {joined ? <button className={styles.joinBtn} onClick={join}>Join</button> : <button className={styles.joinedBtn} onClick={unjoin}>Joined</button>}
+            {!joined ? <button className={styles.joinBtn} onClick={join}>Join</button> : <button className={styles.joinedBtn} onClick={unjoin}>Joined</button>}
           <button
             className={styles.groupChatBtn}
             onClick={() =>
@@ -122,7 +123,6 @@ export function Feed({
             </span>
             {groups[0]?.Nonmembers &&
                 groups[0]?.Nonmembers.map((follower) => {
-                  console.log(follower.Avatar);
                   return (
                     <div key={follower.UserId} className={styles.follower}>
                       {follower.Avatar && (
