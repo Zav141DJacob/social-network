@@ -43,7 +43,7 @@ export function Profile({userId, state, dispatch}) {
               'Content-Type': 'application/json',
               'Authentication': output.session,
             },})
-          .then((item) => {setAccess(state.profileId == nickname || item.status != 401);item.json().then(res =>  setProfile({...res, Posts: res.Posts.reverse()}))})
+          .then((item) => {setAccess(state.profileId == nickname || item.status != 401);item.json().then(res =>  setProfile({...res, Posts: res?.Posts?.reverse()}))})
         window.history.pushState("y2", "x3", `/users/${state.profileId}`)
       } else if (userId) {
         fetch(`http://localhost:8000/api/v1/profile/?nickname=${userId}`,

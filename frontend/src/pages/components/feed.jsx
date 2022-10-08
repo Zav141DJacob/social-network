@@ -52,7 +52,7 @@ export function Feed({
   useEffect(() => {
     if (selectedCat.postCat) {
       setPostCopy(
-        posts?.filter((post) => {console.log(post); return post.Post.CatId == selectedCat.postCat}).reverse()
+        posts?.filter((post) => {return post.Post.CatId == selectedCat.postCat}).reverse()
       );
     } else {
       setPostCopy(posts?.slice().reverse());
@@ -288,7 +288,6 @@ function Description({
           .catch((err) => console.log("FOUND ERROR\n", err));
       });
     } else {
-      console.log(123, postViewers)
       const postObj = {
         title: title,
         body: value,

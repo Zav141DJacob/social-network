@@ -35,7 +35,8 @@ const getMessages = (setMessages, messages, targetUser, mode = "default", nickna
               .then((user) => {
                 let messagesCopy = []
                 xd?.forEach((elem) => {
-                  if (elem.SenderName !== nickname) {
+                  console.log(elem)
+                  if (elem.SenderName !== nickname && targetUser.postCat == elem.TargetId) {
                     if (prevSender !== elem.SenderName) {
                       prevSender = elem.SenderName
                       messagesCopy.push({

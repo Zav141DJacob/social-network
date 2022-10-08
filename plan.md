@@ -111,4 +111,6 @@ Comments
   Add image button CSS
   Hear me! button CSS
 
+Fix websocket problems
+Fix react-query
 

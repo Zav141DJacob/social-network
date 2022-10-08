@@ -43,6 +43,7 @@ export const wsOnMessage = (notification, setNotification, setUsers, dispatch, g
       queryClient.invalidateQueries("groups")
       return
     }
+    console.log(jsonData)
     switch (jsonData.Type) {
       case "registerEvent": {
         ForwardWS2(jsonData)

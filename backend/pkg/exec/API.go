@@ -374,6 +374,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			memberTo, err := FromGroupMembers("userId", auth.UserId)
 
 			if err != nil {
+        fmt.Println("DAMN ITS A ERROR")
 				HandleErr(err)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
@@ -390,6 +391,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if found == false {
+        fmt.Println("ERROR YES 911")
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
@@ -410,6 +412,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(accessList)
 			err = Post(auth.UserId, categoryId, title, body, image, privacy, accessList)
 			if err != nil {
+        fmt.Println("DAMN ITS A ERROR 2")
 				HandleErr(err)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
@@ -418,6 +421,7 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			posts, err := FromPosts("", "")
 			if err != nil {
 				HandleErr(err)
+        fmt.Println("DAMN ITS A ERROR 3")
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
