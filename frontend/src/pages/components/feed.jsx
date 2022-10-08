@@ -45,7 +45,6 @@ export function Feed({
     if (forwardRef.current) {
       throttler.current(scrollValue, forwardRef);
     }
-    console.log(joined)
   });
 
   const { data: groups } = useQuery(["groups"], fetchGroups, {
@@ -57,8 +56,7 @@ export function Feed({
   useEffect(() => {
     if (selectedCat.postCat) {
       if (groups) {
-        console.log(groups, userInfo.UserId)
-        setJoined(groups[0]?.Members?.some(i => {console.log(i.UserId, userInfo.UserId); return i.UserId == userInfo.UserId}))
+        setJoined(groups[0]?.Members?.some(i => i.UserId == userInfo.UserId))
       }
       ws.send(JSON.stringify({catId: parseInt(selectedCat.postCat), mode: "open"}))
       setPostCopy(
