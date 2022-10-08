@@ -83,16 +83,22 @@ export async function fetchPostComments({queryKey}) {
 export async function fetchAvatar({queryKey}) {
   let id = queryKey[1];
   return await fetch("http://localhost:8000/api/v1/users/nickname/" + id + "/")
-      .then((item) => item.json().then(res =>  res[0].Avatar))
+    .then((item) => item.json().then(res => {
+      if (res?.length > 0) {
+        return res[0]?.Avatar
+      } else {
+        return null
+      }
+    }))
 }
 export async function fetchGroups() {
   let output = findCookies();
   return await fetch(`http://localhost:8000/api/v1/categories/`, {
-        method: "GET",
-        mode: "cors",
-        cache: "no-cache",
-        credentials: "include",
-        headers: { Authentication: output.session },
+    method: "GET",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
+    headers: { Authentication: output.session },
   }).then((response) =>
     response.json()
   );

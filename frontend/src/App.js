@@ -189,16 +189,17 @@ const AuthProvider = ({ children }) => {
     output[pair[0]] = pair.splice(1).join('=');
   });
   if (!token && output.session) {
-    fetch('http://localhost:8000/api/v1/sessions/',
-      {method: "GET", mode:'cors', cache:'no-cache', credentials: 'include',  headers: {Authentication: output.session}})
-      .then(item => item.json().then(i => {
-        console.log(i)
-        document.cookie = `uID=${i.Nickname}; path=/;`;
-        setNickname(i.Nickname)
-      }))
     setToken(output.session);
     fetch("http://localhost:8000/api/v1/users/nickname/" + output.uID + "/")
       .then((item) => item.json().then(res =>  setUserInfo(res[0])))
+  }
+  if (!nickname && output.session) {
+    fetch('http://localhost:8000/api/v1/sessions/',
+      {method: "GET", mode:'cors', cache:'no-cache', credentials: 'include',  headers: {Authentication: output.session}})
+      .then(item => item.json().then(i => {
+        document.cookie = `uID=${i.Nickname}; path=/;`;
+        setNickname(i.Nickname)
+      }))
   }
 
   const handleLogout = () => {
@@ -206,6 +207,7 @@ const AuthProvider = ({ children }) => {
     document.cookie = "uID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; samesite=strict";
     setToken(null);
     setUserInfo(null);
+    setNickname(null)
     nav('/login', {replace:"true"})
   };
 

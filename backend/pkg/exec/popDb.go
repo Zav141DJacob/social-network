@@ -60,7 +60,7 @@ func users() error {
 	}
 	Register("Kertu", "kertu.saul@gmail.com", "q1w2e3r4t5y6", "Kertu", "Saul", "22", "CTRL+F", "kertu.png")
 	Register("Alexxx", "alex.viik@gmail.com", "aaaaaaaa", "Alex", "Viik", "28", "Wowwww123123", "alex.png")
-	Register("testuser", "test.user@gmail.com", "testuser", "test", "user", "22", "testuser", "testuser.png")
+	Register("testuser", "test.user@gmail.com", "testuser", "test", "user", "22", "testuser", "default-avatar.png")
 	return nil
 }
 
