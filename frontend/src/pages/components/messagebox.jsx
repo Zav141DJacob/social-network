@@ -118,7 +118,7 @@ const deleteNotification = (fromUserId, notification, setNotification) => {
     }),
   })
     .then(() => {
-      queryClient.invalidateQueries("notifications")
+      queryClient.invalidateQueries(["notifications"])
     });
   // console.log("delete")
 }

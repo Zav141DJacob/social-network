@@ -21,6 +21,7 @@ export function Feed({
   const { nickname, userInfo } = useAuth();
   const [postCopy, setPostCopy] = useState();
   const [joined, setJoined] = useState(null)
+  const [done, setDone] = useState(false)
   const throttler = useRef(
     throttle((newVal, ref) => ref?.current?.scroll({ top: newVal }), 40)
   );
@@ -65,17 +66,18 @@ export function Feed({
     } else {
       setPostCopy(posts?.slice().reverse());
     }
+    setDone(true)
   }, [posts, selectedCat]);
 
   if (isLoading) {
-    return <div>loading</div>;
+    return <div/>;
   }
 
   if (isError) {
     return <div>{error.message}</div>;
   }
 
-  if (postCopy?.length > 0) {
+  if (postCopy?.length > 0 && done) {
     return (
       <div className={styles.feed} ref={forwardRef}>
         {selectedCat?.postCat && (
@@ -168,7 +170,7 @@ export function Feed({
         </div>
       </div>
     );
-  } else if (groups?.IsPublic) {
+  } else if (groups?.IsPublic && done) {
     return (
       <div className={styles.feed} ref={forwardRef}>
         <div className={styles.joinBtn}>
@@ -193,7 +195,7 @@ export function Feed({
         </div>
       </div>
     );
-  } else {
+  } else if (done) {
     return (
       <div className={styles.feed} ref={forwardRef}>
         <div className={styles.posts}>

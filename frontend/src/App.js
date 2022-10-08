@@ -1,6 +1,5 @@
 import './App.css';
 import {PrivateRoute} from './utils/PrivateRoute'
-import Login from './pages/Login'
 import { Routes, Route,  useNavigate } from 'react-router-dom';
 import React, { Suspense, useReducer, useState, createContext, useContext, useEffect} from 'react'
 import {ForwardWS2} from './utils/WsCases'
@@ -10,6 +9,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 export const queryClient = new QueryClient()
 
 const Home = React.lazy(() => import('./pages/Home'))
+const Login = React.lazy(() => import('./pages/Login'))
 let ws = {}
 export {ws}
 export const findCookies = () => {
@@ -48,7 +48,7 @@ export const wsOnMessage = (notification, setNotification, setUsers, dispatch, g
       case "registerGroup":
         dispatch({type: "category", category: jsonData.CategoryId, catName: jsonData.CategoryTitle}) 
         window.history.pushState("y2", "x3", `/group/${jsonData.CategoryId}`)
-        queryClient.invalidateQueries("groups")
+        queryClient.invalidateQueries(["groups"])
         break
       case "join":
         ForwardWS2(jsonData)
@@ -165,12 +165,14 @@ function postReducer(state, action) {
     case 'home':
      window.history.pushState("Home.jsx:31", "Home.jsx:31", `/`)
       return defaultFalse
+    case 'logout':
+      return {}
     default:
       throw Error('Unknown action', action.type)
   }
 }
 
-const AuthProvider = ({ children }) => {
+const AuthProvider = ({ children, dispatch }) => {
   const [token, setToken] = useState(null);
   const [nickname, setNickname] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
@@ -198,6 +200,7 @@ const AuthProvider = ({ children }) => {
   const handleLogout = () => {
     document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; samesite=strict";
     document.cookie = "uID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; samesite=strict";
+    dispatch({type: "logout"})
     setToken(null);
     setUserInfo(null);
     setNickname(null)
@@ -253,7 +256,7 @@ function App() {
   return (
     <div className="App">
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
+        <AuthProvider dispatch={dispatch}>
           <Suspense fallback={<div/>}>
             <Routes>
               <Route path='/login' element={<Login />} />

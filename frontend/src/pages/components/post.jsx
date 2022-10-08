@@ -33,7 +33,7 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
     initialData: () => {return []}
   })
   const {mutate: insertNewComment} = useMutation(addComment, {
-    onSuccess: () => queryClient.invalidateQueries("comments"),
+    onSuccess: () => queryClient.invalidateQueries(["comments"]),
   }
   )
 
@@ -148,7 +148,7 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
     });
   };
   if (isLoading && !postData) {
-    return <div>Loading...</div>
+    return <div/>
   }
   if (postData) {
     return (
