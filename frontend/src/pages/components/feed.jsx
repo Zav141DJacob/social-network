@@ -8,6 +8,7 @@ import { findCookies } from "./right-sidebar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchPosts, fetchGroups } from "../../utils/queries";
 import AlmostPrivateSelection from "./almostPrivateSelection";
+import {ws2, ws2Setup} from './topbar'
 
 export function Feed({
   selectedCat,
@@ -27,7 +28,9 @@ export function Feed({
     data: posts,
     isError,
     error,
-  } = useQuery(["posts"], fetchPosts);
+  } = useQuery(["posts"], fetchPosts, {
+    refetchOnWindowFocus: false
+  });
 
   function join() {
     const postObj = { catId: selectedCat.postCat, nickname: nickname };

@@ -195,7 +195,10 @@ func (c *Client) reader(conn *websocket.Conn) {
       }
 
       // If target's connection is valid then WriteMessage to their connection
-      for _, v := range members {
+      for i, v := range members {
+        if i == 0  && catId.(float64) < 4{
+          continue
+        }
         targetUser, err := FromUsers("userId", v.UserId)
         if v.UserId == int(c.id) {
           continue
@@ -220,7 +223,6 @@ func (c *Client) reader(conn *websocket.Conn) {
 
       // If target's connection is valid then WriteMessage to their connection
       if isValid {
-        fmt.Println("JAMMIN", len(value))
         for key, v := range value {
           if key == c.id {
             continue
