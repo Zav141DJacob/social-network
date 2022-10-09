@@ -8,7 +8,8 @@ import { findCookies } from "./right-sidebar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchPosts, fetchGroups } from "../../utils/queries";
 import AlmostPrivateSelection from "./almostPrivateSelection";
-import {ws2, ws2Setup} from './topbar'
+import {fetchEvents} from "../../utils/queries"
+import {calculateCountdown} from '../../utils/PrivateRoute'
 
 export function Feed({
   selectedCat,
@@ -17,7 +18,6 @@ export function Feed({
   forwardRef,
   scrollValue,
 }) {
-  const queryClient = useQueryClient();
   const { nickname, userInfo } = useAuth();
   const [postCopy, setPostCopy] = useState();
   const [joined, setJoined] = useState(null)
@@ -25,6 +25,7 @@ export function Feed({
   const throttler = useRef(
     throttle((newVal, ref) => ref?.current?.scroll({ top: newVal }), 40)
   );
+
   const {
     isLoading,
     data: posts,
@@ -53,6 +54,11 @@ export function Feed({
     select: (i) => i.filter((e) => e.CatId == state.postCat),
     refetchOnMount: false,
   });
+
+  const {isLoading2, isError2, data: events} = useQuery(["events", state.postCat], fetchEvents, {
+    enabled: !!selectedCat?.postCat,
+    select: (i) => i.filter((e) => e.Event.GroupId == state.postCat),
+  })
 
   useEffect(() => {
     if (selectedCat.postCat) {
@@ -85,23 +91,23 @@ export function Feed({
         )}
         {selectedCat?.postCat && (
           <div className={styles.btns}>
-              <button onClick={() => dispatch({ type: "inviteGroup" })} className={styles.inviteBtn} >Invite</button>
+            <button onClick={() => dispatch({ type: "inviteGroup" })} className={styles.inviteBtn} >Invite</button>
             {!joined ? <button className={styles.joinBtn} onClick={join}>Join</button> : <button className={styles.joinedBtn} onClick={unjoin}>Joined</button>}
-          <button
-            className={styles.groupChatBtn}
-            onClick={() =>
-                dispatch({
-                  type: "groupChat",
-                  groupChatCat: state.catName,
-                  groupChatId: state.postCat,
-                })
-            }
-          >
-            <svg className={styles.groupChatBtnIcon} viewBox="0 0 24 24">
-              <path d="M12 6a4 4 0 0 1 4 3 4 4 0 0 1-4 4 4 4 0 0 1-3-4 4 4 0 0 1 3-3M5 8h2c-1 2 0 3 1 4l-3 2a3 3 0 0 1-3-3 3 3 0 0 1 3-3m14 0a3 3 0 0 1 3 3 3 3 0 0 1-3 3l-3-2c1-1 2-2 1-4h2M6 18c0-2 2-3 6-3s7 1 7 3v2H6v-2m-6 2v-1c0-2 2-3 4-3v4H0m24 0h-3v-2l-1-2c2 0 4 1 4 3v1Z" />
-            </svg>
-            Group chat
-          </button>
+            <button
+              className={styles.groupChatBtn}
+              onClick={() =>
+                  dispatch({
+                    type: "groupChat",
+                    groupChatCat: state.catName,
+                    groupChatId: state.postCat,
+                  })
+              }
+            >
+              <svg className={styles.groupChatBtnIcon} viewBox="0 0 24 24">
+                <path d="M12 6a4 4 0 0 1 4 3 4 4 0 0 1-4 4 4 4 0 0 1-3-4 4 4 0 0 1 3-3M5 8h2c-1 2 0 3 1 4l-3 2a3 3 0 0 1-3-3 3 3 0 0 1 3-3m14 0a3 3 0 0 1 3 3 3 3 0 0 1-3 3l-3-2c1-1 2-2 1-4h2M6 18c0-2 2-3 6-3s7 1 7 3v2H6v-2m-6 2v-1c0-2 2-3 4-3v4H0m24 0h-3v-2l-1-2c2 0 4 1 4 3v1Z" />
+              </svg>
+              Group chat
+            </button>
           </div>
         )}
         {selectedCat?.inviteGroup && (
@@ -150,6 +156,44 @@ export function Feed({
                 })}
           </div>
         )}
+        {events && 
+          <div className={styles.events}>
+            {events.map((i) => { 
+              let date = calculateCountdown(i.Event.Date)
+              if (!date) {
+                return false
+              }
+              return (
+                <div key={i.Event.EventId} className={styles.eventContainer} onClick={() => dispatch({type: "event", eventId: i.Event.EventId})}>
+                  <div className={styles.eventCountdown}>
+                    <div>{date.days ? `${date.days} days ` : ""} {date.hours ? `${date.hours} hours ` : ""}
+                      {!date.days && date.min ? `${date.min} min` : ""} until
+                    </div>
+                  </div>
+                  <div className={styles.eventIllustration}>
+                    <svg viewBox="0 0 100 100" width="100" height="100">
+                      <defs>
+                        <path id="circle"
+                          d="
+                          M 50, 50
+                          m -37, 0
+                          a 37,37 0 1,1 74,0
+                          a 37,37 0 1,1 -74,0"/>
+                      </defs>
+                      <text fill="white" font-size="17">
+                        <textPath xlinkHref="#circle">
+                          {i.Event.Title}
+                        </textPath>
+                      </text>
+                    </svg>
+                  </div>
+                  <div className={styles.eventTitle}>
+                    {i.Event.Title}
+                  </div>
+                </div>
+              )})}
+          </div>
+        }
         <div className={styles.posts}>
           {postCopy?.map((i) => {
             // only summon this post when i.Post.Privacy === "public"

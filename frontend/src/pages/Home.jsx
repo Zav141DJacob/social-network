@@ -1,12 +1,13 @@
 import {LeftSideBar} from './components/left-sidebar'
 import {RightSideBar} from './components/right-sidebar'
 import {Feed} from './components/feed'
+import {Event} from './components/event'
 import { PostComponent } from './components/post'
 import { useState, useEffect, createRef } from 'react'
 import { ws2Setup } from './components/topbar'
 import {Group} from './components/group'
 import {Profile} from './components/profile'
-import {Event} from './components/event'
+import {EventCreator} from './components/eventCreator'
 import {useParams} from 'react-router-dom'
 import {wsSetup, wsOnMessage} from "../App"
 import {useQuery, useQueryClient} from '@tanstack/react-query'
@@ -62,7 +63,7 @@ export default function Home({post, dispatch}) {
     return (
       <>
         <LeftSideBar dispatch={dispatch} state={post}/>
-        {post.postSelected ? postLayout : post.createGroup ? <Group dispatch={dispatch}/> : post.event? <Event dispatch={dispatch} state={post}/> : post.profile ? <Profile state={post} user={post.profileId} dispatch={dispatch}/> : <Feed forwardRef={feedScroll} state={post} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
+        {post.postSelected ? postLayout : post.createGroup ? <Group dispatch={dispatch}/> : post.event ? <EventCreator dispatch={dispatch} state={post}/> : post.eventId ? <Event dispatch={dispatch} state={post}/> : post.profile ? <Profile state={post} user={post.profileId} dispatch={dispatch}/> : <Feed forwardRef={feedScroll} state={post} scrollValue={scrollValue} selectedCat={post} dispatch={dispatch}/>}
         <RightSideBar dispatch={dispatch} state={post}/>
       </>
     )

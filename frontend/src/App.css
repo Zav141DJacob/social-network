@@ -16,6 +16,7 @@
   height: 100vh;
   margin: auto;
   background: rgb(43, 46, 48);
+  overflow-x: hidden;
   }
   
   .login-module {

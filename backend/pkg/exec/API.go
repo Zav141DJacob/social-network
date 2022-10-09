@@ -1493,17 +1493,43 @@ func EventsAPI(w http.ResponseWriter, r *http.Request) {
 		}
 		switch r.Method {
 		case "GET":
-			events, err := FromEvents("", "")
+      type toEvents struct {
+        Event EventData
+        Creator []UserData
+      }
+			var toAPI []toEvents
+
+			requestUrl := r.URL.RawQuery
+	
+			m, err := url.ParseQuery(requestUrl)
+
+      var events []EventData
+      if len(m["eventId"]) > 0{
+        events, err = FromEvents("eventId", m["eventId"][0])
+      } else if len(m["categoryId"]) > 0{
+        events, err = FromEvents("groupId", m["categoryId"][0])
+      } else {
+        events, err = FromEvents("", "")
+      }
+      for _, event := range events {
+        user, err := FromUsers("userId", event.CreatorId)
+        if err != nil {
+          HandleErr(err)
+          w.WriteHeader(http.StatusInternalServerError)
+          return
+        }
+        toAPI = append(toAPI, toEvents{Event: event, Creator: user})
+      }
+
+			// ?userId=0
+			jsonEvents, err := json.Marshal(toAPI)
 			if err != nil {
-				w.WriteHeader(500)
+				HandleErr(err)
+				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
-			returnJson, err := json.Marshal(events)
-			if err != nil {
-				w.WriteHeader(500)
-				return
-			}
-			fmt.Fprintf(w, string(returnJson))
+
+			fmt.Fprintln(w, string(jsonEvents))
 		}
 	}
 }

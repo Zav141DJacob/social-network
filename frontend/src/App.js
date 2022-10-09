@@ -40,6 +40,8 @@ export const wsOnMessage = (notification, setNotification, setUsers, dispatch, g
     let jsonData = JSON.parse(event.data)
     switch (jsonData.Type) {
       case "registerEvent": {
+        console.log(jsonData)
+        dispatch({type: "event", eventId: jsonData.EventId}) 
         ForwardWS2(jsonData)
       }
       case "follow":
@@ -111,6 +113,7 @@ function postReducer(state, action) {
     notificationDrop: false,
     createGroup: false,
     event: false,
+    eventId: null,
     profileId: undefined,
     postCat: undefined,
     public: undefined,
@@ -158,6 +161,10 @@ function postReducer(state, action) {
       return {...state, notificationDrop: !state.notificationDrop, profileDrop: false}
     case 'createEvent':
       return {...state, notificationDrop: false, profileDrop: false, event: true}
+    case 'event':
+      return {...state,  notificationDrop: false, profileDrop: false, event: false, eventId: action.eventId}
+    case 'eventClose':
+      return {...state, event: false, eventId: undefined}
     case 'followers':
       return {...defaultFalse, followers: true, groupChat: state.groupChat, groupChatCat: action.groupChatCat}
     case 'following':

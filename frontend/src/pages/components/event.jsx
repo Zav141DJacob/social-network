@@ -1,128 +1,37 @@
+import React from "react";
+import * as timeago from "timeago.js";
 import styles from "./event.module.css";
-import { ws, wsOnMessage } from "../../App";
-import { useState, useEffect } from "react";
-import { useAuth } from "./../../App";
-import DtPicker from "react-calendar-datetime-picker";
-import "react-calendar-datetime-picker/dist/index.css";
+import {fetchEvent} from '../../utils/queries'
+import { useQuery } from "@tanstack/react-query";
 
-const DatePicker = () => {
-  const [date, setDate] = useState(null);
-  return (
-    <DtPicker
-      onChange={setDate}
-      withTime
-      showTimeInput //just show time in input
-      showWeekend
-      headerClass={styles.dateHeader}
-    />
-  );
-};
-
-// async function postData(url = '', data = {}) {
-//   console.log(url, data);
-//   // Default options are marked with *
-//   const response = await fetch(url, {
-//     method: 'POST',
-//     mode: 'cors',
-//     cache: 'no-cache',
-//     credentials: 'include',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     redirect: 'follow',
-//     referrerPolicy: 'no-referrer',
-//     body: JSON.stringify(data)
-//   });
-// return response.json(); // parses JSON response into native JavaScript objects
-// }
-
-export function Event({ state, dispatch }) {
-  const { nickname } = useAuth();
-  const [title, setTitle] = useState("");
-  const [visibility, setVisibility] = useState("public");
-  const [desc, setDesc] = useState();
-  wsOnMessage(1, 1, 1, dispatch);
-
-  function handleTitleChange(e) {
-    setTitle(e.target.value);
-    return;
+export const Event = ({ state, dispatch }) => {
+  const {isError, isLoading, data: event} = useQuery(["event", state.eventId], fetchEvent)
+  if (isLoading || isError) {
+    return <div/>
   }
+  let date
+  if (event) {
+    date = new Date(event[0].Event.Date)
+  }
+
   return (
-    <div className={styles.feed}>
-      <div className={styles.creator}>
-        <h1 style={{ position: "relative", top: "14px", color: "white" }}>
-          Create an event
-        </h1>
-        <input
-          className={styles.title}
-          placeholder={"Give a title to your event, " + nickname + "!"}
-          value={title}
-          onChange={handleTitleChange}
-        />
-        <div className={styles.date}>
-          <span style={{ color: "white", paddingRight: "10px" }}>
-            Event start
-          </span>
-          <DatePicker />
+    <div className={styles.eventC}>
+      <div className={styles.eventContainer}>
+        <div className={styles.close} onClick={() => {dispatch({type: "eventClose"})}}>
+          <svg viewBox="0 0 24 24">
+            <path
+              fill="currentColor"
+              d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
+            />
+          </svg>
         </div>
-        <Description
-          className={styles.description}
-          catId={state.postCat}
-          nickname={nickname}
-          title={title}
-          value={desc}
-          visibility={visibility}
-          dispatch={dispatch}
-          setDesc={setDesc}
-        />
+        <div className={styles.host}>{event[0].Creator[0].Nickname}</div>
+        <div className={styles.title}>{event[0].Event.Title}</div>
+        <div className={styles.dateLabel}>Date</div>
+        <div className={styles.date}>{date.toLocaleDateString("en-GB", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + " " + date.toLocaleTimeString("it-IT", { hour: '2-digit', minute: '2-digit' })}</div>
+        <div className={styles.descLabel}>Description</div>
+        <div className={styles.desc}>{event[0].Event.Description}</div>
       </div>
     </div>
   );
-}
-
-function Description({
-  nickname,
-  title,
-  value,
-  visibility,
-  setDesc,
-  dispatch,
-  catId,
-}) {
-  function submitPost() {
-    const postObj = {
-      title: title,
-      description: value,
-      catId: parseInt(catId),
-    };
-    ws.send(JSON.stringify({ ...postObj, mode: "registerEvent" }));
-    //    ws.onmessage(({data: JSON.stringify({...postObj, Type: "registerEvent"})}))
-  }
-  if (title && value) {
-    return (
-      <>
-        <textarea
-          className={styles.description}
-          value={value}
-          onChange={(e) => setDesc(e.target.value)}
-          placeholder={"Description"}
-        ></textarea>
-        <div className={styles.submitready} onClick={submitPost}>
-          Create
-        </div>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <textarea
-        className={styles.description}
-        value={value}
-        onChange={(e) => setDesc(e.target.value)}
-        placeholder={"Description"}
-      ></textarea>
-      <div className={styles.submit}>Create</div>
-    </>
-  );
-}
+};

@@ -35,6 +35,33 @@ export async function fetchPost({queryKey}) {
   );
 }
 
+export async function fetchEvents() {
+  let output = findCookies()
+  return await fetch(`http://localhost:8000/api/v1/events/`, {
+        method: "GET",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "include",
+        headers: { Authentication: output.session },
+  }).then((response) =>
+    response.json()
+  );
+}
+
+export async function fetchEvent({queryKey}) {
+  let output = findCookies()
+  let id = queryKey[1]
+  return await fetch(`http://localhost:8000/api/v1/events/?eventId=${id}`, {
+        method: "GET",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "include",
+        headers: { Authentication: output.session },
+  }).then((response) =>
+    response.json()
+  );
+}
+
 export async function fetchNotifications(setNotification) {
   let cookies = findCookies()
   let returnArr = {

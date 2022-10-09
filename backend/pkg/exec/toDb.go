@@ -290,10 +290,9 @@ func GroupMessage(senderId, senderName, message, targetId interface{}) error {
 
 // Inserts a event into the database
 //	fields: (Id), CreatorId, GroupId, Title, Description, (Date)
-func InsertEvent(creatorId, groupId, title, description interface{}) error {
+func InsertEvent(creatorId, groupId, title, description, date interface{}) error {
 	println("run toDb.go func InsertEvent")
 	var eventId int
-	var date = time.Now()
 	stmt, err := Db.Prepare(`INSERT INTO events (creatorId, groupId, title, description, date) 
 	VALUES (?, ?, ?, ?, ?)
 	RETURNING eventId;`)

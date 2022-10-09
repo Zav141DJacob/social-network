@@ -517,32 +517,32 @@ func FromGroupMessages(condition string, value interface{}) ([]GroupMessageData,
 }
 
 func FromEvents(condition string, value interface{}) ([]EventData, error) {
-	rows, err := doRows("events", condition, value)
+  rows, err := doRows("events", condition, value)
 
-	if err != nil {
-		return nil, err
-	}
+  if err != nil {
+    return nil, err
+  }
 
-	defer rows.Close()
+  defer rows.Close()
 
-	var returnEvents []EventData
-	for rows.Next() {
-		var event EventData
+  var returnEvents []EventData
+  for rows.Next() {
+    var event EventData
 
-		err = rows.Scan(
-			&event.EventId,
-			&event.Title,
-			&event.Description,
-			&event.Date)
+    err = rows.Scan(
+      &event.EventId,
+      &event.CreatorId,
+      &event.GroupId,
+      &event.Title,
+      &event.Description,
+      &event.Date)
 
-		if err != nil {
-			return nil, err
-		}
-
-		returnEvents = append(returnEvents, event)
-	}
-
-	return returnEvents, nil
+    if err != nil {
+      return nil, err
+    }
+    returnEvents = append(returnEvents, event)
+  }
+  return returnEvents, nil
 }
 
 // Pulls data from the database

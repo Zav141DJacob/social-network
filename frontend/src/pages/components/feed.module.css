@@ -586,3 +586,49 @@
 	min-height: 57px;
 	border-radius: 12px;
 }
+
+.events {
+  position: relative;
+	display: flex;
+  top: 90px;
+  z-index: 0;
+	justify-content: space-evenly;
+	left: 50%;
+	transform: translate(-50%);
+	max-width: 1000px;
+	min-width: 250px;
+	padding-left: 20px;
+	padding-right: 20px;
+	min-height: 57px;
+	border-radius: 12px;
+}
+
+.eventContainer {
+  position: relative;
+  height: 200px;
+  width: 120px;
+  background: rgb(48, 52, 54);
+	border-radius: 12px;
+  cursor: pointer;
+}
+
+.eventTitle {
+  position: relative;
+  left: 10px;
+  top: 10px;
+  color: white;
+ overflow: hidden;
+white-space: nowrap;
+text-overflow: ellipsis; height: 100px;
+}
+
+.eventCountdown {
+  color: white;
+}
+
+.eventIllustration {
+  position: relative;
+  left: 10px;
+  top: 10px;
+  color: white;
+}

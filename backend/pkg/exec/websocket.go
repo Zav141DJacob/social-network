@@ -160,11 +160,13 @@ func (c *Client) reader(conn *websocket.Conn) {
         TargetId    IdType
         Description string
         Type        string
+        EventId int
       }
 
       description := v["description"]
       title := v["title"]
       catId := v["catId"]
+      date := v["date"]
 
       var to toClient
       to.Title = title.(string)
@@ -240,6 +242,17 @@ func (c *Client) reader(conn *websocket.Conn) {
           }
         }
       }
+      err = InsertEvent(int(c.id), catId, title, description, date)
+      if err != nil {
+        fmt.Println("websocket.go: insert event err")
+        HandleErr(err)
+      }
+      event, err := FromEvents("description", description)
+      if err != nil {
+        HandleErr(err)
+        continue
+      }
+      to.EventId = event[0].EventId
 
       jsonTo, err = json.Marshal(to)
       if err != nil {
@@ -257,11 +270,6 @@ func (c *Client) reader(conn *websocket.Conn) {
       }
 
       //db integration
-      err = InsertEvent(int(c.id), catId, title, description)
-      if err != nil {
-        fmt.Println("websocket.go: insert event err")
-        HandleErr(err)
-      }
     case "groupMessage":
       type toClient struct {
         Message    string
