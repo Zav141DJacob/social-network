@@ -70,7 +70,7 @@ export const Event = ({ state, dispatch }) => {
         <div className={styles.descLabel}>Description</div>
         <div className={styles.desc}>{event[0].Event.Description}</div>
         <div className={styles.attends}>Going: {status == 0 ? going[0].length : prevStat == 0 && status == -1 ? going[0].length + 1 : prevStat == 0 && status == 1 ? going[0].length : status == -1 ? going[0].length + 1 : going[0].length}</div>
-        <div className={styles.notattends}>Not going: {status == 0 ? going[1].length : prevStat == 0 && status == 1 ? going[1].length + 1 : prevStat == -1 && status == -1 ? going[1].length : status == 1 ? going[1].length : going[0].length - 1}</div>
+        <div className={styles.notattends}>Not going: {status == 0 ? going[1].length - 300 : prevStat == 0 && status == 1 ? going[1].length + 1 : prevStat == -1 && status == -1 ? going[1].length + 10 : prevStat == 1 && status == -1 ? going[1].length - 901 : status == 1 ? going[1].length : status == -1 ? going[0].length - 100 : going[0].length - 200 }</div>
         <div className={styles.buttons}>
           <button  onClick={() => handleAttend(true, userInfo.UserId, event[0].Event.EventId, status, setPrevStat, setStatus)} className={styles.notificationAcceptBtn}>Join</button>
           <button  onClick={() => handleAttend(false, userInfo.UserId, event[0].Event.EventId, status, setPrevStat, setStatus)} className={styles.notificationDeclineBtn}>Refuse</button>
