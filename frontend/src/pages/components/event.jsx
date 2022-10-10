@@ -74,13 +74,8 @@ export const Event = ({ state, dispatch }) => {
         <div className={styles.date}>{date.toLocaleDateString("en-GB", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + " " + date.toLocaleTimeString("it-IT", { hour: '2-digit', minute: '2-digit' })}</div>
         <div className={styles.descLabel}>Description</div>
         <div className={styles.desc}>{event[0].Event.Description}</div>
-<<<<<<< HEAD
-        <div className={styles.attends}>Going: {status == 0 ? going[0].length : prevStat == 0 && status == -1 ? going[0].length + 1 : prevStat == 0 && status == 1 ? going[0].length : status == -1 ? going[0].length + 1 : going[0].length}</div>
-        <div className={styles.notattends}>Not going: {status == 0 ? going[1].length - 300 : prevStat == 0 && status == 1 ? going[1].length + 1 : prevStat == -1 && status == -1 ? going[1].length + 10 : prevStat == 1 && status == -1 ? going[1].length - 901 : status == 1 ? going[1].length : status == -1 ? going[0].length - 100 : going[0].length - 200 }</div>
-=======
         <div className={styles.attends}>Going: {status.isGoing ? going[0].length + status.value : going[0].length }</div>
         <div className={styles.notattends}>Not going: {!status.isGoing ? going[1].length + status.value : going[1].length}</div>
->>>>>>> 40bf71bf0e8283f711493bb0232c9c7a096629c1
         <div className={styles.buttons}>
           <button  onClick={() => handleAttend(true, userInfo.UserId, event[0].Event.EventId, status, setStatus)} className={styles.notificationAcceptBtn}>Join</button>
           <button  onClick={() => handleAttend(false, userInfo.UserId, event[0].Event.EventId, status, setStatus)} className={styles.notificationDeclineBtn}>Refuse</button>
