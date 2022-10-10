@@ -173,8 +173,9 @@ type EventData struct {
 	GroupId     int
 	Title       string
 	Description string
-	Attendees   []EventAttendeesData
 	Date        string
+
+	Attendees   []EventAttendeesData
 }
 
 // type ErrorString struct {

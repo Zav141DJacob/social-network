@@ -1492,61 +1492,62 @@ func EventsAPI(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		switch r.Method {
-    case "PUT": 
+		case "PUT": 
 
-      if (auth == SessionData{}) {
-        w.WriteHeader(401)
-        return
-      }
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
+			return
+		}
 
 
-      // https://stackoverflow.com/questions/27595480/does-golang-request-parseform-work-with-application-json-content-type
-      var v map[string]interface{}
-      err := json.NewDecoder(r.Body).Decode(&v)
-      if err != nil {
-        HandleErr(err)
-        w.WriteHeader(http.StatusInternalServerError)
-        return
-      }
+		// https://stackoverflow.com/questions/27595480/does-golang-request-parseform-work-with-application-json-content-type
+		var v map[string]interface{}
+		err := json.NewDecoder(r.Body).Decode(&v)
+		if err != nil {
+			HandleErr(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 
-      var userId = v["userId"]
-      var eventId = v["eventId"]
-      var going = v["going"]
-      err = InsertAttendees(userId, eventId, going)
-      if err != nil {
-        fmt.Println("ERROR: ", err)
-        HandleErr(err)
-        w.WriteHeader(http.StatusInternalServerError)
-        return
-      }
+		var userId = v["userId"]
+		var eventId = v["eventId"]
+		var going = v["going"]
+		err = InsertAttendees(userId, eventId, going)
+		if err != nil {
+			fmt.Println("ERROR: ", err)
+			HandleErr(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 		case "GET":
-      type toEvents struct {
-        Event EventData
-        Creator []UserData
-      }
+			type toEvents struct {
+				Event	EventData
+				Creator []UserData
+			}
 			var toAPI []toEvents
 
 			requestUrl := r.URL.RawQuery
-	
+
 			m, err := url.ParseQuery(requestUrl)
 
-      var events []EventData
-      if len(m["eventId"]) > 0{
-        events, err = FromEvents("eventId", m["eventId"][0])
-      } else if len(m["categoryId"]) > 0{
-        events, err = FromEvents("groupId", m["categoryId"][0])
-      } else {
-        events, err = FromEvents("", "")
-      }
-      for _, event := range events {
-        user, err := FromUsers("userId", event.CreatorId)
-        if err != nil {
-          HandleErr(err)
-          w.WriteHeader(http.StatusInternalServerError)
-          return
-        }
-        toAPI = append(toAPI, toEvents{Event: event, Creator: user})
-      }
+			var events []EventData
+			
+			if len(m["eventId"]) > 0{
+				events, err = FromEvents("eventId", m["eventId"][0])
+			} else if len(m["categoryId"]) > 0{
+				events, err = FromEvents("groupId", m["categoryId"][0])
+			} else {
+				events, err = FromEvents("", "")
+			}
+			for _, event := range events {
+				user, err := FromUsers("userId", event.CreatorId)
+				if err != nil {
+					HandleErr(err)
+					w.WriteHeader(http.StatusInternalServerError)
+					return
+				}
+				toAPI = append(toAPI, toEvents{Event: event, Creator: user})
+			}
 
 			// ?userId=0
 			jsonEvents, err := json.Marshal(toAPI)

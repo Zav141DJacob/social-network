@@ -7,22 +7,29 @@ import {putData} from './topbar'
 import {queryClient, useAuth} from './../../App'
 import {partition} from 'lodash'
 
-function handleAttend(doJoin, userId, eventId, status, setPrevStat, setStatus) {
+function handleAttend(doJoin, userId, eventId, status, setStatus) {
   if (doJoin) {
     putData("http://localhost:8000/api/v1/events/", {userId: userId, eventId: eventId, going: 1}).then(i => console.log(333, i))
-    setPrevStat(status)
-    setStatus(-1)
+    setStatus({
+      isGoing: true,
+      value: 1 
+    })
   } else {
     putData("http://localhost:8000/api/v1/events/", {userId: userId, eventId: eventId, going: 0}).then(i => console.log(333, i))
-    setPrevStat(status)
-    setStatus(1)
+    setStatus({
+      isGoing: false,
+      value: 1
+    })
   }
 }
 
 export const Event = ({ state, dispatch }) => {
   const {userInfo} = useAuth()
-  const [status, setStatus] = useState(0)
-  const [prevStat, setPrevStat] = useState(0)
+  const [status, setStatus] = useState({
+    isGoing: false,
+    value: 0
+  })
+  // const [prevStat, setPrevStat] = useState(0)
   const {isError, isLoading, data: event, isFetching, isRefetching} = useQuery(["event", state.eventId], fetchEvent, {
     staleTime: Infinity,
     cacheTime: Infinity,
@@ -31,16 +38,7 @@ export const Event = ({ state, dispatch }) => {
   let going
 
   useEffect(() => {
-    if (going) {
-      if (going[0].filter(e => e.UserId == userInfo.UserId).length > 0) {
-        setPrevStat(-1)
-      } else if (going[1].filter(e => e.UserId == userInfo.UserId).length > 0) {
-        setPrevStat(1)
-      } else {
-        setPrevStat(0)
-      }
-    }
-  }, [going])
+  }, [])
   if (isLoading || isError || isFetching || isRefetching) {
     return <div>LOADING</div>
   }
@@ -50,8 +48,15 @@ export const Event = ({ state, dispatch }) => {
     going = partition(event[0].Event.Attendees.slice(), (e) => e.Going === 1)
   }
 
+  for (const i in going) {
+    for (const j in i) {
+      // if (j.)
+      console.log(j);
+    }
+  }
 
-  console.log(going, going[0].length - status, status)
+
+  // console.log(going, going[0].length - status, status)
   return (
     <div className={styles.eventC}>
       <div className={styles.eventContainer}>
@@ -69,11 +74,16 @@ export const Event = ({ state, dispatch }) => {
         <div className={styles.date}>{date.toLocaleDateString("en-GB", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + " " + date.toLocaleTimeString("it-IT", { hour: '2-digit', minute: '2-digit' })}</div>
         <div className={styles.descLabel}>Description</div>
         <div className={styles.desc}>{event[0].Event.Description}</div>
+<<<<<<< HEAD
         <div className={styles.attends}>Going: {status == 0 ? going[0].length : prevStat == 0 && status == -1 ? going[0].length + 1 : prevStat == 0 && status == 1 ? going[0].length : status == -1 ? going[0].length + 1 : going[0].length}</div>
         <div className={styles.notattends}>Not going: {status == 0 ? going[1].length - 300 : prevStat == 0 && status == 1 ? going[1].length + 1 : prevStat == -1 && status == -1 ? going[1].length + 10 : prevStat == 1 && status == -1 ? going[1].length - 901 : status == 1 ? going[1].length : status == -1 ? going[0].length - 100 : going[0].length - 200 }</div>
+=======
+        <div className={styles.attends}>Going: {status.isGoing ? going[0].length + status.value : going[0].length }</div>
+        <div className={styles.notattends}>Not going: {!status.isGoing ? going[1].length + status.value : going[1].length}</div>
+>>>>>>> 40bf71bf0e8283f711493bb0232c9c7a096629c1
         <div className={styles.buttons}>
-          <button  onClick={() => handleAttend(true, userInfo.UserId, event[0].Event.EventId, status, setPrevStat, setStatus)} className={styles.notificationAcceptBtn}>Join</button>
-          <button  onClick={() => handleAttend(false, userInfo.UserId, event[0].Event.EventId, status, setPrevStat, setStatus)} className={styles.notificationDeclineBtn}>Refuse</button>
+          <button  onClick={() => handleAttend(true, userInfo.UserId, event[0].Event.EventId, status, setStatus)} className={styles.notificationAcceptBtn}>Join</button>
+          <button  onClick={() => handleAttend(false, userInfo.UserId, event[0].Event.EventId, status, setStatus)} className={styles.notificationDeclineBtn}>Refuse</button>
         </div>
       </div>
     </div>

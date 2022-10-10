@@ -563,11 +563,11 @@ func FromEventAttendees(condition string, value interface{}) ([]EventAttendeesDa
   for rows.Next() {
     var attends EventAttendeesData
     err = rows.Scan(
-      &attends.Id,
-      &attends.UserId,
-      &attends.EventId,
-      &attends.Going,
-      )
+		&attends.Id,
+		&attends.UserId,
+		&attends.EventId,
+		&attends.Going,
+	)
 
     if err != nil {
       return nil, err
