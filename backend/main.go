@@ -43,6 +43,7 @@ func main(){
   http.HandleFunc("/api/v1/followers/", Middleware(exec.FollowerAPI))
   http.HandleFunc("/api/v1/profile/", Middleware(exec.ProfileAPI))
   http.HandleFunc("/api/v1/events/", Middleware(exec.EventsAPI))
+  http.HandleFunc("/api/v1/event/", Middleware(exec.EventAPI))
 
   http.HandleFunc("/api/v1/upload/", Middleware(exec.UploadFile))
 

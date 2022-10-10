@@ -174,8 +174,6 @@ type EventData struct {
 	Title       string
 	Description string
 	Date        string
-
-	Attendees   []EventAttendeesData
 }
 
 // type ErrorString struct {

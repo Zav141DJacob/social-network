@@ -539,8 +539,6 @@ func FromEvents(condition string, value interface{}) ([]EventData, error) {
       &event.Description,
       &event.Date)
 
-    event.Attendees, err = FromEventAttendees("eventId", event.EventId)
-
     if err != nil {
       return nil, err
     }
@@ -575,6 +573,7 @@ func FromEventAttendees(condition string, value interface{}) ([]EventAttendeesDa
 
     returnEventAttends = append(returnEventAttends, attends)
   }
+  fmt.Println(123, returnEventAttends)
   return returnEventAttends, nil
 }
 // Pulls data from the database

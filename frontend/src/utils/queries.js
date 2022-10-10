@@ -62,6 +62,20 @@ export async function fetchEvent({queryKey}) {
   );
 }
 
+export async function fetchGuests({queryKey}) {
+  let output = findCookies()
+  let id = queryKey[1]
+  return await fetch(`http://localhost:8000/api/v1/event/?eventId=${id}`, {
+        method: "GET",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "include",
+        headers: { Authentication: output.session },
+  }).then((response) =>
+    response.json()
+  );
+}
+
 export async function fetchNotifications(setNotification) {
   let cookies = findCookies()
   let returnArr = {

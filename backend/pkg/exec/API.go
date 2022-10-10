@@ -1523,6 +1523,7 @@ func EventsAPI(w http.ResponseWriter, r *http.Request) {
 			type toEvents struct {
 				Event	EventData
 				Creator []UserData
+        Guests []EventAttendeesData
 			}
 			var toAPI []toEvents
 
@@ -1531,9 +1532,11 @@ func EventsAPI(w http.ResponseWriter, r *http.Request) {
 			m, err := url.ParseQuery(requestUrl)
 
 			var events []EventData
+      var guests []EventAttendeesData
 			
 			if len(m["eventId"]) > 0{
 				events, err = FromEvents("eventId", m["eventId"][0])
+				guests, err = FromEventAttendees("eventId", m["eventId"][0])
 			} else if len(m["categoryId"]) > 0{
 				events, err = FromEvents("groupId", m["categoryId"][0])
 			} else {
@@ -1546,8 +1549,47 @@ func EventsAPI(w http.ResponseWriter, r *http.Request) {
 					w.WriteHeader(http.StatusInternalServerError)
 					return
 				}
-				toAPI = append(toAPI, toEvents{Event: event, Creator: user})
+        toAPI = append(toAPI, toEvents{Event: event, Creator: user, Guests: guests})
 			}
+
+			// ?userId=0
+			jsonEvents, err := json.Marshal(toAPI)
+			if err != nil {
+				HandleErr(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			fmt.Fprintln(w, string(jsonEvents))
+		}
+	}
+}
+
+func EventAPI(w http.ResponseWriter, r *http.Request) {
+  fmt.Println("GOT EM")
+	if r.Method != "OPTIONS" {
+		auth := AuthenticateSession(r.Header["Authentication"])
+		if (auth == SessionData{}) {
+			w.WriteHeader(401)
+			return
+		}
+		switch r.Method {
+		case "GET":
+			type toEvents struct {
+        Guests []EventAttendeesData
+			}
+			var toAPI []toEvents
+
+			requestUrl := r.URL.RawQuery
+
+			m, err := url.ParseQuery(requestUrl)
+
+      var guests []EventAttendeesData
+			
+      if len(m["eventId"]) > 0{
+        guests, err = FromEventAttendees("eventId", m["eventId"][0])
+      }
+      toAPI = append(toAPI, toEvents{Guests: guests})
 
 			// ?userId=0
 			jsonEvents, err := json.Marshal(toAPI)

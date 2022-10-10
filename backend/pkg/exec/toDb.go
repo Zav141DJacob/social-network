@@ -322,11 +322,11 @@ func InsertEvent(creatorId, groupId, title, description, date interface{}) error
 }
 
 func InsertAttendees(userId, eventId, going interface{}) error {
-  one, err := FromEvents("eventId", eventId)
+  one, err := FromEventAttendees("eventId", eventId)
   if err != nil {
     return err
   }
-  for _, e := range one[0].Attendees {
+  for _, e := range one {
     if float64(e.UserId) == userId.(float64) {
       stmt, err := Db.Prepare("UPDATE eventAttendees SET going = ? WHERE userId = ? AND eventId = ?")
       if err != nil {
