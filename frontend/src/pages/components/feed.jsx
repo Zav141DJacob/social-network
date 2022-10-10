@@ -65,6 +65,7 @@ export function Feed({
       if (groups) {
         setJoined(groups[0]?.Members?.some(i => i.UserId == userInfo?.UserId))
       }
+      console.log('hey')
       ws.send(JSON.stringify({catId: parseInt(selectedCat.postCat), mode: "open"}))
       setPostCopy(
         posts?.filter((post) => {return post.Post.CatId == selectedCat.postCat}).reverse()
