@@ -1492,6 +1492,33 @@ func EventsAPI(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		switch r.Method {
+    case "PUT": 
+
+      if (auth == SessionData{}) {
+        w.WriteHeader(401)
+        return
+      }
+
+
+      // https://stackoverflow.com/questions/27595480/does-golang-request-parseform-work-with-application-json-content-type
+      var v map[string]interface{}
+      err := json.NewDecoder(r.Body).Decode(&v)
+      if err != nil {
+        HandleErr(err)
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+      }
+
+      var userId = v["userId"]
+      var eventId = v["eventId"]
+      var going = v["going"]
+      err = InsertAttendees(userId, eventId, going)
+      if err != nil {
+        fmt.Println("ERROR: ", err)
+        HandleErr(err)
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+      }
 		case "GET":
       type toEvents struct {
         Event EventData

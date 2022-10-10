@@ -177,7 +177,7 @@ func PingUser(userId, fromUserId interface{}) error {
 	return nil
 }
 
-func Notify(user, target []UserData, catId, mode interface{}) error {
+func Notify(user, target []UserData, catId, mode, eventId interface{}) error {
 
 	var stmt *sql.Stmt
 	var err error
@@ -187,16 +187,18 @@ func Notify(user, target []UserData, catId, mode interface{}) error {
 		return err
 	}
 
-	for _, l := range list {
-		str := fmt.Sprintf("%v", catId)
-		if l.TargetId == target[0].UserId && l.Type == mode && fmt.Sprintf("%v", l.CatId) == str {
-			return CreateErr("409")
-		}
-	}
+  if eventId == 0 {
+    for _, l := range list {
+      str := fmt.Sprintf("%v", catId)
+      if l.TargetId == target[0].UserId && l.Type == mode && fmt.Sprintf("%v", l.CatId) == str {
+        return CreateErr("409")
+      }
+    }
+  }
 
-	stmt, err = Db.Prepare(`INSERT INTO notificationsList 
-	(userId, nickname, userAvatar, targetId, targetName, catId, categoryTitle, type) 
-	VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
+  stmt, err = Db.Prepare(`INSERT INTO notificationsList 
+    (userId, nickname, userAvatar, targetId, targetName, catId, categoryTitle, type, eventId) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 
 	if err != nil {
 		return err
@@ -213,9 +215,9 @@ func Notify(user, target []UserData, catId, mode interface{}) error {
 
 	defer stmt.Close()
 	if len(category) == 0 {
-		stmt.Exec(user[0].UserId, user[0].Nickname, user[0].Avatar, target[0].UserId, target[0].Nickname, catId, "", mode)
+		stmt.Exec(user[0].UserId, user[0].Nickname, user[0].Avatar, target[0].UserId, target[0].Nickname, catId, "", mode, eventId)
 	} else {
-		stmt.Exec(user[0].UserId, user[0].Nickname, user[0].Avatar, target[0].UserId, target[0].Nickname, catId, category[0].Title, mode)
+		stmt.Exec(user[0].UserId, user[0].Nickname, user[0].Avatar, target[0].UserId, target[0].Nickname, catId, category[0].Title, mode, eventId)
 
 	}
 	return nil
@@ -307,13 +309,44 @@ func InsertEvent(creatorId, groupId, title, description, date interface{}) error
 		return err
 	}
 
-	stmt, err = Db.Prepare("INSERT INTO eventAttendees (userId, eventId) VALUES (?, ?)")
+	stmt, err = Db.Prepare("INSERT INTO eventAttendees (userId, eventId, going) VALUES (?, ?, 1)")
 
 	if err != nil {
 		return err
 	}
 
 	stmt.Exec(creatorId, eventId)
+
+	defer stmt.Close()
+	return nil
+}
+
+func InsertAttendees(userId, eventId, going interface{}) error {
+  one, err := FromEvents("eventId", eventId)
+  if err != nil {
+    return err
+  }
+  for _, e := range one[0].Attendees {
+    if float64(e.UserId) == userId.(float64) {
+      stmt, err := Db.Prepare("UPDATE eventAttendees SET going = ? WHERE userId = ? AND eventId = ?")
+      if err != nil {
+        fmt.Println("ERROR: ", err)
+      }
+      _, err = stmt.Exec(going, userId, eventId)
+      if err != nil {
+        fmt.Println("ERROR: ", err)
+      }
+      return nil
+    }
+  }
+  println("run toDb.go func InsertAttend")
+  stmt, err := Db.Prepare("INSERT INTO eventAttendees (userId, eventId, going) VALUES (?, ?, ?)")
+
+	if err != nil {
+		return err
+	}
+
+	stmt.Exec(userId, eventId, going)
 
 	defer stmt.Close()
 	return nil

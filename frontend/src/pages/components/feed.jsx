@@ -57,13 +57,13 @@ export function Feed({
 
   const {isLoading2, isError2, data: events} = useQuery(["events", state.postCat], fetchEvents, {
     enabled: !!selectedCat?.postCat,
-    select: (i) => i.filter((e) => e.Event.GroupId == state.postCat),
+    select: (i) => i?.filter((e) => e.Event.GroupId == state.postCat),
   })
 
   useEffect(() => {
     if (selectedCat.postCat) {
       if (groups) {
-        setJoined(groups[0]?.Members?.some(i => i.UserId == userInfo.UserId))
+        setJoined(groups[0]?.Members?.some(i => i.UserId == userInfo?.UserId))
       }
       ws.send(JSON.stringify({catId: parseInt(selectedCat.postCat), mode: "open"}))
       setPostCopy(
@@ -180,7 +180,7 @@ export function Feed({
                           a 37,37 0 1,1 74,0
                           a 37,37 0 1,1 -74,0"/>
                       </defs>
-                      <text fill="white" font-size="17">
+                      <text fill="white" fontSize="17">
                         <textPath xlinkHref="#circle">
                           {i.Event.Title}
                         </textPath>

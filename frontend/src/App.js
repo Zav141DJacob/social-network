@@ -38,10 +38,12 @@ export const wsSetup = () => {
 export const wsOnMessage = (notification, setNotification, setUsers, dispatch, getNotifications, lat) => {
   ws.onmessage = function(event) {
     let jsonData = JSON.parse(event.data)
+    console.log(jsonData)
     switch (jsonData.Type) {
       case "registerEvent": {
-        console.log(jsonData)
+        if (jsonData.EventId !== 0) {
         dispatch({type: "event", eventId: jsonData.EventId}) 
+        }
         ForwardWS2(jsonData)
       }
       case "follow":
@@ -162,6 +164,7 @@ function postReducer(state, action) {
     case 'createEvent':
       return {...state, notificationDrop: false, profileDrop: false, event: true}
     case 'event':
+      console.log(action.eventId)
       return {...state,  notificationDrop: false, profileDrop: false, event: false, eventId: action.eventId}
     case 'eventClose':
       return {...state, event: false, eventId: undefined}

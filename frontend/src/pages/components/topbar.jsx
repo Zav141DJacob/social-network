@@ -167,14 +167,33 @@ function handleJoin(doJoin, id, notifications, setNotifications, userId, catId) 
     }
   }
 }
+function handleAttend(doJoin, id, notifications, setNotifications, userId, eventId) {
+  if (doJoin) {
+    putData("http://localhost:8000/api/v1/events/", {userId: userId, eventId: eventId, going: 1}).then(i => console.log(333, i))
+  } else {
+    console.log("jammn")
+    putData("http://localhost:8000/api/v1/events/", {userId: userId, eventId: eventId, going: 0}).then(i => console.log(333, i))
+  }
+  deleteData("http://localhost:8000/api/v1/notifications-list/", {id: id}, false).then(i => {
+    getData("http://localhost:8000/api/v1/notifications-list/")
+      .then(data => {
+        if (data) {
+          setNotifications(data)
+        } else {
+          setNotifications([])
+        }
+      })
+  })
+  let newNotif = []
+  for (const i of notifications) {
+    if (i.Id != id) {
+      newNotif.push(i)
+    }
+  }
+}
 
 
 function ws2OnMessage(setNotifications, notifications) {
-  // if (count) {
-
-  //   setCount(count + 1)
-  //   return
-  // }
   ws2.onmessage = function(event) {
     // let jsonData = JSON.parse(event.data)
     getData("http://localhost:8000/api/v1/notifications-list/")
@@ -186,7 +205,6 @@ function ws2OnMessage(setNotifications, notifications) {
         setNotifications([])
       }
     }).catch(() => console.log("BAMB"))
-    // setNotifications(mockNotifications)
   }
 }
 function NotificationDropdown({dispatch, setNotifications, notifications}) {
@@ -245,14 +263,14 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
               )
             }
             case "registerEvent": {
-              console.log("YU")
+              console.log(item)
               return (
                 <div key={item.Id} className={styles.notification}>
                   {item.UserAvatar && <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />}
-                  <span><strong style={{cursor: "pointer"}}  onClick={() => dispatch({type: "profile", Id: item.Nickname})}>{item.Nickname}</strong><br/> has created a new event in {item.CategoryTitle}</span>
+                  <span onClick={() => {console.log(123);dispatch({type: "event", eventId: item.EventId})}}><strong style={{cursor: "pointer"}}  onClick={() => dispatch({type: "profile", Id: item.Nickname})}>{item.Nickname}</strong><br/> has created a new event in {item.CategoryTitle}</span>
                   <div className={styles.notificationBtns}>
-                    <button className={styles.notificationAcceptBtn}>Join</button>
-                    <button className={styles.notificationDeclineBtn}>Refuse</button>
+                    <button onClick={() => handleAttend(true, item.Id, notifications, setNotifications, item.TargetId, item.EventId)} className={styles.notificationAcceptBtn}>Join</button>
+                    <button onClick={() => handleAttend(false, item.Id, notifications, setNotifications, item.TargetId, item.EventId)} className={styles.notificationDeclineBtn}>Refuse</button>
                   </div>
                   <hr />
                 </div>

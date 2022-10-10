@@ -199,6 +199,17 @@ func (c *Client) reader(conn *websocket.Conn) {
         break
       }
 
+      err = InsertEvent(int(c.id), catId, title, description, date)
+      if err != nil {
+        fmt.Println("websocket.go: insert event err")
+        HandleErr(err)
+      }
+      event, err := FromEvents("description", description)
+      if err != nil {
+        HandleErr(err)
+        continue
+      }
+      to.EventId = event[0].EventId
       // If target's connection is valid then WriteMessage to their connection
       for i, v := range members {
         if i == 0  && catId.(float64) < 4{
@@ -210,7 +221,7 @@ func (c *Client) reader(conn *websocket.Conn) {
         }
 
           // value2, isValid := v
-          err = Notify(user, targetUser, catId, mode)
+          err = Notify(user, targetUser, catId, mode, event[0].EventId)
           if err != nil {
             HandleErr(err)
             break
@@ -242,17 +253,6 @@ func (c *Client) reader(conn *websocket.Conn) {
           }
         }
       }
-      err = InsertEvent(int(c.id), catId, title, description, date)
-      if err != nil {
-        fmt.Println("websocket.go: insert event err")
-        HandleErr(err)
-      }
-      event, err := FromEvents("description", description)
-      if err != nil {
-        HandleErr(err)
-        continue
-      }
-      to.EventId = event[0].EventId
 
       jsonTo, err = json.Marshal(to)
       if err != nil {
@@ -445,7 +445,7 @@ func (c *Client) reader(conn *websocket.Conn) {
         return
       }
 
-      err = Notify(user, target, 0, mode)
+      err = Notify(user, target, 0, mode, 0)
       if err != nil {
         HandleErr(err)
         break
@@ -510,7 +510,7 @@ func (c *Client) reader(conn *websocket.Conn) {
         break
       }
 
-      err = Notify(user, target, catId, mode)
+      err = Notify(user, target, catId, mode, 0)
       if err != nil {
         HandleErr(err)
         break

@@ -137,9 +137,10 @@ type GroupMembersData struct {
 }
 
 type EventAttendeesData struct {
-	Id      int
-	UserId  int
-	EventId int
+  Id      int
+  UserId  int
+  EventId int
+  Going int
 }
 
 type FollowerData struct {
@@ -154,15 +155,16 @@ type FollowerData struct {
 }
 
 type NotificationsListData struct {
-	Id            int
-	UserId        int
-	Nickname      string
-	UserAvatar    string
-	TargetId      int
-	TargetName    string
-	CatId         int
-	CategoryTitle string
-	Type          string
+  Id            int
+  UserId        int
+  Nickname      string
+  UserAvatar    string
+  TargetId      int
+  TargetName    string
+  CatId         int
+  CategoryTitle string
+  Type          string
+  EventId          int
 }
 
 type EventData struct {

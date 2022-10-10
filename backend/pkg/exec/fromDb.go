@@ -360,7 +360,9 @@ func FromNotificationsList(condition string, value interface{}) ([]Notifications
 			&notification.TargetName,
 			&notification.CatId,
 			&notification.CategoryTitle,
-			&notification.Type)
+			&notification.Type,
+			&notification.EventId,
+      )
 
 		if err != nil {
 			return nil, err
@@ -537,21 +539,51 @@ func FromEvents(condition string, value interface{}) ([]EventData, error) {
       &event.Description,
       &event.Date)
 
+    event.Attendees, err = FromEventAttendees("eventId", event.EventId)
+
     if err != nil {
       return nil, err
     }
+
     returnEvents = append(returnEvents, event)
   }
   return returnEvents, nil
 }
 
+func FromEventAttendees(condition string, value interface{}) ([]EventAttendeesData, error) {
+  rows, err := doRows("eventAttendees", condition, value)
+
+  if err != nil {
+    return nil, err
+  }
+
+  defer rows.Close()
+
+  var returnEventAttends []EventAttendeesData
+  for rows.Next() {
+    var attends EventAttendeesData
+    err = rows.Scan(
+      &attends.Id,
+      &attends.UserId,
+      &attends.EventId,
+      &attends.Going,
+      )
+
+    if err != nil {
+      return nil, err
+    }
+
+    returnEventAttends = append(returnEventAttends, attends)
+  }
+  return returnEventAttends, nil
+}
 // Pulls data from the database
 // SELECT - how many arguments (* for all)
 // FROM	  - from where you pull data from
 // condition, value - "WHERE condition = value"
 func doRows(FROM, condition string, value interface{}) (*sql.Rows, error) {
-	var rows *sql.Rows
-	var err error
+  var rows *sql.Rows
+  var err error
 
 	// Check if there is a condition
 	switch condition {

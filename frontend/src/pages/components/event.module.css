@@ -91,6 +91,28 @@
   color: #777575;
 }
 
+.attends {
+  position: relative;
+  left: 22px;
+  top: 24px;
+  font-family: 'Helvetica';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 44px;
+  color: #D0D0D0;
+}
+.notattends {
+  position: relative;
+  left: 22px;
+  top: 24px;
+  font-family: 'Helvetica';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 44px;
+  color: #D0D0D0;
+}
 .close {
   position: relative;
   left: 94%;
@@ -99,4 +121,39 @@
   height: 20px;
   color: rgb(232, 230, 227);
   cursor: pointer;
+}
+
+.notificationAcceptBtn {
+  height: 24px;
+  width: 80px;
+  margin-right: 10px;
+  background: rgb(14, 57, 122);
+  border-radius: 3px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.notificationDeclineBtn {
+  height: 24px;
+  width: 80px;
+  background: rgba(154, 157, 182, 0.2);
+  border-radius: 3px;
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.buttons {
+  position: relative;
+  top: 40px;
+  left: 20px;
 }

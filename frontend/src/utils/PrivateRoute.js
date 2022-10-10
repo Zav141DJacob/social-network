@@ -16,7 +16,7 @@ export const PrivateRoute = ({dispatch, state}) => {
       }).catch(() => setSession(23))
   }, [])
   if (!cookies) {
-    dispatch({type: "home"})
+    dispatch({type: "logout"})
     return <Navigate to='/login' replace="true"/>
   }
   cookies.split(/\s*;\s*/).forEach(function(pair) {
@@ -24,7 +24,7 @@ export const PrivateRoute = ({dispatch, state}) => {
     output[pair[0]] = pair.splice(1).join('=');
   });
   if (session === 23) {
-    dispatch({type: "home"})
+    dispatch({type: "logout"})
     return <Navigate to='/login' replace />
   }
   return (
