@@ -283,6 +283,7 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
               )
             }
             case "registerEvent": {
+              console.log("YES")
               return (
                 <div key={item.Id} className={styles.notification}>
                   {item.UserAvatar && <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />}

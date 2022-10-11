@@ -211,10 +211,7 @@ func (c *Client) reader(conn *websocket.Conn) {
       }
       to.EventId = event[0].EventId
       // If target's connection is valid then WriteMessage to their connection
-      for i, v := range members {
-        if i == 0  && catId.(float64) < 4{
-          continue
-        }
+      for _, v := range members {
         targetUser, err := FromUsers("userId", v.UserId)
         if v.UserId == int(c.id) {
           continue
@@ -223,6 +220,7 @@ func (c *Client) reader(conn *websocket.Conn) {
           // value2, isValid := v
           err = Notify(user, targetUser, catId, mode, event[0].EventId, event[0].Title)
           if err != nil {
+          fmt.Println(err)
             HandleErr(err)
             break
           }

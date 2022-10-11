@@ -72,7 +72,6 @@ func Register(nickname, email, password, firstName, lastName, age, bio, avatar i
 	}
 
 	var id int
-	fmt.Println(id)
 
 	defer stmt.Close()
 	err = stmt.QueryRow(nickname, email, hash, firstName, lastName, age.(string), bio, avatar, 1, time.Now(), true).Scan(&id)

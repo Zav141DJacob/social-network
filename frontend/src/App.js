@@ -38,7 +38,6 @@ export const wsSetup = () => {
 export const wsOnMessage = (notification, setNotification, setUsers, dispatch, getNotifications, lat) => {
   ws.onmessage = function(event) {
     let jsonData = JSON.parse(event.data)
-    console.log(jsonData)
     switch (jsonData.Type) {
       case "registerEvent": 
         if (jsonData.EventId !== 0) {
