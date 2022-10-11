@@ -370,9 +370,6 @@ func FromNotificationsList(condition string, value interface{}) ([]Notifications
 			return nil, err
 		}
 
-    fmt.Println()
-    fmt.Printf("%+v", notification)
-    fmt.Println()
 		returnNotification = append(returnNotification, notification)
 	}
 

@@ -81,7 +81,6 @@ func Register(nickname, email, password, firstName, lastName, age, bio, avatar i
 	if err != nil {
 		return err
 	}
-	fmt.Println(id)
 
 	stmt, err = Db.Prepare(
 		`INSERT INTO groupMembers 
@@ -118,6 +117,7 @@ func Comment(body, postId, userId, image interface{}) error {
 // Inserts a category into the database
 func InsertCategory(title, description, userId, isPublic interface{}) error {
 	var catId int
+  user, err := FromUsers("userId", userId)
 	stmt, err := Db.Prepare(`INSERT INTO categories (title, description, userId, isPublic) 
 	VALUES (?, ?, ?, ?)
 	RETURNING catId`)
@@ -128,18 +128,26 @@ func InsertCategory(title, description, userId, isPublic interface{}) error {
 
 	err = stmt.QueryRow(title, description, userId, isPublic).Scan(&catId)
 
+  if err != nil {
+    return err
+  }
+  if user != nil {
+    stmt, err = Db.Prepare("INSERT INTO groupMembers (userId, catId, username) VALUES (?, ?, ?)")
+  } else {
+    stmt, err = Db.Prepare("INSERT INTO groupMembers (userId, catId) VALUES (?, ?)")
+  }
+
+
 	if err != nil {
 		return err
 	}
 
-	stmt, err = Db.Prepare("INSERT INTO groupMembers (userId, catId) VALUES (?, ?)")
-
-	if err != nil {
-		return err
-	}
-
-	stmt.Exec(userId, catId)
-	Manager.groupChats[IdType(catId)] = make(map[IdType]*websocket.Conn)
+  if user != nil {
+    stmt.Exec(userId, catId, user[0].Nickname)
+  } else {
+    stmt.Exec(userId, catId)
+  }
+  Manager.groupChats[IdType(catId)] = make(map[IdType]*websocket.Conn)
 
 	// _, err = Db.Exec(`ALTER TABLE postCategory ADD COLUMN "has` + title.(string) + `" BOOLEAN NOT NULL`)
 

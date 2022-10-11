@@ -411,7 +411,6 @@ func PostAPI(w http.ResponseWriter, r *http.Request) {
 			// 	HandleErr(err)
 			// 	return
 			// }
-			fmt.Println(accessList)
 			err = Post(auth.UserId, categoryId, title, body, image, privacy, accessList)
 			if err != nil {
 				HandleErr(err)
@@ -678,9 +677,10 @@ func CategoryAPI(w http.ResponseWriter, r *http.Request) {
 
       var userId = v["userId"]
       var catId = v["catId"]
+      user, err := FromUsers("userId", userId)
       // var userToken = v["userToken"]
 
-      stmt, err := Db.Prepare("INSERT INTO groupMembers (userId, catId) VALUES (?, ?)")
+      stmt, err := Db.Prepare("INSERT INTO groupMembers (userId, catId, username) VALUES (?, ?, ?)")
 
       if err != nil {
         HandleErr(err)
@@ -688,7 +688,7 @@ func CategoryAPI(w http.ResponseWriter, r *http.Request) {
         return
       }
 
-      stmt.Exec(userId, catId)
+      stmt.Exec(userId, catId, user[0].Nickname)
 
 
     }
@@ -1337,7 +1337,6 @@ func FollowerAPI(w http.ResponseWriter, r *http.Request) {
 
 
 		for _, follower := range followers {
-			fmt.Println(follower.FollowerUserId, userId)
 			if follower.FollowerUserId == int(userId.(float64)) {
 				w.WriteHeader(419)
 				return

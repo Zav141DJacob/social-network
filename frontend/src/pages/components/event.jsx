@@ -42,7 +42,7 @@ export const Event = ({ state, dispatch }) => {
   }
   let date
   if (event && guests && groups) {
-    possibleInvites = groups[0].Members.filter(e => !guests[0].Guests.includes(e.UserId))
+    possibleInvites = groups[0]?.Members?.filter(e => !guests[0]?.Guests?.includes(e.UserId))
     date = new Date(event[0].Event.Date)
     going = partition(guests[0].Guests.slice(), (e) => e.Going === 1)
   }
