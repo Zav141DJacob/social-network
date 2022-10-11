@@ -15,21 +15,21 @@ sudo docker run -p 3000:3000 -d dockerized-react
 # Move into the backend directory
 cd ../backend/
 
-sudo docker build --tag godocker .
+# sudo docker build --tag godocker .
 
 # # Updates backend dependencies
 # go mod tidy
 
 # # Build backend Docker image
-# sudo docker build --rm -t golang-docker-backend .
+sudo docker build --rm -t forum .
 
 # # Run backend Docker image
-# sudo docker run -p 8000:8000 golang-docker-backend
+sudo docker run -p 8000:8000 forum
 
 echo V--Below should be two images: *dockerized-react* and *golang-docker-backend*--V
 # Check if the images were created
 sudo docker images | grep dockerized-react
-sudo docker images | grep godocker
+sudo docker images | grep forum
 
 # Opens the page for you! <3
 xdg-open http://localhost:3000/
