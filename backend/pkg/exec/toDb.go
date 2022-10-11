@@ -85,12 +85,12 @@ func Register(nickname, email, password, firstName, lastName, age, bio, avatar i
 
 	stmt, err = Db.Prepare(
 		`INSERT INTO groupMembers 
-		(userId, catId) 
-		VALUES (?, ?);`)
+		(userId, catId, username) 
+		VALUES (?, ?, ?);`)
 
-	_, err = stmt.Exec(id, 1)
-	_, err = stmt.Exec(id, 2)
-	_, err = stmt.Exec(id, 3)
+	_, err = stmt.Exec(id, 1, nickname)
+	_, err = stmt.Exec(id, 2, nickname)
+	_, err = stmt.Exec(id, 3, nickname)
 	if err != nil {
 		return err
 	}
@@ -177,7 +177,7 @@ func PingUser(userId, fromUserId interface{}) error {
 	return nil
 }
 
-func Notify(user, target []UserData, catId, mode, eventId interface{}) error {
+func Notify(user, target []UserData, catId, mode, eventId, eventTitle interface{}) error {
 
 	var stmt *sql.Stmt
 	var err error
@@ -197,8 +197,8 @@ func Notify(user, target []UserData, catId, mode, eventId interface{}) error {
   }
 
   stmt, err = Db.Prepare(`INSERT INTO notificationsList 
-    (userId, nickname, userAvatar, targetId, targetName, catId, categoryTitle, type, eventId) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+    (userId, nickname, userAvatar, targetId, targetName, catId, categoryTitle, type, eventId, eventTitle) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 
 	if err != nil {
 		return err
@@ -215,9 +215,9 @@ func Notify(user, target []UserData, catId, mode, eventId interface{}) error {
 
 	defer stmt.Close()
 	if len(category) == 0 {
-		stmt.Exec(user[0].UserId, user[0].Nickname, user[0].Avatar, target[0].UserId, target[0].Nickname, catId, "", mode, eventId)
+		stmt.Exec(user[0].UserId, user[0].Nickname, user[0].Avatar, target[0].UserId, target[0].Nickname, catId, "", mode, eventId, eventTitle)
 	} else {
-		stmt.Exec(user[0].UserId, user[0].Nickname, user[0].Avatar, target[0].UserId, target[0].Nickname, catId, category[0].Title, mode, eventId)
+		stmt.Exec(user[0].UserId, user[0].Nickname, user[0].Avatar, target[0].UserId, target[0].Nickname, catId, category[0].Title, mode, eventId, eventTitle)
 
 	}
 	return nil

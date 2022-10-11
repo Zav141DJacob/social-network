@@ -208,15 +208,9 @@ function ws2OnMessage(setNotifications, notifications) {
   }
 }
 function NotificationDropdown({dispatch, setNotifications, notifications}) {
+  const {userInfo} = useAuth()
   
 
-  useEffect(() => {
-  }, [notifications])
-  // let d;
-  
-  
-  // console.log("data here: ", mockNotifications)
-  // 
   return (
     <>
       <div className={styles.arrowUpNotification}></div>
@@ -231,6 +225,32 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
                   <div className={styles.notificationBtns}>
                     <button onClick={() => handleFollow(true, item.Id, notifications, setNotifications, item.UserId)} className={styles.notificationAcceptBtn}>Accept</button>
                     <button onClick={() => handleFollow(false, item.Id, notifications, setNotifications)} className={styles.notificationDeclineBtn}>Decline</button>
+                  </div>
+                  <hr />
+                </div>
+              )
+            }
+            case "inviteGroup": {
+              return (
+                <div key={item.Id} className={styles.notification} onSubmit={handleFollow}>
+                  {item.UserAvatar && <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />}
+                  <span><strong style={{cursor: "pointer"}}  onClick={() => dispatch({type: "profile", Id: item.Nickname})}>{item.Nickname}</strong><br/> has invited you to {item.CategoryTitle}</span>
+                  <div className={styles.notificationBtns}>
+                    <button onClick={() => handleJoin(true, item.Id, notifications, setNotifications, userInfo.UserId, item.CatId)} className={styles.notificationAcceptBtn}>Join</button>
+                    <button onClick={() => handleJoin(false, item.Id, notifications, setNotifications)} className={styles.notificationDeclineBtn}>Decline</button>
+                  </div>
+                  <hr />
+                </div>
+              )
+            }
+            case "inviteEvent": {
+              return (
+                <div key={item.Id} className={styles.notification} onSubmit={handleFollow}>
+                  {item.UserAvatar && <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />}
+                  <span><strong style={{cursor: "pointer"}}  onClick={() => dispatch({type: "profile", Id: item.Nickname})}>{item.Nickname}</strong><br/> has invited you to {item.EventTitle}</span>
+                  <div className={styles.notificationBtns}>
+                    <button onClick={() => handleAttend(true, item.Id, notifications, setNotifications, userInfo.UserId, item.CatId)} className={styles.notificationAcceptBtn}>Join</button>
+                    <button onClick={() => handleAttend(false, item.Id, notifications, setNotifications)} className={styles.notificationDeclineBtn}>Decline</button>
                   </div>
                   <hr />
                 </div>
@@ -263,7 +283,6 @@ function NotificationDropdown({dispatch, setNotifications, notifications}) {
               )
             }
             case "registerEvent": {
-              console.log(item)
               return (
                 <div key={item.Id} className={styles.notification}>
                   {item.UserAvatar && <img className={styles.notificationAvatar} alt="avatar" src={`http://localhost:8000/static/${item.UserAvatar}`} />}

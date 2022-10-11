@@ -221,7 +221,7 @@ func (c *Client) reader(conn *websocket.Conn) {
         }
 
           // value2, isValid := v
-          err = Notify(user, targetUser, catId, mode, event[0].EventId)
+          err = Notify(user, targetUser, catId, mode, event[0].EventId, event[0].Title)
           if err != nil {
             HandleErr(err)
             break
@@ -445,7 +445,7 @@ func (c *Client) reader(conn *websocket.Conn) {
         return
       }
 
-      err = Notify(user, target, 0, mode, 0)
+      err = Notify(user, target, 0, mode, 0, "")
       if err != nil {
         HandleErr(err)
         break
@@ -510,7 +510,7 @@ func (c *Client) reader(conn *websocket.Conn) {
         break
       }
 
-      err = Notify(user, target, catId, mode, 0)
+      err = Notify(user, target, catId, mode, 0, "")
       if err != nil {
         HandleErr(err)
         break
@@ -521,6 +521,130 @@ func (c *Client) reader(conn *websocket.Conn) {
       to.UserId = user[0].UserId
       to.UserAvatar = user[0].Avatar
       to.CategoryId = catId.(string)
+
+      jsonTo, err := json.Marshal(to)
+      if err != nil {
+        HandleErr(err)
+        return
+      }
+      // targetId := IdType(target[0].UserId)
+
+      value, isValid := Manager.clients[IdType(target[0].UserId)]
+
+      if isValid {
+        err = value.WriteMessage(messageType, []byte(jsonTo))
+        if err != nil {
+          HandleErr(err)
+        }
+      }
+    case "inviteEvent":
+      type toClient struct {
+        Nickname   string
+        UserId     int
+        UserAvatar string
+        Type       string
+        EventId float64
+        CategoryTitle string
+      }
+
+      to := toClient{}
+
+      eventId := v["eventId"]
+      userId := v["userId"]
+      nickname := v["nickname"]
+
+      category, err := FromEvents("eventId", eventId)
+      if err != nil {
+        HandleErr(err)
+        break
+      }
+
+      target, err := FromUsers("userId", userId)
+      if err != nil {
+        HandleErr(err)
+        break
+      }
+
+      user, err := FromUsers("nickname", nickname)
+      if err != nil {
+        HandleErr(err)
+        break
+      }
+
+      err = Notify(user, target, eventId, mode, 0, category[0].Title)
+      if err != nil {
+        HandleErr(err)
+        break
+      }
+
+      to.Type = mode
+      to.Nickname = user[0].Nickname
+      to.UserId = user[0].UserId
+      to.UserAvatar = user[0].Avatar
+      to.EventId = eventId.(float64)
+      to.CategoryTitle = category[0].Title
+
+      jsonTo, err := json.Marshal(to)
+      if err != nil {
+        HandleErr(err)
+        return
+      }
+      // targetId := IdType(target[0].UserId)
+
+      value, isValid := Manager.clients[IdType(target[0].UserId)]
+
+      if isValid {
+        err = value.WriteMessage(messageType, []byte(jsonTo))
+        if err != nil {
+          HandleErr(err)
+        }
+      }
+    case "inviteGroup":
+      type toClient struct {
+        Nickname   string
+        UserId     int
+        UserAvatar string
+        Type       string
+        CategoryId float64
+        CategoryTitle string
+      }
+
+      to := toClient{}
+
+      catId := v["catId"]
+      userId := v["userId"]
+      nickname := v["nickname"]
+
+      category, err := FromCategories("catId", catId)
+      if err != nil {
+        HandleErr(err)
+        break
+      }
+
+      target, err := FromUsers("userId", userId)
+      if err != nil {
+        HandleErr(err)
+        break
+      }
+
+      user, err := FromUsers("nickname", nickname)
+      if err != nil {
+        HandleErr(err)
+        break
+      }
+
+      err = Notify(user, target, catId, mode, 0, "")
+      if err != nil {
+        HandleErr(err)
+        break
+      }
+
+      to.Type = mode
+      to.Nickname = user[0].Nickname
+      to.UserId = user[0].UserId
+      to.UserAvatar = user[0].Avatar
+      to.CategoryId = catId.(float64)
+      to.CategoryTitle = category[0].Title
 
       jsonTo, err := json.Marshal(to)
       if err != nil {

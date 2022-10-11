@@ -40,12 +40,19 @@ export const wsOnMessage = (notification, setNotification, setUsers, dispatch, g
     let jsonData = JSON.parse(event.data)
     console.log(jsonData)
     switch (jsonData.Type) {
-      case "registerEvent": {
+      case "registerEvent": 
         if (jsonData.EventId !== 0) {
-        dispatch({type: "event", eventId: jsonData.EventId}) 
+          dispatch({type: "event", eventId: jsonData.EventId}) 
         }
         ForwardWS2(jsonData)
-      }
+        break
+      case "inviteGroup":
+        ForwardWS2(jsonData)  
+        ws.send(JSON.stringify({catId: parseInt(jsonData.CategoryId), mode: "open"}))
+        break
+      case "inviteEvent":
+        ForwardWS2(jsonData)  
+        break
       case "follow":
         ForwardWS2(jsonData)  
         break
@@ -125,7 +132,8 @@ function postReducer(state, action) {
     groupChatCat: state.groupChatCat,
     groupChatId: state.groupChatId,
     inviteGroup: false,
-    messageBox: false
+    messageBox: false,
+    inviteEvent: false
   }
   if (action.fat == 12) {
       return {...action, profileDrop: false, notificationDrop: false}
@@ -149,6 +157,10 @@ function postReducer(state, action) {
       return {...state, groupChat: false}
     case 'inviteGroup': 
       return {...state, inviteGroup: true}
+    case 'inviteEvent': 
+      return {...state, inviteEvent: true}
+    case 'inviteEventClose': 
+      return {...state, inviteEvent: false}
     case 'messageBoxOpen': 
       return {...state, messageBox: true}
     case 'messageBoxClose':

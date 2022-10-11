@@ -134,6 +134,7 @@ type GroupMembersData struct {
 	Id     int
 	UserId int
 	CatId  int
+  Username string
 }
 
 type EventAttendeesData struct {
@@ -165,6 +166,7 @@ type NotificationsListData struct {
   CategoryTitle string
   Type          string
   EventId          int
+  EventTitle string
 }
 
 type EventData struct {

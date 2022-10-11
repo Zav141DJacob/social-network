@@ -21,6 +21,7 @@ export function Feed({
   const { nickname, userInfo } = useAuth();
   const [postCopy, setPostCopy] = useState();
   const [joined, setJoined] = useState(null)
+  const [invited, setInvited] = useState([])
   const [done, setDone] = useState(false)
   const throttler = useRef(
     throttle((newVal, ref) => ref?.current?.scroll({ top: newVal }), 40)
@@ -33,6 +34,15 @@ export function Feed({
     error,
   } = useQuery(["posts"], fetchPosts);
 
+  function inviteGroup(userId) {
+    let inviteCp = invited.slice()
+    inviteCp.push(userId)
+    setInvited(inviteCp)
+    console.log("HEY")
+    const postObj = { catId: parseFloat(selectedCat.postCat), nickname: nickname, userId: userId };
+    ws.send(JSON.stringify({ ...postObj, mode: "inviteGroup" }));
+  }
+
   function join() {
     const postObj = { catId: selectedCat.postCat, nickname: nickname };
     ws.send(JSON.stringify({ ...postObj, mode: "join" }));
@@ -40,7 +50,7 @@ export function Feed({
 
   function unjoin() {
     const postObj = { catId: selectedCat.postCat, nickname: nickname };
-    ws.send(JSON.stringify({ ...postObj, mode: "join" }));
+    ws.send(JSON.stringify({ ...postObj, mode: "unjoin" }));
   }
 
   useEffect(() => {
@@ -65,7 +75,6 @@ export function Feed({
       if (groups) {
         setJoined(groups[0]?.Members?.some(i => i.UserId == userInfo?.UserId))
       }
-      console.log('hey')
       ws.send(JSON.stringify({catId: parseInt(selectedCat.postCat), mode: "open"}))
       setPostCopy(
         posts?.filter((post) => {return post.Post.CatId == selectedCat.postCat}).reverse()
@@ -151,7 +160,11 @@ export function Feed({
                       >
                         {follower.Nickname}
                       </div>
-                      <button className={styles.inviteUserBtn}>Invite</button>
+                      {invited.includes(follower.UserId) ? 
+                        <button className={styles.invitedUserBtn}>Invited</button>
+                        :
+                        <button className={styles.inviteUserBtn} onClick={() => inviteGroup(follower.UserId)}>Invite</button>
+                      }
                     </div>
                   );
                 })}

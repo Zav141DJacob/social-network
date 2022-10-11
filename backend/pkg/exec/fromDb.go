@@ -288,7 +288,8 @@ func FromGroupMembers(condition string, value interface{}) ([]GroupMembersData, 
 		err = rows.Scan(
 			&groupMembers.Id,
 			&groupMembers.UserId,
-			&groupMembers.CatId)
+			&groupMembers.CatId,
+      &groupMembers.Username)
 
 		if err != nil {
 			return nil, err
@@ -362,12 +363,16 @@ func FromNotificationsList(condition string, value interface{}) ([]Notifications
 			&notification.CategoryTitle,
 			&notification.Type,
 			&notification.EventId,
+			&notification.EventTitle,
       )
 
 		if err != nil {
 			return nil, err
 		}
 
+    fmt.Println()
+    fmt.Printf("%+v", notification)
+    fmt.Println()
 		returnNotification = append(returnNotification, notification)
 	}
 
@@ -573,7 +578,6 @@ func FromEventAttendees(condition string, value interface{}) ([]EventAttendeesDa
 
     returnEventAttends = append(returnEventAttends, attends)
   }
-  fmt.Println(123, returnEventAttends)
   return returnEventAttends, nil
 }
 // Pulls data from the database

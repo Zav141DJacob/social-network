@@ -518,6 +518,20 @@
   background-color: rgb(14, 57, 122);
 }
 
+.invitedUserBtn {
+  position: absolute;
+  left: 270px;
+  top: 5px;
+  cursor: pointer;
+  height: 28px;
+  width: 77px;
+  font-size: 18px;
+  background-color: transparent;
+  border: 1px solid rgb(232, 230, 227);
+  border-radius: 7px;
+  color: rgb(232, 230, 227);
+}
+
 .joinBtn {
   position: relative;
   z-index: 2;

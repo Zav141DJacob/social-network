@@ -1566,7 +1566,6 @@ func EventsAPI(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventAPI(w http.ResponseWriter, r *http.Request) {
-  fmt.Println("GOT EM")
 	if r.Method != "OPTIONS" {
 		auth := AuthenticateSession(r.Header["Authentication"])
 		if (auth == SessionData{}) {
