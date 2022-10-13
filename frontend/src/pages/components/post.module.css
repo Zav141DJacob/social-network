@@ -133,11 +133,7 @@
   margin: 0 auto;
 }
 
-.commentInput::placeholder {
-  color: #a9a9a9;
-}
-
-.commentInput:placeholder-shown {
+.commentInput {
   position: relative;
   width: 332px;
   height: auto;
@@ -147,8 +143,13 @@
   font-weight: 400;
   font-size: 20px;
   line-height: 24px;
-  color: #a9a9a9;
+  color: #ffffff;
   margin: 0 auto;
+  margin-bottom: 5px;
+}
+.commentInput::placeholder {
+  padding-top: 5px;
+  color: rgba(255, 255, 255, 0.39);
 }
 
 .commentsLabel {
@@ -219,18 +220,12 @@
 
 .addImg {
   display: flex;
-}
-.customFileInput {
-  color: transparent;
+  color: white;
 }
 
-.customFileInput::-webkit-file-upload-button {
-  visibility: hidden;
-}
-
-.customFileInput::before {
+.customFileInput::file-selector-button {
   margin-left: 10px;
-  content: "Add Image";
+  margin-bottom: 5px;
   display: inline-block;
   border-radius: 10px;
   outline: none;
@@ -244,20 +239,19 @@
   background: rgb(47, 47, 47);
   cursor: pointer;
   width: 120px;
-  -webkit-user-select: none;
   user-select: none;
 }
 
-.customFileInput:hover::before {
+.customFileInput::file-selector-button:hover {
   background: rgb(87, 87, 87);
 }
 
-.customFileInput:active::before {
+.customFileInput::file-selector-button:active {
   background: rgb(181, 181, 181);
 }
 
 .submitBtn {
-  margin-left: -100px;
+  margin-left: 10px;
   content: "add and Image";
   display: inline-block;
   border-radius: 10px;
@@ -281,4 +275,24 @@
 
 .submitBtn:active {
   background: rgb(181, 181, 181);
+}
+
+.removeBtn {
+  color: rgb(147, 12, 0);
+  font-size: 2rem;
+  font-weight: 800;
+  padding: 0px;
+  margin-top: -10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.removeBtn:hover {
+  color: rgb(180, 18, 3);
+}
+
+.removeBtn:active {
+  font-size: 2.2rem;
+  margin-bottom: -0.2rem;
 }

@@ -75,8 +75,17 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
     return;
   };
 
+  function removeSelectedFile() {
+    document.getElementById("upload").value = "";
+    setSelectedFile(undefined);
+  }
+
   const onClick = (e) => {
+    if (currentComment.value === "") {
+      return;
+    }
     e.preventDefault();
+    removeSelectedFile();
     let cmntCp;
     if (commentData) {
       cmntCp = [
@@ -216,9 +225,12 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
               rows="3"
               value={currentComment.value}
               onChange={handleCommentChange}
-              placeholder={"Write a comment..."}
+              placeholder="Write a comment..."
             />
             <div className={styles.addImg}>
+              <label for="upload" className={styles.customFileInput} hidden>
+                Add Image
+              </label>
               <input
                 type="file"
                 id="upload"
@@ -228,15 +240,23 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
                 }}
                 className={styles.customFileInput}
               />
-
-              <button
-                className={styles.submitBtn}
-                type="submit"
-                onClick={onClick}
-              >
-                Submit
-              </button>
+              {selectedFile && (
+                <button
+                  className={styles.removeBtn}
+                  onClick={removeSelectedFile}
+                >
+                  &#215;
+                </button>
+              )}
             </div>
+            <button
+              className={styles.submitBtn}
+              type="submit"
+              onClick={onClick}
+            >
+              Submit
+            </button>
+
             <p className={styles.commentsLabel}>Comments</p>
 
             <div className={styles.comments}>
