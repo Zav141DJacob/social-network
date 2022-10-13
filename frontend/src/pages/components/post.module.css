@@ -21,7 +21,7 @@
   height: 40px;
   left: 30px;
   top: 4px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 400;
   font-size: 15px;
@@ -34,8 +34,8 @@
   position: relative;
   top: 3px;
   left: 30px;
-  width:inherit;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  width: inherit;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 400;
   font-size: 25px;
@@ -52,15 +52,14 @@
   color: #777575;
 }
 
-
 .ul {
-   position: relative;
-   list-style-type: none;
-   height: 10px;
-   margin: auto;
-   top: 5px;
-   padding: 0;
-   overflow: hidden;
+  position: relative;
+  list-style-type: none;
+  height: 10px;
+  margin: auto;
+  top: 5px;
+  padding: 0;
+  overflow: hidden;
 }
 
 .category {
@@ -74,11 +73,11 @@
   left: 25px;
   padding-right: 20px;
   margin: 0px 10px 20px 30px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
-  color: #D0D0D0;
+  color: #d0d0d0;
   height: 30px;
   border-radius: 10px;
 }
@@ -89,7 +88,7 @@
   left: 30px;
   top: -18px;
   max-width: 740px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 400;
   font-size: 15px;
@@ -121,7 +120,7 @@
   background: #777575;
   border-radius: 9px;
   border: none;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 400;
   font-size: 15px;
@@ -135,7 +134,7 @@
 }
 
 .commentInput::placeholder {
-  color: #A9A9A9;
+  color: #a9a9a9;
 }
 
 .commentInput:placeholder-shown {
@@ -143,12 +142,12 @@
   width: 332px;
   height: auto;
   left: 10px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 400;
   font-size: 20px;
   line-height: 24px;
-  color: #A9A9A9;
+  color: #a9a9a9;
   margin: 0 auto;
 }
 
@@ -168,7 +167,7 @@
   border-radius: 10px;
   padding: 10px;
   margin-bottom: 20px;
-  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-style: normal;
   font-weight: 400;
   font-size: 20px;
@@ -216,4 +215,70 @@
   transform: translate(-50%);
   cursor: pointer;
   padding-bottom: 20px;
+}
+
+.addImg {
+  display: flex;
+}
+.customFileInput {
+  color: transparent;
+}
+
+.customFileInput::-webkit-file-upload-button {
+  visibility: hidden;
+}
+
+.customFileInput::before {
+  margin-left: 10px;
+  content: "Add Image";
+  display: inline-block;
+  border-radius: 10px;
+  outline: none;
+  border: 1px rgb(88, 88, 88) solid;
+  padding: 5px;
+  font-family: "Helvetica Neue", Helvetica, Arial;
+  font-weight: 800;
+  font-size: 14px;
+  text-align: center;
+  color: #d0d0d0;
+  background: rgb(47, 47, 47);
+  cursor: pointer;
+  width: 120px;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.customFileInput:hover::before {
+  background: rgb(87, 87, 87);
+}
+
+.customFileInput:active::before {
+  background: rgb(181, 181, 181);
+}
+
+.submitBtn {
+  margin-left: -100px;
+  content: "add and Image";
+  display: inline-block;
+  border-radius: 10px;
+  outline: none;
+  border: 1px rgb(88, 88, 88) solid;
+  padding: 5px;
+  font-family: "Helvetica Neue", Helvetica, Arial;
+  font-weight: 800;
+  font-size: 14px;
+  text-align: center;
+  color: #d0d0d0;
+  background: rgb(47, 47, 47);
+  cursor: pointer;
+  width: 120px;
+  user-select: none;
+}
+
+.submitBtn:hover {
+  background: rgb(87, 87, 87);
+}
+
+.submitBtn:active {
+  background: rgb(181, 181, 181);
 }

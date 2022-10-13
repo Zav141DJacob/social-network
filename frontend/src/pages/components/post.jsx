@@ -6,13 +6,17 @@ import { queryClient, useAuth, ws, wsOnMessage, wsSetup } from "./../../App";
 import { postData as postComment } from "../Login";
 import { postImg } from "./feed";
 import Comment from "./comment.jsx";
-import {useQuery, useMutation} from '@tanstack/react-query'
-import {fetchPost, fetchPostComments} from '../../utils/queries'
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { fetchPost, fetchPostComments } from "../../utils/queries";
 
 const addComment = (newComment) => {
-  return postComment("http://localhost:8000/api/v1/comments/", newComment, false)
-}
-  
+  return postComment(
+    "http://localhost:8000/api/v1/comments/",
+    newComment,
+    false
+  );
+};
+
 export function PostComponent({ post, postInfo, dispatch, group }) {
   const [postData, setPostData] = useState();
   const [currentComment, setCurrentComment] = useState({
@@ -25,17 +29,26 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
   const [selectedFile, setSelectedFile] = useState(undefined);
   const { nickname } = useAuth();
   const nav = useNavigate();
-  const {isLoading, data: postFetch, isError} = useQuery(["post", post], fetchPost, {
-    enabled: !postInfo && !postData
-  })
-  const {data: commentData} = useQuery(["comments", post], fetchPostComments, {
-    enabled: !!post,
-    initialData: () => {return []}
-  })
-  const {mutate: insertNewComment} = useMutation(addComment, {
+  const {
+    isLoading,
+    data: postFetch,
+    isError,
+  } = useQuery(["post", post], fetchPost, {
+    enabled: !postInfo && !postData,
+  });
+  const { data: commentData } = useQuery(
+    ["comments", post],
+    fetchPostComments,
+    {
+      enabled: !!post,
+      initialData: () => {
+        return [];
+      },
+    }
+  );
+  const { mutate: insertNewComment } = useMutation(addComment, {
     onSuccess: () => queryClient.invalidateQueries(["comments"]),
-  }
-  )
+  });
 
   useEffect(() => {
     if (post) {
@@ -43,14 +56,12 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
     }
   }, [post]);
 
-
-
   useEffect(() => {
-  if (postInfo && !postData) {
-    setPostData(postInfo)
-  } else if (!postData && postFetch){
-    setPostData(postFetch[0])
-  }
+    if (postInfo && !postData) {
+      setPostData(postInfo);
+    } else if (!postData && postFetch) {
+      setPostData(postFetch[0]);
+    }
   }, [postData, postFetch, postInfo]);
 
   const closePostHandler = (e) => {
@@ -66,7 +77,7 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
 
   const onClick = (e) => {
     e.preventDefault();
-    let cmntCp
+    let cmntCp;
     if (commentData) {
       cmntCp = [
         ...commentData,
@@ -91,7 +102,7 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
           },
           User: nickname,
         },
-      ]
+      ];
     }
 
     let cookieStruct = {};
@@ -117,11 +128,11 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
           commentObj.image = res;
         })
         .then(() => {
-          insertNewComment(commentObj)
+          insertNewComment(commentObj);
           setSelectedFile();
         });
     } else {
-      insertNewComment(commentObj)
+      insertNewComment(commentObj);
     }
   };
 
@@ -148,7 +159,7 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
     });
   };
   if (isLoading && !postData) {
-    return <div/>
+    return <div />;
   }
   if (postData) {
     return (
@@ -157,7 +168,7 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
           className={styles.postContainer}
           key={postData?.Post?.PostId}
           onClick={() =>
-              dispatch({ type: "select", postId: postData?.Post?.PostId })
+            dispatch({ type: "select", postId: postData?.Post?.PostId })
           }
         >
           {!postInfo && (
@@ -181,16 +192,21 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
           </span>
           <div className={styles.title}>{postData?.Post?.Title}</div>
           {(postData?.User && (
-            <p className={styles.date}>{timeago.format(postData?.Post?.Date)}</p>
+            <p className={styles.date}>
+              {timeago.format(postData?.Post?.Date)}
+            </p>
           )) || <div className={styles.bottomPad}>{group}</div>}
           {!postInfo && (
             <>
               <p className={styles.desc}>{postData?.Post?.Body}</p>
             </>
           )}
-          {postData?.Post?.Image != "none" &&
-              postData?.Post?.Image && <img className={styles.postImg} src={"http://localhost:8000/static/" + postData?.Post?.Image} />
-          }
+          {postData?.Post?.Image != "none" && postData?.Post?.Image && (
+            <img
+              className={styles.postImg}
+              src={"http://localhost:8000/static/" + postData?.Post?.Image}
+            />
+          )}
         </div>
         {/* building post image - kaarel*/}
         {!postInfo && (
@@ -203,13 +219,6 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
               placeholder={"Write a comment..."}
             />
             <div className={styles.addImg}>
-              <label className={styles.addImageBtn} htmlFor="upload">
-                {!selectedFile ? (
-                  <span className={styles.addImageText}>Add an image</span>
-                ) : (
-                  <span className={styles.addImageText}>Image added</span>
-                )}
-              </label>
               <input
                 type="file"
                 id="upload"
@@ -217,27 +226,35 @@ export function PostComponent({ post, postInfo, dispatch, group }) {
                 onChange={(e) => {
                   setSelectedFile(e.target.files[0]);
                 }}
-                hidden
+                className={styles.customFileInput}
               />
-              <button type="submit" onClick={onClick}>
-                Hear me!
+
+              <button
+                className={styles.submitBtn}
+                type="submit"
+                onClick={onClick}
+              >
+                Submit
               </button>
             </div>
             <p className={styles.commentsLabel}>Comments</p>
 
-          <div className={styles.comments}>
-            {commentData
-              ?.slice(0)
+            <div className={styles.comments}>
+              {commentData
+                ?.slice(0)
                 .reverse()
                 .map((comment) => {
                   return (
-                    <Comment comment={comment} key={comment.Comment.CommentId} />
+                    <Comment
+                      comment={comment}
+                      key={comment.Comment.CommentId}
+                    />
                   );
                 })}
+            </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+      </div>
+    );
   }
 }

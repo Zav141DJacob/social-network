@@ -7,10 +7,11 @@ const Comment = ({ comment }) => {
     <div className={styles.comment}>
       <div className={styles.commentAuthor}>{comment.User}</div>
       <p className={styles.commentBody}>{comment.Comment.Body}</p>
-      {comment?.Comment?.Image ? (
-        <img src={"http://localhost:8000/static/" + comment?.Comment?.Image} />
-      ) : (
-        <div className="not"></div>
+      {comment?.Comment?.Image && (
+        <img
+          src={"http://localhost:8000/static/" + comment?.Comment?.Image}
+          style={{ maxWidth: "60%" }}
+        />
       )}
       <p className={styles.commentTime}>
         {timeago.format(comment.Comment.Date)}
