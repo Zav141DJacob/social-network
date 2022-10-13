@@ -232,7 +232,7 @@ export function Feed({
     return (
       <div className={styles.feed} ref={forwardRef}>
         <div >
-          <button className={styles.joinBtn} onClick={join}>Join</button>
+          <button className={styles.joinPrivateBtn} onClick={join}>Join</button>
         </div>
         <div className={styles.posts}>
           {postCopy?.map((i) => {
@@ -259,7 +259,7 @@ export function Feed({
         <div className={styles.posts}>
           <div className={styles.private}>
             <div >
-              <button className={styles.joinBtn} onClick={join}>Join</button>
+              <button className={styles.joinPrivateBtn} onClick={join}>Join</button>
             </div>
             <div className={styles.privatebox}>
               <svg className={styles.lock} viewBox="0 0 24 24">

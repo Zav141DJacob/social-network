@@ -535,6 +535,24 @@
 .joinBtn {
   position: relative;
   z-index: 2;
+  top: 100px;
+  width: 150px;
+  height: 30.77px;
+  background: rgb(14, 57, 122);
+  border-radius: 7px;
+  font-family: "Helvetica Neue", Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 29px;
+  border: none;
+  color: rgb(232, 230, 227);
+  cursor: pointer;
+}
+
+.joinPrivateBtn {
+  position: relative;
+  z-index: 2;
 	left: 50%;
 	transform: translate(-50%);
   top: 210px;
