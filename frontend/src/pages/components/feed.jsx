@@ -231,8 +231,8 @@ export function Feed({
   } else if (groups?.IsPublic && done) {
     return (
       <div className={styles.feed} ref={forwardRef}>
-        <div className={styles.joinBtn}>
-          <button onClick={join}>Join</button>
+        <div >
+          <button className={styles.joinBtn} onClick={join}>Join</button>
         </div>
         <div className={styles.posts}>
           {postCopy?.map((i) => {
@@ -258,8 +258,8 @@ export function Feed({
       <div className={styles.feed} ref={forwardRef}>
         <div className={styles.posts}>
           <div className={styles.private}>
-            <div className={styles.joinBtn}>
-              <button onClick={join}>Join</button>
+            <div >
+              <button className={styles.joinBtn} onClick={join}>Join</button>
             </div>
             <div className={styles.privatebox}>
               <svg className={styles.lock} viewBox="0 0 24 24">

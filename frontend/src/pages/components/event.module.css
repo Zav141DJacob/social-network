@@ -46,7 +46,6 @@
 .desc {
   position: relative;
   left: 22px;
-  top: 30px;
   font-family: 'Helvetica';
   font-style: normal;
   font-weight: 400;
@@ -81,7 +80,6 @@
 
 .descLabel {
   position: relative;
-  top:30px;
   left: 22px;
   font-family: 'Helvetica';
   font-style: normal;
@@ -98,18 +96,18 @@
   font-family: 'Helvetica';
   font-style: normal;
   font-weight: 400;
-  font-size: 36px;
+  font-size: 18px;
   line-height: 44px;
   color: #D0D0D0;
 }
 .notattends {
   position: relative;
   left: 22px;
-  top: 24px;
+  top: 4px;
   font-family: 'Helvetica';
   font-style: normal;
   font-weight: 400;
-  font-size: 36px;
+  font-size: 18px;
   line-height: 44px;
   color: #D0D0D0;
 }
@@ -138,6 +136,22 @@
   cursor: pointer;
 }
 
+.notificationAcceptBtnDis {
+  height: 24px;
+  width: 80px;
+  margin-right: 10px;
+  background: rgb(14, 57, 122);
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: transparent;
+  border: 1px solid rgb(232, 230, 227);
+  border-radius: 5px;
+  color: rgb(232, 230, 227);
+}
+
 .notificationDeclineBtn {
   height: 24px;
   width: 80px;
@@ -152,16 +166,34 @@
   cursor: pointer;
 }
 
+
+.notificationDeclineBtnDis {
+  height: 24px;
+  width: 80px;
+  margin-right: 10px;
+  background: rgb(14, 57, 122);
+  font-family: 'Helvetica Neue', Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: transparent;
+  border: 1px solid rgb(232, 230, 227);
+  border-radius: 5px;
+  color: rgb(232, 230, 227);
+}
+
 .buttons {
   position: relative;
-  top: 40px;
+  top: 10px;
   left: 20px;
 }
 
 .inviteBtn {
   position: relative;
   z-index: 2;
-  top: 23px;
+  top: 170px;
+  left: 20px;
   width: 150px;
   height: 30.77px;
   background: rgb(14, 57, 122);

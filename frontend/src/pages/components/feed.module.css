@@ -83,7 +83,7 @@
 
 .privateText {
   position: relative;
-  top: -44px;
+  top: -43px;
 }
 
 .almostPrivateText {
@@ -389,8 +389,8 @@
   max-width: 600px;
   min-width: 450px;
   padding-left: 20px;
-  min-height: 157px;
-  top: 71px;
+  min-height: 177px;
+  top: 41px;
   background: rgb(48, 52, 54);
   border-radius: 12px;
 }
@@ -399,7 +399,7 @@
   position: absolute;
   color: whitesmoke;
   left: 50%;
-  top: 70%;
+  top: 60%;
   font-weight: 100;
   font-family: Helvetica;
   font-size: 24px;
@@ -535,7 +535,9 @@
 .joinBtn {
   position: relative;
   z-index: 2;
-  top: 100px;
+	left: 50%;
+	transform: translate(-50%);
+  top: 210px;
   width: 150px;
   height: 30.77px;
   background: rgb(14, 57, 122);

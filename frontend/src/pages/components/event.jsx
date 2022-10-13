@@ -116,8 +116,8 @@ export const Event = ({ state, dispatch }) => {
                   })}
             </div>
           )}
-          <div className={styles.attends}>Going: {going[0].length}</div>
-          <div className={styles.notattends}>Not going: {going[1].length}</div>
+          <div className={styles.attends}>{going[0].length} going</div>
+          <div className={styles.notattends}>{going[1].length} can't go</div>
           <div className={styles.buttons}>
             {going[0].filter(e => e.UserId == userInfo.UserId).length > 0 ?
               <button  className={styles.notificationAcceptBtnDis}>Joined</button>
